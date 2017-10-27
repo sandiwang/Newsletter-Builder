@@ -1,0 +1,25 @@
+{
+  "name": "newsletter-builder",
+  "description": "",
+  "main": "",
+  "authors": [
+    "Ying-Chun Wang (Ying-Chun_Wang@gensler.com)"
+  ],
+  "license": "ISC",
+  "homepage": "",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jQuery": "^3.2.1",
+    "dropzone": "^5.1.1",
+    "bootstrap": "^3.3.7",
+    "vue": "^2.5.2",
+    "file-saver": "FileSaver#^1.3.3",
+    "summernote": "^0.8.8"
+  }
+}

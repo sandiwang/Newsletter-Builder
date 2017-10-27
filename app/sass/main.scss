@@ -1,0 +1,290 @@
+// @import url('https://fonts.googleapis.com/css?family=Lato:300,400,700,900');
+@import url('https://www.fontify.me/wf/62bff158c0b7d8c9ca2a87f599f46dae');
+
+// $font: 'Lato', sans-serif;
+$kievit: font86106;
+// todo: try Kievit
+$emailfont: Verdana, Geneva, sans-serif;
+
+$font8: 0.5714rem;
+$font9: 0.6429rem;
+$font10: 0.7143rem;
+$font12: 0.8571rem;
+$font16: 1.143rem;
+$font18: 1.286rem;
+$font20: 1.429rem;
+$font22: 1.571rem;
+$font24: 1.714rem;
+$font26: 1.857rem;
+$font28: 2rem;
+$font30: 2.143rem;
+$font40: 2.857rem;
+
+$lightgrey: #c9c9ca;
+$grey: #b5b5b7;
+$darkpurple: #252839;
+$yellow: #f2b632;
+$teal: #3fb0ac;
+$blue: #0091ea;
+
+$dropshadow: 0 2px 2px 0 rgba(0,0,0,0.14), 0 1px 5px 0 rgba(0,0,0,0.12), 0 3px 1px -2px rgba(0,0,0,0.2);
+
+$sidebarW: 400px;
+$canvasH: 700px;
+$canvasW: 1000px;
+
+*{
+	box-sizing: border-box;
+}
+
+html, body{
+	height: 100%;
+	width: 100%;
+	font-family: $kievit;
+	font-size: 14px;
+	background-color: $lightgrey;
+}
+
+#app, .main, .sidebar{
+	position: relative;
+	height: 100%;
+	font-size: 0;
+}
+
+#app{
+	overflow-x: hidden;
+}
+
+.nav{
+	background-color: #fff;
+	clear: both;
+	margin-bottom: 15px;
+
+	li{
+		display: inline-block;
+		width: 50%;
+		float: left;
+		text-align: center;
+		padding: 15px 10px;
+		border: 2px solid transparent;
+		cursor: pointer;
+
+		&.active, &:hover{
+			border-color: $yellow;
+		}
+
+		&.active .template-name{
+			color: $yellow;
+		}
+	}
+}
+
+.template-name{
+	letter-spacing: 1px;
+	font-size: $font16;
+}
+
+.template-thumb{
+	padding-top: 10px;
+
+	img{
+		width: 100%;
+	}
+}
+
+.sidebar{
+	display: inline-block;
+	vertical-align: top;
+	width: $sidebarW;
+	font-size: 1rem;
+	padding: 20px;
+
+	&.active{
+		display: inline-block;
+
+		&+.canvas-container{
+			width: calc(100% - #{$sidebarW});
+		}
+	}
+}
+
+.tab{
+	display: none;
+
+	&.active{
+		display: block;
+	}
+}
+
+.canvas-container{
+	display: inline-block;
+	width: calc(100% - 400px);
+	transition: 0.3s all;
+	font-size: 1rem;
+	text-align: center;
+}
+
+.canvas{
+	background-color: #fff;
+	width: $canvasW;
+	height: $canvasH;
+	margin: 20px auto;
+	box-shadow: $dropshadow;
+}
+
+.button{
+	display: inline-block;
+	font-size: 1rem;
+	padding: 0.7rem 2rem;
+	border-radius: 4px;
+	letter-spacing: 1px;
+	cursor: pointer;
+	transition: 0.3s all;
+	box-shadow: $dropshadow;
+	background-color: $darkpurple;
+
+	&:hover{
+		background-color: #3F4253;
+	}
+}
+
+.export{
+	margin: 20px auto 40px;	
+	color: #fff;
+	text-transform: uppercase;
+	font-weight: 300;
+}
+
+/* .editor-popup{
+	position: absolute;
+	right: 20px;
+	top: 40px;
+	width: 500px;
+	height: 300px;
+	background-color: mix(#fff, $lightgrey, 98);
+	border: 1px solid mix(#fff, $lightgrey, 98);
+	box-shadow: $dropshadow;
+	border-radius: 4px;
+	font-size: 1rem;
+} */
+
+.editor-popup{
+	position: absolute;
+}
+
+.input{
+	cursor: pointer;
+	position: relative;
+
+	&:hover, &.active{
+		border: 2px solid $yellow;
+	}
+
+	&.active.img-dragging{
+		border-style: dashed;
+		&:after{
+			content: '';
+			width: 100%;
+			height: 100%;
+			background-color: rgba($lightgrey, 0.5);
+			display: block;
+			position: absolute;
+			top: 0;
+			left: 0;
+		}
+	}
+}
+
+.tool-popup{
+	//display: none;
+	position: absolute;
+	top: 2px; // 2px to compensate the border
+	left: 2px; // 2px to compensate the border
+	list-style: none;
+	padding-left: 0;
+	z-index: 99;
+	background-color: #fff;
+
+	li{
+		display: inline-block;
+		font-size: $font20;
+
+		a{
+			padding: 1px 5px;
+			color: $yellow;
+			border-radius: 3px;
+			border: 1px solid $yellow;
+		}
+
+		a:hover{
+			box-shadow: $dropshadow;
+		}
+	}
+}
+
+.upload-img-reminder{
+	position: absolute;
+	top: 20px;
+	left: -100%;
+	padding: 20px 30px;
+	font-size: 1rem;
+	color: #fff;
+	background-color: #fff;
+	transition: 0.2s all;
+	box-shadow: $dropshadow;
+	border-radius: 4px;
+	letter-spacing: 0.5px;
+	background-color: $blue;
+
+	span{
+		font-size: $font18;
+	}
+}
+
+.note-editor.panel{
+	position: absolute;
+	left: 20px;
+	top: 400px;
+	width: 500px;
+	height: 300px;
+	background-color: mix(#fff, $lightgrey, 98);
+	border: 1px solid mix(#fff, $lightgrey, 98);
+	box-shadow: $dropshadow;
+	border-radius: 4px;
+	font-size: 1rem;
+	transition: 0.2s all;
+
+	.note-resizebar{
+		display: none !important;
+	}
+
+	.note-submit button{
+		background-color: $teal;
+		color: #fff;
+		transition: 0.2s all;
+
+		&:hover{
+			background-color: rgba($teal, 0.7);
+		}
+	}
+
+	.note-cancel button{
+		background-color: $grey;
+		color: #fff;
+		transition: 0.2s all;
+
+		&:hover{
+			background-color: $lightgrey;
+		}
+	}
+
+	.panel-body{
+		p{
+			margin: 0 0 5px 0;
+		}
+
+		a, a:hover, a:visited, a:focus{
+			color: $blue;
+		}
+	}
+}

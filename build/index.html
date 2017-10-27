@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<!-- vendors -->
+	<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.min.css">
+	<link rel="stylesheet" type="text/css" href="css/vendors/bootstrap/dist/css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="css/vendors/dropzone/dist/basic.css">
+	<link rel="stylesheet" type="text/css" href="css/vendors/dropzone/dist/dropzone.css">
+	<link rel="stylesheet" type="text/css" href="css/vendors/summernote/dist/summernote.css">
+	
+	<link rel="stylesheet" type="text/css" href="css/main.css">
+	<title>gNYC Newsletter Builder</title>
+</head>
+<body>
+	<div id="app">
+		<!-- 
+		<p>{{ message }}</p>
+		<input v-model="message">
+		-->
+		<div class="nav"></div>
+		<div class="main">
+			<div class="sidebar"></div>
+			<div class="canvas-container">
+				<div class="canvas">
+					<table width="1000" height="700" cellpadding="0" cellspacing="0" border="0" align="center" style="padding:0; border-collapse: collapse; border-spacing: 0; font-family: 'KievitOT', Verdana, Geneva, sans-serif;">
+						<tr>
+							<td width="350" align="center">
+								<table width="350" height="700" cellpadding="0" cellspacing="0" border="0" style="text-align: center;">
+									<tr>
+										<td style="padding-top: 25px;">
+											<img src="img/gNYC.png" width="250">
+										</td>
+									</tr>
+									<tr>
+										<td style="vertical-align: top;">
+											<h3 class="input input-no-style subheading" style="font-family: 'KievitOT Light', Verdana, Geneva, sans-serif; font-weight: 300; font-size: 20px; margin: 0; padding-bottom: 5px; font-style: italic; letter-spacing: -1px;">your weekly experience snapshot</h3>
+											<h3 class="input input-no-style dateOfTheWeek" style="font-family: 'KievitOT Light', Verdana, Geneva, sans-serif; font-weight: 300; font-size: 18px; margin: 0; font-style: italic; color: #ff5252;">10.23.2017</h3>
+										</td>
+									</tr>
+								</table>
+							</td>
+							<td width="630" style="padding-left: 20px;">
+								<table width="630" height="700" cellpadding="0" cellspacing="0" border="0" style="">
+									<tr>
+										<td style="text-align: center; padding: 20px 10px;">
+											<table width="160" height="135" cellpadding="0" cellspacing="0" border="0">
+												<tr>
+													<td class="input thumb">
+														<img src="img/sample.png" height="135">
+													</td>
+												</tr>
+											</table>
+										</td>
+										<td width="460" style="text-align: center; vertical-align: top; padding: 20px 0 20px 10px;">
+											<table width="440" cellpadding="0" cellspacing="0" border="0" style="text-align: left;">
+												<tr>
+													<td class="input input-no-style title" style="font-family: 'KievitOT', Verdana, Geneva, sans-serif; vertical-align: top; background-color: #eee; font-weight: 600; font-size: 20px; color: #000; padding: 3px 10px;">
+														Titles here
+													</td>
+												</tr>
+												<tr>
+													<td class="input desc" style="font-family: 'KievitOT', Verdana, Geneva, sans-serif; color:#000; font-size: 14px; padding: 5px 10px;">
+														Contents here...
+													</td>
+												</tr>
+											</table>
+										</td>
+									</tr>
+									<tr>
+										<td style="text-align: center; padding: 20px 10px;">
+											<table width="160" height="135" cellpadding="0" cellspacing="0" border="0">
+												<tr>
+													<td class="input thumb">
+														<img src="img/sample.png" height="135">
+													</td>
+												</tr>
+											</table>
+										</td>
+										<td width="460" style="text-align: center; vertical-align: top; padding: 20px 0 20px 10px;">
+											<table width="440" cellpadding="0" cellspacing="0" border="0" style="text-align: left;">
+												<tr>
+													<td class="input input-no-style title" style="font-family: 'KievitOT', Verdana, Geneva, sans-serif; vertical-align: top; background-color: #eee; font-weight: 600; font-size: 20px; color: #000; padding: 3px 10px;">
+														Titles here
+													</td>
+												</tr>
+												<tr>
+													<td class="input desc" style="font-family: 'KievitOT', Verdana, Geneva, sans-serif; color:#000; font-size: 14px; padding: 5px 10px;">
+														Contents here...
+													</td>
+												</tr>
+											</table>
+										</td>
+									</tr>
+									<tr>
+										<td style="text-align: center; padding: 20px 10px;">
+											<table width="160" height="135" cellpadding="0" cellspacing="0" border="0">
+												<tr>
+													<td class="input thumb">
+														<img src="img/sample.png" height="135">
+													</td>
+												</tr>
+											</table>
+										</td>
+										<td width="460" style="text-align: center; vertical-align: top; padding: 20px 0 20px 10px;">
+											<table width="440" cellpadding="0" cellspacing="0" border="0" style="text-align: left;">
+												<tr>
+													<td class="input input-no-style title" style="font-family: 'KievitOT', Verdana, Geneva, sans-serif; vertical-align: top; background-color: #eee; font-weight: 600; font-size: 20px; color: #000; padding: 3px 10px;">
+														Titles here
+													</td>
+												</tr>
+												<tr>
+													<td class="input desc" style="font-family: 'KievitOT', Verdana, Geneva, sans-serif; color:#000; font-size: 14px; padding: 5px 10px;">
+														Contents here...
+													</td>
+												</tr>
+											</table>
+										</td>
+									</tr>
+									<tr>
+										<td style="text-align: center; padding: 20px 10px;">
+											<table width="160" height="135" cellpadding="0" cellspacing="0" border="0">
+												<tr>
+													<td class="input thumb">
+														<img src="img/sample.png" height="135">
+													</td>
+												</tr>
+											</table>
+										</td>
+										<td width="460" style="text-align: center; vertical-align: top; padding: 20px 0 20px 10px;">
+											<table width="440" cellpadding="0" cellspacing="0" border="0" style="text-align: left;">
+												<tr>
+													<td class="input input-no-style title" style="font-family: 'KievitOT', Verdana, Geneva, sans-serif; vertical-align: top; background-color: #eee; font-weight: 600; font-size: 20px; color: #000; padding: 3px 10px;">
+														Titles here
+													</td>
+												</tr>
+												<tr>
+													<td class="input desc" style="font-family: 'KievitOT', Verdana, Geneva, sans-serif; color:#000; font-size: 14px; padding: 5px 10px;">
+														Contents here...
+													</td>
+												</tr>
+											</table>
+										</td>
+									</tr>
+								</table>
+							</td>
+						</tr>
+					</table>
+				</div>
+				<div class="button export">Export</div>
+			</div>
+		</div>
+		<div class="editor-popup"></div>
+		<div class="upload-img-reminder"><span>Drag and drop your image to upload</span></div>
+	</div>
+</body>
+</html>
+
+<!-- vendors -->
+<script src="js/vendors/jQuery/dist/jquery.min.js"></script>
+<script src="js/vendors/bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="js/vendors/vue/dist/vue.min.js"></script>
+<script src="js/vendors/dropzone/dist/min/dropzone.min.js"></script>
+<script src="js/vendors/summernote/dist/summernote.min.js"></script>
+<script src="js/vendors/FileDrop/jQuery.FileDrop.js"></script>
+<script src="https://www.gstatic.com/firebasejs/4.6.0/firebase.js"></script>
+<!-- <script src="js/vendors/file-saver/FileSaver.min.js"></script> -->
+<!-- <script src="http://danml.com/js/download2.js"></script> -->
+
+<script src="js/dist/db.js"></script>
+<script src="js/dist/main.js"></script>
