@@ -3,6 +3,7 @@
 <head>
 	<!-- vendors -->
 	<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.min.css">
+	<link rel="stylesheet" type="text/css" href="http://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
 	<link rel="stylesheet" type="text/css" href="css/vendors/bootstrap/dist/css/bootstrap.min.css">
 	<link rel="stylesheet" type="text/css" href="css/vendors/dropzone/dist/basic.css">
 	<link rel="stylesheet" type="text/css" href="css/vendors/dropzone/dist/dropzone.css">
@@ -17,11 +18,37 @@
 		<p>{{ message }}</p>
 		<input v-model="message">
 		-->
-		<div class="nav"></div>
 		<div class="main">
-			<div class="sidebar"></div>
+			<div class="sidebar">
+				<ul class="nav templates">
+					<li class="active" data-template="1">
+						<div class="template-name">Template 1</div>
+						<div class="template-thumb">
+							<img src="img/template1.png">
+						</div>
+					</li>
+					<li data-template="2">
+						<div class="template-name">Template 2</div>
+						<div class="template-thumb">
+							<img src="img/template1.png">
+						</div>
+					</li>
+					<li data-template="3">
+						<div class="template-name">Template 3</div>
+						<div class="template-thumb">
+							<img src="img/template1.png">
+						</div>
+					</li>
+					<li data-template="4">
+						<div class="template-name">Template 4</div>
+						<div class="template-thumb">
+							<img src="img/template1.png">
+						</div>
+					</li>
+				</ul>
+			</div>
 			<div class="canvas-container">
-				<div class="canvas">
+				<div class="canvas tab active" template="1">
 					<table width="1000" height="700" cellpadding="0" cellspacing="0" border="0" align="center" style="padding:0; border-collapse: collapse; border-spacing: 0; font-family: 'KievitOT', Verdana, Geneva, sans-serif;">
 						<tr>
 							<td width="350" align="center">
@@ -144,6 +171,21 @@
 								</table>
 							</td>
 						</tr>
+					</table>
+				</div>
+				<div class="canvas tab" template="2">
+					<table width="1000" height="700" cellpadding="0" cellspacing="0" border="0" align="center" style="padding:0; border-collapse: collapse; border-spacing: 0; font-family: 'KievitOT', Verdana, Geneva, sans-serif;">
+						Template 2
+					</table>
+				</div>
+				<div class="canvas tab" template="3">
+					<table width="1000" height="700" cellpadding="0" cellspacing="0" border="0" align="center" style="padding:0; border-collapse: collapse; border-spacing: 0; font-family: 'KievitOT', Verdana, Geneva, sans-serif;">
+						Template 3
+					</table>
+				</div>
+				<div class="canvas tab" template="4">
+					<table width="1000" height="700" cellpadding="0" cellspacing="0" border="0" align="center" style="padding:0; border-collapse: collapse; border-spacing: 0; font-family: 'KievitOT', Verdana, Geneva, sans-serif;">
+						Template 4
 					</table>
 				</div>
 				<div class="button export">Export</div>

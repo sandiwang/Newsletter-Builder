@@ -1,0 +1,111 @@
+$closeSize: 20px;
+
+.modal{
+	.closeModal{
+		float: none;
+		position: absolute;
+		top: 10px;
+		right: 10px;
+		
+		> div{
+			position: relative;
+			width: $closeSize;
+			height: $closeSize;
+			cursor: pointer;
+		}
+
+		> div:after, > div:before{
+			content: '';
+			width: $closeSize;
+			height: 3px;
+			background: $lightgrey;
+			position: absolute;
+			left: 0;
+			top: 50%;
+			transition: 0.2s all;
+		}
+
+		> div:hover::after, > div:hover::before{
+				background: $darkgrey;
+			}
+
+		> div:before{
+			-webkit-transform: translateY(-50%) rotate(-45deg);
+			    -ms-transform: translateY(-50%) rotate(-45deg);
+			        transform: translateY(-50%) rotate(-45deg);
+		}
+
+		> div:after{
+			-webkit-transform: translateY(-50%) rotate(45deg);
+			    -ms-transform: translateY(-50%) rotate(45deg);
+			        transform: translateY(-50%) rotate(45deg);
+		}
+
+	}
+
+	.message{
+		font-size: $font22;
+		text-align: center;
+		margin: 30px 0 10px;
+
+		&.success{
+			color: #4caf50;
+		}
+
+		&.failed{
+			color: #f44336;
+		}
+	}
+
+	.sub-message{
+		font-size: 1rem;
+		display: inline-block;
+		text-decoration: underline;
+		cursor: pointer;
+	}
+}
+
+.modal-header{
+	border-bottom: 0;
+}
+
+.modal-title{
+	margin-top: 10px;
+	letter-spacing: 0.5px;
+}
+
+.modal-content{
+	border-radius: 0;
+}
+
+.modal-footer{
+	border-top: 0;
+}
+
+#img-linking-modal{
+	.modal-title{
+		text-align: center;
+	}
+
+	.single-input{
+		display: block;
+		width: 400px;
+		margin: 40px auto 10px;
+		text-align: center;
+
+		input{
+			width: 100%;
+		}
+
+		.label-text{
+			// text-transform: uppercase;
+			letter-spacing: 0.5px;
+			text-align: left;
+			color: $grey;
+		}
+	}
+
+	.modal-footer{
+		text-align: center;
+	}
+}

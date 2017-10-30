@@ -1,4 +1,104 @@
 @import url("https://www.fontify.me/wf/62bff158c0b7d8c9ca2a87f599f46dae");
+.modal .closeModal {
+  float: none;
+  position: absolute;
+  top: 10px;
+  right: 10px; }
+  .modal .closeModal > div {
+    position: relative;
+    width: 20px;
+    height: 20px;
+    cursor: pointer; }
+  .modal .closeModal > div:after, .modal .closeModal > div:before {
+    content: '';
+    width: 20px;
+    height: 3px;
+    background: #c9c9ca;
+    position: absolute;
+    left: 0;
+    top: 50%;
+    transition: 0.2s all; }
+  .modal .closeModal > div:hover::after, .modal .closeModal > div:hover::before {
+    background: #838386; }
+  .modal .closeModal > div:before {
+    -webkit-transform: translateY(-50%) rotate(-45deg);
+    -ms-transform: translateY(-50%) rotate(-45deg);
+    transform: translateY(-50%) rotate(-45deg); }
+  .modal .closeModal > div:after {
+    -webkit-transform: translateY(-50%) rotate(45deg);
+    -ms-transform: translateY(-50%) rotate(45deg);
+    transform: translateY(-50%) rotate(45deg); }
+
+.modal .message {
+  font-size: 1.571rem;
+  text-align: center;
+  margin: 30px 0 10px; }
+  .modal .message.success {
+    color: #4caf50; }
+  .modal .message.failed {
+    color: #f44336; }
+
+.modal .sub-message {
+  font-size: 1rem;
+  display: inline-block;
+  text-decoration: underline;
+  cursor: pointer; }
+
+.modal-header {
+  border-bottom: 0; }
+
+.modal-title {
+  margin-top: 10px;
+  letter-spacing: 0.5px; }
+
+.modal-content {
+  border-radius: 0; }
+
+.modal-footer {
+  border-top: 0; }
+
+#img-linking-modal .modal-title {
+  text-align: center; }
+
+#img-linking-modal .single-input {
+  display: block;
+  width: 400px;
+  margin: 40px auto 10px;
+  text-align: center; }
+  #img-linking-modal .single-input input {
+    width: 100%; }
+  #img-linking-modal .single-input .label-text {
+    letter-spacing: 0.5px;
+    text-align: left;
+    color: #b5b5b7; }
+
+#img-linking-modal .modal-footer {
+  text-align: center; }
+
+.single-input {
+  position: relative;
+  margin: 15px 0 5px; }
+  .single-input .label-text {
+    position: absolute;
+    width: 100%;
+    height: 36px;
+    line-height: 36px;
+    padding-left: 5px;
+    font-weight: 300;
+    transition: 0.3s all;
+    top: 0;
+    font-size: 1.143rem; }
+  .single-input input {
+    height: 36px;
+    line-height: 36px;
+    padding: 3px 5px;
+    outline: 0;
+    border: 0;
+    border-bottom: 1px solid #c9c9ca; }
+  .single-input.has-value .label-text, .single-input input:focus + .label-text {
+    top: -20px;
+    font-size: 0.8571rem; }
+
 * {
   box-sizing: border-box; }
 
@@ -8,6 +108,21 @@ html, body {
   font-family: font86106;
   font-size: 14px;
   background-color: #c9c9ca; }
+
+.primary-btn {
+  background-color: #0091ea;
+  color: #fff;
+  border: 0;
+  letter-spacing: 0.5px;
+  font-size: 1.143rem;
+  text-transform: uppercase;
+  padding: 0.5rem 2rem;
+  border-radius: 4px;
+  transition: 0.3s all;
+  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2); }
+  .primary-btn:hover, .primary-btn:focus, .primary-btn:active {
+    background-color: rgba(0, 145, 234, 0.85);
+    box-shadow: 0 4px 5px 0 rgba(0, 0, 0, 0.14), 0 1px 10px 0 rgba(0, 0, 0, 0.12), 0 2px 4px -1px rgba(0, 0, 0, 0.3); }
 
 #app, .main, .sidebar {
   position: relative;

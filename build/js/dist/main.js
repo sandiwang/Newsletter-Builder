@@ -30,6 +30,22 @@ let SaveBtn = function (context) {
 	return button.render();
 };
 
+let CancelBtn = function (context) {
+	const summernoteui = $.summernote.ui;
+
+	let button = summernoteui.button({
+		contents: 'CANCEL',
+		tooltip: 'Cancel',
+		click: () => {
+			$('.editor-popup').summernote('reset');
+			hideTextEditorPopup();
+			$('.input.active').removeClass('active');
+		}
+	});
+
+	return button.render();
+};
+
 function updateContent() {
 	let content = $('.editor-popup').summernote('code');
 
@@ -85,9 +101,10 @@ function initTextEditor(elem) {
 		maxHeight: 250,
 		toolbar: [
 		// [groupName, [list of button]]
-		['style', ['bold', 'italic', 'underline']], ['font', ['strikethrough', 'superscript', 'subscript']], ['fontsize', ['fontsize']], ['color', ['color']], ['para', ['ul', 'ol']], ['link', ['link']], ['submit', ['save']]],
+		['style', ['bold', 'italic', 'underline']], ['font', ['strikethrough', 'superscript', 'subscript']], ['fontsize', ['fontsize']], ['color', ['color']], ['para', ['ul', 'ol']], ['link', ['link', 'picture']], ['cancel', ['cancel']], ['submit', ['save']]],
 		buttons: {
-			save: SaveBtn
+			save: SaveBtn,
+			cancel: CancelBtn
 		}
 	});
 }
@@ -98,10 +115,12 @@ function destroyTextEditor() {
 }
 
 function showTextEditorPopup() {
-	$('.canvas-container').css({
-		width: '80%',
-		'margin-left': '20%'
-	});
+	/*
+ $('.canvas-container').css({
+ 	width: '80%',
+ 	'margin-left': '20%'
+ });
+ */
 
 	$('.note-editor.panel').animate({
 		left: '20px'
@@ -109,10 +128,12 @@ function showTextEditorPopup() {
 }
 
 function hideTextEditorPopup() {
-	$('.canvas-container').css({
-		width: '100%',
-		'margin-left': '0'
-	});
+	/*
+ $('.canvas-container').css({
+ 	width: '100%',
+ 	'margin-left': '0'
+ });
+ */
 
 	$('.note-editor.panel').animate({
 		left: '-100%'
@@ -160,8 +181,69 @@ function toggleImgUploadUI() {
 	}
 }
 
+function createToolPopup() {
+	let $popup = $('<ul>', { class: 'tool-popup' }),
+	    $tool = $('<li>').append('<a class="hyperlink" title="Hyperlink"><i class="ion-link"></i></a>');
+
+	return $popup.append($tool);
+}
+
+// TODO: create modal to ask for link
+function doImageLinkTask() {
+	$('.input.thumb.hovering').find('img').wrap('<a href="google.com"></a>');
+}
+
+function doImageTask(e) {
+	e.preventDefault();
+	e.stopPropagation();
+
+	let task = $(this).attr('class');
+
+	switch (task) {
+		case 'hyperlink':
+			console.log('hyperlink');
+			doImageLinkTask();
+			break;
+		default:
+			console.log(`not in the tool lists: ${tasl}`);
+	}
+}
+
+function showImgToolOptions() {
+	let $tools = createToolPopup();
+	$(this).addClass('hovering').append($tools);
+
+	$tools.find('a').on('click', doImageTask);
+	//$(this).find('.tool-popup').show();
+}
+
+function hideImgToolOptions() {
+	//$(this).find('.tool-popup').remove();
+	$('.tool-popup').hide();
+	$(this).removeClass('hovering');
+}
+
+function changeTemplate() {
+	// if user clicks on current template, nothing happens
+	let template = $(this).attr('data-template');
+
+	if ($('.templates li.active').length > 0 && !$(this).hasClass('active')) {
+		$('.templates li.active').removeClass('active');
+		$(this).addClass('active');
+
+		$('.canvas.tab.active').removeClass('active');
+		$(`.canvas.tab[template=${template}]`).addClass('active');
+	} else if ($('.templates li.active').length <= 0) {
+		$(this).addClass('active');
+		$(`.canvas.tab[template=${template}]`).addClass('active');
+	}
+}
+
 $(function () {
 	$('.input.thumb').each(function () {
+		//let $tools = createToolPopup();
+		//$(this).append($tools);
+
 		$(this).fileDrop({
 			onFileRead: files => {
 				$('.thumb.active').find('img').attr('src', files[0].data);
@@ -177,7 +259,7 @@ $(function () {
 	$('.export').on('click', () => {
 		const windowUrl = 'about:blank';
 
-		let content = document.querySelector('.canvas'),
+		let content = document.querySelector('.canvas.active'),
 		    printWindow = window.open(windowUrl, 'gNYC Newsletter');
 
 		printWindow.document.write('<html><head><title>gNYC Newsletter</title></head><body>' + content.innerHTML + "</body>");
@@ -185,5 +267,9 @@ $(function () {
 
 	$('.input:not(.thumb)').on('click', toggleEditing);
 	$('.input a').on('click', e => e.stopPropagation());
+
 	$('.input.thumb').on('click', toggleImgUploadUI);
+	$('.input.thumb').hover(showImgToolOptions, hideImgToolOptions);
+
+	$('.templates li').on('click', changeTemplate);
 });

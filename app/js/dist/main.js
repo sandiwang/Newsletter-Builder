@@ -46,6 +46,18 @@ let CancelBtn = function (context) {
 	return button.render();
 };
 
+function isEmpty(elm) {
+	return elm.val().trim() === '' ? 1 : 0;
+}
+
+function checkInputValue() {
+	if (isEmpty($(this))) {
+		$(this).parent().removeClass('has-value');
+	} else {
+		$(this).parent().addClass('has-value');
+	}
+}
+
 function updateContent() {
 	let content = $('.editor-popup').summernote('code');
 
@@ -181,6 +193,11 @@ function toggleImgUploadUI() {
 	}
 }
 
+function showImgUrlForm() {
+	$(this).parents('.modal').find('.tab.active').removeClass('active');
+	$(this).parents('.modal').find('.tab.url-form').addClass('active');
+}
+
 function createToolPopup() {
 	let $popup = $('<ul>', { class: 'tool-popup' }),
 	    $tool = $('<li>').append('<a class="hyperlink" title="Hyperlink"><i class="ion-link"></i></a>');
@@ -188,9 +205,32 @@ function createToolPopup() {
 	return $popup.append($tool);
 }
 
-// TODO: create modal to ask for link
-function doImageLinkTask() {
-	$('.input.thumb.hovering').find('img').wrap('<a href="google.com"></a>');
+function populateCurrentLink(elem) {
+	let url = elem.find('a').attr('href');
+
+	$('#img-linking-modal input[name="img-url"]').val(url);
+	$('#img-linking-modal .url-form .single-input').addClass('has-value');
+}
+
+function clearCurrentLink() {
+	$('#img-linking-modal input[name="img-url"]').val('');
+	$('#img-linking-modal .url-form .single-input').removeClass('has-value');
+}
+
+function showImgLinkModal() {
+	let imgContainer = $('.input.thumb.hovering').attr('data-id');
+
+	$('#img-linking-modal').find('.tab.active').removeClass('active');
+	$('#img-linking-modal').find('.tab.url-form').addClass('active');
+	$('#img-linking-modal').find('#setImgLink').show();
+
+	if ($('.input.thumb.hovering').children('a').length > 0) {
+		populateCurrentLink($('.input.thumb.hovering'));
+	} else {
+		clearCurrentLink();
+	}
+
+	$('#img-linking-modal').attr('target-img', imgContainer).modal('show');
 }
 
 function doImageTask(e) {
@@ -201,12 +241,44 @@ function doImageTask(e) {
 
 	switch (task) {
 		case 'hyperlink':
-			console.log('hyperlink');
-			doImageLinkTask();
+			showImgLinkModal();
 			break;
 		default:
 			console.log(`not in the tool lists: ${tasl}`);
 	}
+}
+
+function setImgLink() {
+	let $modal = $(this).parents('.modal'),
+	    $input = $modal.find('input[name="img-url"]'),
+	    target = $modal.attr('target-img'),
+	    $targetImgContainer = $(`.canvas-container .canvas.active .input.thumb[data-id=${target}]`),
+	    url = $input.val().trim(),
+	    link = `<a href="${url}" target="_blank"></a>`;
+
+	$modal.find('.tab.active').removeClass('active');
+
+	try {
+		if ($targetImgContainer.find('a').length > 0) {
+			$targetImgContainer.find('a').attr('href', url);
+		} else {
+			$targetImgContainer.find('img').wrap(link);
+			$targetImgContainer.find('a').on('click', e => {
+				e.preventDefault();
+			});
+		}
+
+		$modal.find('.tab.message.success').addClass('active');
+		setTimeout(() => $modal.modal('hide'), 2000);
+	} catch (err) {
+		console.log(err);
+		$modal.find('.tab.message.failed').addClass('active');
+	}
+
+	$modal.find('.single-input').removeClass('has-value');
+	$input.val('');
+	$('#setImgLink').hide();
+	//$(this).parents('.modal').modal('hide');
 }
 
 function showImgToolOptions() {
@@ -214,12 +286,10 @@ function showImgToolOptions() {
 	$(this).addClass('hovering').append($tools);
 
 	$tools.find('a').on('click', doImageTask);
-	//$(this).find('.tool-popup').show();
 }
 
 function hideImgToolOptions() {
-	//$(this).find('.tool-popup').remove();
-	$('.tool-popup').hide();
+	$(this).find('.tool-popup').remove();
 	$(this).removeClass('hovering');
 }
 
@@ -256,6 +326,8 @@ $(function () {
 		});
 	});
 
+	$('.single-input input').on('keyup', checkInputValue);
+
 	$('.export').on('click', () => {
 		const windowUrl = 'about:blank';
 
@@ -272,4 +344,7 @@ $(function () {
 	$('.input.thumb').hover(showImgToolOptions, hideImgToolOptions);
 
 	$('.templates li').on('click', changeTemplate);
+
+	$('#setImgLink').on('click', setImgLink);
+	$('#img-linking-modal .tab.message.failed .sub-message').on('click', showImgUrlForm);
 });
