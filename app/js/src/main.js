@@ -228,9 +228,11 @@ $(function(){
 
 		$(this).fileDrop({
 			onFileRead: (files) => {
-				$('.thumb.active').find('img').attr('src', files[0].data);
-
 				let base64data = $.removeUriScheme(files[0].data);
+
+				$('.thumb.active').find('img').attr('src', files[0].data);
+				$('.thumb.active').find('img').attr('img-data', files[0].data);
+
 				uploadImg(base64data);
 			},
 			overClass: 'img-dragging',
@@ -245,6 +247,15 @@ $(function(){
 
 		let content = document.querySelector('.canvas.active'),
     		printWindow = window.open(windowUrl, 'gNYC Newsletter');
+
+    let imgs = content.querySelectorAll('.thumb img');
+    for(let i=0 ; i<imgs.length ; i++){
+    	let imgUrl = imgs[i].getAttribute('img-url') || null;
+
+    	if( imgUrl ){
+    		imgs[i].setAttribute('src', imgUrl);
+    	}
+    }
 
     printWindow.document.write('<html><head><title>gNYC Newsletter</title></head><body>' + content.innerHTML + "</body>");
 	});

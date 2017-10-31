@@ -15,7 +15,7 @@ let imagesRef = storageRef.child('images');
 
 function updateImgSrc(url) {
 	//console.log('update function:', url);
-	$('.thumb.active').find('img').attr('src', url);
+	$('.thumb.active').find('img').attr('img-url', url);
 	return $('.thumb.active').removeClass('active');
 }
 

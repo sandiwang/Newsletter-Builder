@@ -46,6 +46,25 @@ let CancelBtn = function (context) {
 	return button.render();
 };
 
+let styleConfig = {
+	fontFamily: '"KievitOT", Verdana, Geneva, sans-serif',
+	fontBig: '20px',
+	fontSmall: '12px',
+	linkColor: '#0091ea'
+};
+
+function isEmpty(elm) {
+	return elm.val().trim() === '' ? 1 : 0;
+}
+
+function checkInputValue() {
+	if (isEmpty($(this))) {
+		$(this).parent().removeClass('has-value');
+	} else {
+		$(this).parent().addClass('has-value');
+	}
+}
+
 function updateContent() {
 	let content = $('.editor-popup').summernote('code');
 
@@ -57,13 +76,6 @@ function updateContent() {
 	$('.input.active').html(content);
 	modifyStyles($('.input.active'));
 }
-
-let styleConfig = {
-	fontFamily: '"KievitOT", Verdana, Geneva, sans-serif',
-	fontBig: '20px',
-	fontSmall: '12px',
-	linkColor: '#0091ea'
-};
 
 function styleParagraph(elem) {
 	return elem.find('p').css({
@@ -181,48 +193,6 @@ function toggleImgUploadUI() {
 	}
 }
 
-function createToolPopup() {
-	let $popup = $('<ul>', { class: 'tool-popup' }),
-	    $tool = $('<li>').append('<a class="hyperlink" title="Hyperlink"><i class="ion-link"></i></a>');
-
-	return $popup.append($tool);
-}
-
-// TODO: create modal to ask for link
-function doImageLinkTask() {
-	$('.input.thumb.hovering').find('img').wrap('<a href="google.com"></a>');
-}
-
-function doImageTask(e) {
-	e.preventDefault();
-	e.stopPropagation();
-
-	let task = $(this).attr('class');
-
-	switch (task) {
-		case 'hyperlink':
-			console.log('hyperlink');
-			doImageLinkTask();
-			break;
-		default:
-			console.log(`not in the tool lists: ${tasl}`);
-	}
-}
-
-function showImgToolOptions() {
-	let $tools = createToolPopup();
-	$(this).addClass('hovering').append($tools);
-
-	$tools.find('a').on('click', doImageTask);
-	//$(this).find('.tool-popup').show();
-}
-
-function hideImgToolOptions() {
-	//$(this).find('.tool-popup').remove();
-	$('.tool-popup').hide();
-	$(this).removeClass('hovering');
-}
-
 function changeTemplate() {
 	// if user clicks on current template, nothing happens
 	let template = $(this).attr('data-template');
@@ -246,9 +216,11 @@ $(function () {
 
 		$(this).fileDrop({
 			onFileRead: files => {
-				$('.thumb.active').find('img').attr('src', files[0].data);
-
 				let base64data = $.removeUriScheme(files[0].data);
+
+				$('.thumb.active').find('img').attr('src', files[0].data);
+				$('.thumb.active').find('img').attr('img-data', files[0].data);
+
 				uploadImg(base64data);
 			},
 			overClass: 'img-dragging',
@@ -256,11 +228,22 @@ $(function () {
 		});
 	});
 
+	$('.single-input input').on('keyup', checkInputValue);
+
 	$('.export').on('click', () => {
 		const windowUrl = 'about:blank';
 
 		let content = document.querySelector('.canvas.active'),
 		    printWindow = window.open(windowUrl, 'gNYC Newsletter');
+
+		let imgs = content.querySelectorAll('.thumb img');
+		for (let i = 0; i < imgs.length; i++) {
+			let imgUrl = imgs[i].getAttribute('img-url') || null;
+
+			if (imgUrl) {
+				imgs[i].setAttribute('src', imgUrl);
+			}
+		}
 
 		printWindow.document.write('<html><head><title>gNYC Newsletter</title></head><body>' + content.innerHTML + "</body>");
 	});
@@ -272,4 +255,9 @@ $(function () {
 	$('.input.thumb').hover(showImgToolOptions, hideImgToolOptions);
 
 	$('.templates li').on('click', changeTemplate);
+
+	$('#setImgLink').on('click', setImgLink);
+	$('#removeImgLink').on('click', removeImgLink);
+	$('#img-linking-modal .tab.message.failed .sub-message').on('click', showImgUrlForm);
+	$('#test-link').on('click', testLinkUrl);
 });

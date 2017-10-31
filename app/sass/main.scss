@@ -230,6 +230,13 @@ html, body{
 			left: 0;
 		}
 	}
+
+	&.img-cropping .tool-popup{
+		display: none !important;
+	}
+	&.img-cropping .crop-btns{
+		display: block !important;
+	}
 }
 
 .tool-popup{
@@ -240,11 +247,12 @@ html, body{
 	list-style: none;
 	padding-left: 0;
 	z-index: 99;
-	background-color: #fff;
 
 	li{
 		display: inline-block;
 		font-size: $font20;
+		margin: 0 2px;
+		background-color: #fff;
 
 		a{
 			padding: 1px 5px;
@@ -257,6 +265,14 @@ html, body{
 			box-shadow: $dropshadow;
 		}
 	}
+}
+
+.crop-btns{
+	@extend .tool-popup;
+
+	display: none;
+	top: -33px;
+	left: 0;
 }
 
 .upload-img-reminder{

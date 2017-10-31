@@ -28,8 +28,9 @@ gulp.task('browserSync', function(){
 			baseDir: 'app',
 			browser: 'google chrome',
 			routes: {
-		        "/bower_components": "bower_components"
-		    }
+		    "/bower_components": "bower_components"
+		  },
+		  cors: true
 		}
 	})
 });

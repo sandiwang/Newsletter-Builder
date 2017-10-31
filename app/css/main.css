@@ -269,25 +269,35 @@ html, body {
       position: absolute;
       top: 0;
       left: 0; }
+  .input.img-cropping .tool-popup, .input.img-cropping .crop-btns {
+    display: none !important; }
+  .input.img-cropping .crop-btns {
+    display: block !important; }
 
-.tool-popup {
+.tool-popup, .crop-btns {
   position: absolute;
   top: 2px;
   left: 2px;
   list-style: none;
   padding-left: 0;
-  z-index: 99;
-  background-color: #fff; }
-  .tool-popup li {
+  z-index: 99; }
+  .tool-popup li, .crop-btns li {
     display: inline-block;
-    font-size: 1.429rem; }
-    .tool-popup li a {
+    font-size: 1.429rem;
+    margin: 0 2px;
+    background-color: #fff; }
+    .tool-popup li a, .crop-btns li a {
       padding: 1px 5px;
       color: #f2b632;
       border-radius: 3px;
       border: 1px solid #f2b632; }
-    .tool-popup li a:hover {
+    .tool-popup li a:hover, .crop-btns li a:hover {
       box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2); }
+
+.crop-btns {
+  display: none;
+  top: -33px;
+  left: 0; }
 
 .upload-img-reminder {
   position: absolute;

@@ -4,6 +4,7 @@
 	<!-- vendors -->
 	<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/7.0.0/normalize.min.css">
 	<link rel="stylesheet" type="text/css" href="http://code.ionicframework.com/ionicons/2.0.1/css/ionicons.min.css">
+	<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/cropper/3.1.3/cropper.min.css">
 	<link rel="stylesheet" type="text/css" href="css/vendors/bootstrap/dist/css/bootstrap.min.css">
 	<link rel="stylesheet" type="text/css" href="css/vendors/dropzone/dist/basic.css">
 	<link rel="stylesheet" type="text/css" href="css/vendors/dropzone/dist/dropzone.css">
@@ -59,7 +60,7 @@
 										</td>
 									</tr>
 									<tr>
-										<td style="vertical-align: top;">
+										<td align="center" style="vertical-align: top;">
 											<h3 class="input input-no-style subheading" style="font-family: 'KievitOT Light', Verdana, Geneva, sans-serif; font-weight: 300; font-size: 20px; margin: 0; padding-bottom: 5px; font-style: italic; letter-spacing: -1px;">your weekly experience snapshot</h3>
 											<h3 class="input input-no-style dateOfTheWeek" style="font-family: 'KievitOT Light', Verdana, Geneva, sans-serif; font-weight: 300; font-size: 18px; margin: 0; font-style: italic; color: #ff5252;">10.23.2017</h3>
 										</td>
@@ -72,7 +73,7 @@
 										<td style="text-align: center; padding: 20px 10px;">
 											<table width="160" height="135" cellpadding="0" cellspacing="0" border="0">
 												<tr>
-													<td class="input thumb">
+													<td class="input thumb" data-id="1">
 														<img src="img/sample.png" height="135">
 													</td>
 												</tr>
@@ -97,7 +98,7 @@
 										<td style="text-align: center; padding: 20px 10px;">
 											<table width="160" height="135" cellpadding="0" cellspacing="0" border="0">
 												<tr>
-													<td class="input thumb">
+													<td class="input thumb" data-id="2">
 														<img src="img/sample.png" height="135">
 													</td>
 												</tr>
@@ -122,7 +123,7 @@
 										<td style="text-align: center; padding: 20px 10px;">
 											<table width="160" height="135" cellpadding="0" cellspacing="0" border="0">
 												<tr>
-													<td class="input thumb">
+													<td class="input thumb" data-id="3">
 														<img src="img/sample.png" height="135">
 													</td>
 												</tr>
@@ -147,7 +148,7 @@
 										<td style="text-align: center; padding: 20px 10px;">
 											<table width="160" height="135" cellpadding="0" cellspacing="0" border="0">
 												<tr>
-													<td class="input thumb">
+													<td class="input thumb" data-id="4">
 														<img src="img/sample.png" height="135">
 													</td>
 												</tr>
@@ -194,6 +195,38 @@
 		<div class="editor-popup"></div>
 		<div class="upload-img-reminder"><span>Drag and drop your image to upload</span></div>
 	</div>
+
+	<div class="modal fade" id="img-linking-modal" tabindex="-1" role="dialog">
+	  <div class="modal-dialog" role="document">
+	    <div class="modal-content">
+	      <div class="modal-body">
+	      	<div class="closeModal" data-dismiss="modal" aria-label="Close"><div></div></div>
+		      <h4 class="modal-title">Insert Link to Image</h4>
+		      <div class="tabs">  
+			      <div class="tab url-form active">
+			      	<label class="single-input">
+			        	<input type="text" name="img-url">
+			        	<div class="label-text">Type in Url here</div>
+			        	<div id="test-link"><i class="ion-share"></i></div>
+			      	</label>
+			      </div>
+			      <div class="tab message success">
+			      	<div data-id="link-added">Link successfully added to the image!</div>
+			      	<div data-id="link-removed">Link successfully removed from the image!</div>
+			      </div>
+			      <div class="tab message failed">
+			      	<div>Error! Please try again.</div>
+			      	<div class="sub-message">Go Back</div>
+			      </div>
+		      </div>
+	      </div>
+	      <div class="modal-footer">
+	      	<button id="removeImgLink" type="button" class="primary-btn danger">Delete Link</button>
+	        <button id="setImgLink" type="button" class="primary-btn">Save</button>
+	      </div>
+	    </div>
+	  </div>
+	</div>
 </body>
 </html>
 
@@ -205,8 +238,10 @@
 <script src="js/vendors/summernote/dist/summernote.min.js"></script>
 <script src="js/vendors/FileDrop/jQuery.FileDrop.js"></script>
 <script src="https://www.gstatic.com/firebasejs/4.6.0/firebase.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropper/3.1.3/cropper.min.js"></script>
 <!-- <script src="js/vendors/file-saver/FileSaver.min.js"></script> -->
 <!-- <script src="http://danml.com/js/download2.js"></script> -->
 
 <script src="js/dist/db.js"></script>
+<script src="js/dist/img-editing.js"></script>
 <script src="js/dist/main.js"></script>

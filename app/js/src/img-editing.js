@@ -1,10 +1,17 @@
 const hideModalAfterDuration = 1000;
+const icons = {
+	linking: 'ion-ios-infinite-outline',
+	cropping: 'ion-ios-crop'
+}
+
+let imgCroppedData;
 
 function createToolPopup() {
 	let $popup = $('<ul>', {class: 'tool-popup'}),
-			$tool = $('<li>').append('<a class="hyperlink" title="Hyperlink"><i class="ion-link"></i></a>');
+			$linking = $('<li>').append(`<a class="linking" title="Hyperlink"><i class="${icons.linking}"></i></a>`),
+			$cropping = $('<li>').append(`<a class="cropping" title="Crop Image"><i class="${icons.cropping}"></i></a>`);
 
-	return $popup.append($tool);
+	return $popup.append($linking).append($cropping);
 }
 
 function populateCurrentLink(elem) {
@@ -36,6 +43,89 @@ function showImgLinkModal() {
 	$('#img-linking-modal').attr('target-img', imgContainer).modal('show');
 }
 
+function showImgCropping() {
+	
+	let $img = $('.input.thumb.hovering').find('img'),
+			imgData = $img.attr('img-data') || null;
+
+	if(imgData) $img.attr('src', imgData);
+
+	$img.cropper({
+	  aspectRatio: 1 / 1,
+	  viewMode: 1,
+	  cropBoxResizable: false,
+	  minContainerWidth: 135,
+	  minContainerHeight: 135,
+	  minCropBoxWidth: 135,
+	  minCropBoxHeight: 135,
+	  autoCropArea: 0,
+	  checkCrossOrigin: true,
+	  built: () => {
+	  	//$img.cropper("setCropBoxData", { width: "135", height: "135" })
+	  },
+	  crop: (e) => {
+	    // Output the result data for cropping image.
+	    // console.log(e.x);
+	    // console.log(e.y);
+	    imgCroppedData = $img.cropper('getCroppedCanvas').toDataURL();
+	  }
+	});
+
+	$img.on('ready', () => {
+		$img.cropper("setCropBoxData", { width: "135", height: "135" });
+
+		$img.parent().addClass('img-cropping');
+		$('.cropper-container').on('click', (e) => e.stopPropagation() );
+		showCropBtns($img.parent());
+	});
+}
+
+function createCropBtns(){
+	let $btns = $('<ul>', {class: 'crop-btns'}),
+			$cropBtn = $('<li>', {class: 'confirm-crop'}).append('<a title="Crop"><i class="ion-ios-crop"></i></a>'),
+			$cancelBtn = $('<li>', {class: 'cancel-crop'}).append('<a title="Cancel"><i class="ion-ios-close-outline"></i></a>');
+
+	return $btns.append($cancelBtn).append($cropBtn);
+}
+
+function showCropBtns(elem){
+	let popup = createCropBtns(elem);
+
+	elem.append(popup);
+
+	elem.find('.confirm-crop a').on('click', cropImg);
+	elem.find('.cancel-crop a').on('click', cancelCropping);
+}
+
+function cropImg(e){
+	e.preventDefault();
+	e.stopPropagation();
+
+	let $img = $('.input.thumb.img-cropping img'),
+			imgDataBase64 = $img.cropper('getCroppedCanvas') === null ? null : $img.cropper('getCroppedCanvas').toDataURL();
+
+
+	if(imgCroppedData !== null){
+		let imgData = $.removeUriScheme(imgCroppedData);
+		
+		$img.attr('data-img', imgCroppedData).attr('src', imgCroppedData);
+		uploadImg(imgData)
+	}
+
+	$img.parent().removeClass('img-cropping').find('.crop-btns').remove();
+	$img.cropper('destroy');
+}
+
+function cancelCropping(e){
+	e.preventDefault();
+	e.stopPropagation();
+
+	let $img = $('.input.thumb.img-cropping img');
+
+	$img.cropper('destroy');
+	$img.parent().removeClass('img-cropping').find('.crop-btns').remove();
+}
+
 function doImageTask(e) {
 	e.preventDefault();
 	e.stopPropagation();
@@ -43,11 +133,14 @@ function doImageTask(e) {
 	let task = $(this).attr('class');
 	
 	switch (task) {
-		case 'hyperlink':
+		case 'linking':
 			showImgLinkModal();
 			break;
+		case 'cropping':
+			showImgCropping();
+			break;
 		default:
-			console.log(`not in the tool lists: ${tasl}`);
+			console.log(`Not in the tool lists: ${task}`);
 	}
 }
 
