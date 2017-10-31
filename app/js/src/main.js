@@ -49,6 +49,13 @@ let CancelBtn = function (context) {
 	return button.render();
 }
 
+let styleConfig = {
+	fontFamily: '"KievitOT", Verdana, Geneva, sans-serif',
+	fontBig: '20px',
+	fontSmall: '12px',
+	linkColor: '#0091ea'
+}
+
 function isEmpty(elm) {
 	return elm.val().trim() === '' ? 1 : 0;
 }
@@ -61,7 +68,6 @@ function checkInputValue() {
 	}
 }
 
-
 function updateContent() {
 	let content = $('.editor-popup').summernote('code');
 
@@ -72,13 +78,6 @@ function updateContent() {
 
 	$('.input.active').html(content);
 	modifyStyles($('.input.active'));
-}
-
-let styleConfig = {
-	fontFamily: '"KievitOT", Verdana, Geneva, sans-serif',
-	fontBig: '20px',
-	fontSmall: '12px',
-	linkColor: '#0091ea'
 }
 
 function styleParagraph(elem) {
@@ -205,107 +204,6 @@ function toggleImgUploadUI() {
 	}	
 }
 
-function showImgUrlForm() {
-	$(this).parents('.modal').find('.tab.active').removeClass('active');
-	$(this).parents('.modal').find('.tab.url-form').addClass('active');
-}
-
-function createToolPopup() {
-	let $popup = $('<ul>', {class: 'tool-popup'}),
-			$tool = $('<li>').append('<a class="hyperlink" title="Hyperlink"><i class="ion-link"></i></a>');
-
-	return $popup.append($tool);
-}
-
-function populateCurrentLink(elem) {
-	let url = elem.find('a').attr('href');
-
-	$('#img-linking-modal input[name="img-url"]').val(url);
-	$('#img-linking-modal .url-form .single-input').addClass('has-value');
-}
-
-function clearCurrentLink() {
-	$('#img-linking-modal input[name="img-url"]').val('');
-	$('#img-linking-modal .url-form .single-input').removeClass('has-value');
-}
-
-
-function showImgLinkModal() {
-	let imgContainer = $('.input.thumb.hovering').attr('data-id');
-
-	$('#img-linking-modal').find('.tab.active').removeClass('active');
-	$('#img-linking-modal').find('.tab.url-form').addClass('active');
-	$('#img-linking-modal').find('#setImgLink').show();
-
-	if($('.input.thumb.hovering').children('a').length > 0) {
-		populateCurrentLink($('.input.thumb.hovering'));
-	} else {
-		clearCurrentLink();
-	}
-
-	$('#img-linking-modal').attr('target-img', imgContainer).modal('show');
-}
-
-function doImageTask(e) {
-	e.preventDefault();
-	e.stopPropagation();
-
-	let task = $(this).attr('class');
-	
-	switch (task) {
-		case 'hyperlink':
-			showImgLinkModal();
-			break;
-		default:
-			console.log(`not in the tool lists: ${tasl}`);
-	}
-}
-
-function setImgLink() {
-	let $modal = $(this).parents('.modal'),
-			$input = $modal.find('input[name="img-url"]'),
-			target = $modal.attr('target-img'),
-			$targetImgContainer = $(`.canvas-container .canvas.active .input.thumb[data-id=${target}]`),
-			url = $input.val().trim(),
-			link = `<a href="${url}" target="_blank"></a>`;
-
-	$modal.find('.tab.active').removeClass('active');
-
-	try {
-		if($targetImgContainer.find('a').length > 0) {
-			$targetImgContainer.find('a').attr('href', url);
-		} else {
-			$targetImgContainer.find('img').wrap(link);
-			$targetImgContainer.find('a').on('click', (e) => {
-				e.preventDefault();
-			});
-		}
-
-		$modal.find('.tab.message.success').addClass('active');
-		setTimeout(() => $modal.modal('hide') , 2000);
-	}
-	catch (err) {
-		console.log(err);
-		$modal.find('.tab.message.failed').addClass('active');
-	}
-
-	$modal.find('.single-input').removeClass('has-value');
-	$input.val('');
-	$('#setImgLink').hide();
-	//$(this).parents('.modal').modal('hide');
-}
-
-function showImgToolOptions() {
-	let $tools = createToolPopup();
-	$(this).addClass('hovering').append($tools);
-
-	$tools.find('a').on('click', doImageTask);
-}
-
-function hideImgToolOptions() {
-	$(this).find('.tool-popup').remove();
-	$(this).removeClass('hovering');
-}
 
 function changeTemplate() {
 	// if user clicks on current template, nothing happens
@@ -360,6 +258,8 @@ $(function(){
 	$('.templates li').on('click', changeTemplate);
 
 	$('#setImgLink').on('click', setImgLink);
+	$('#removeImgLink').on('click', removeImgLink);
 	$('#img-linking-modal .tab.message.failed .sub-message').on('click', showImgUrlForm);
+	$('#test-link').on('click', testLinkUrl);
 });
 

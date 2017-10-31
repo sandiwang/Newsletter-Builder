@@ -1,5 +1,12 @@
 $closeSize: 20px;
 
+@mixin verticalCenter {
+	top: 50%;
+	transform        : translateY(-50%);
+	-webkit-transform: translateY(-50%);
+	-ms-transform    : translateY(-50%);
+}
+
 .modal{
 	.closeModal{
 		float: none;
@@ -49,11 +56,15 @@ $closeSize: 20px;
 		margin: 30px 0 10px;
 
 		&.success{
-			color: #4caf50;
+			color: $green;
 		}
 
 		&.failed{
-			color: #f44336;
+			color: $red;
+		}
+
+		&.success div{
+			display: none;
 		}
 	}
 
@@ -92,6 +103,7 @@ $closeSize: 20px;
 		width: 400px;
 		margin: 40px auto 10px;
 		text-align: center;
+		position: relative;
 
 		input{
 			width: 100%;
@@ -107,5 +119,26 @@ $closeSize: 20px;
 
 	.modal-footer{
 		text-align: center;
+	}
+}
+
+#img-linking-modal .single-input.has-value #test-link{
+	color: inherit;
+	cursor: pointer;
+	pointer-events: auto;
+}
+
+#test-link{
+	@include verticalCenter;
+
+	position: absolute;
+	right: -30px;
+	color: $grey;
+	margin-top: 5px;
+	pointer-events: none;
+	transition: 0.3s all;
+
+	i{
+		font-size: $font24;
 	}
 }

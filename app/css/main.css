@@ -37,6 +37,8 @@
     color: #4caf50; }
   .modal .message.failed {
     color: #f44336; }
+  .modal .message.success div {
+    display: none; }
 
 .modal .sub-message {
   font-size: 1rem;
@@ -64,7 +66,8 @@
   display: block;
   width: 400px;
   margin: 40px auto 10px;
-  text-align: center; }
+  text-align: center;
+  position: relative; }
   #img-linking-modal .single-input input {
     width: 100%; }
   #img-linking-modal .single-input .label-text {
@@ -74,6 +77,25 @@
 
 #img-linking-modal .modal-footer {
   text-align: center; }
+
+#img-linking-modal .single-input.has-value #test-link {
+  color: inherit;
+  cursor: pointer;
+  pointer-events: auto; }
+
+#test-link {
+  top: 50%;
+  transform: translateY(-50%);
+  -webkit-transform: translateY(-50%);
+  -ms-transform: translateY(-50%);
+  position: absolute;
+  right: -30px;
+  color: #b5b5b7;
+  margin-top: 5px;
+  pointer-events: none;
+  transition: 0.3s all; }
+  #test-link i {
+    font-size: 1.714rem; }
 
 .single-input {
   position: relative;
@@ -119,9 +141,18 @@ html, body {
   padding: 0.5rem 2rem;
   border-radius: 4px;
   transition: 0.3s all;
-  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2); }
+  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
+  outline: 0; }
   .primary-btn:hover, .primary-btn:focus, .primary-btn:active {
     background-color: rgba(0, 145, 234, 0.85);
+    box-shadow: 0 4px 5px 0 rgba(0, 0, 0, 0.14), 0 1px 10px 0 rgba(0, 0, 0, 0.12), 0 2px 4px -1px rgba(0, 0, 0, 0.3); }
+
+.primary-btn.danger {
+  background-color: #fff;
+  border: 1px solid #f44336;
+  color: #f44336;
+  box-shadow: none; }
+  .primary-btn.danger:hover, .primary-btn.danger:focus, .primary-btn.danger:active {
     box-shadow: 0 4px 5px 0 rgba(0, 0, 0, 0.14), 0 1px 10px 0 rgba(0, 0, 0, 0.12), 0 2px 4px -1px rgba(0, 0, 0, 0.3); }
 
 #app, .main, .sidebar {
