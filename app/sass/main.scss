@@ -237,6 +237,20 @@ html, body{
 	&.img-cropping .crop-btns{
 		display: block !important;
 	}
+
+	&.crop-rounded{
+		.toggle-crop-rounded{
+			background-color: $yellow;
+			i {
+				color: #fff;
+			}
+		}
+
+		// make the crop box rounded
+		.cropper-view-box, .cropper-face {
+      border-radius: 50%;
+    }
+	}
 }
 
 .tool-popup{

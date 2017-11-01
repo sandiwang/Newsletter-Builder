@@ -273,6 +273,12 @@ html, body {
     display: none !important; }
   .input.img-cropping .crop-btns {
     display: block !important; }
+  .input.crop-rounded .toggle-crop-rounded {
+    background-color: #f2b632; }
+    .input.crop-rounded .toggle-crop-rounded i {
+      color: #fff; }
+  .input.crop-rounded .cropper-view-box, .input.crop-rounded .cropper-face {
+    border-radius: 50%; }
 
 .tool-popup, .crop-btns {
   position: absolute;

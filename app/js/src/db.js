@@ -1,3 +1,9 @@
+/***** example to get download link of a image *****/
+//const piglet = storageRef.child('images/piglet.png');
+//piglet.getDownloadURL().then((url) => {
+//	console.log(url);
+//});
+
 // Initialize Firebase
 let FirebaseConfig = {
   apiKey: "AIzaSyBlvNBOhRw5A1CrLod8UDwVZywpo5u3onU",
@@ -14,8 +20,13 @@ let storageRef = firebase.storage().ref();
 let imagesRef = storageRef.child('images');
 
 function updateImgSrc(url) {
-	//console.log('update function:', url);
-	$('.thumb.active').find('img').attr('img-url', url);
+	if($('.thumb.img-cropping').length > 0) {
+		$('.thumb.img-cropping').find('img').attr('img-url', url);
+	} else if ($('.thumb.active').length > 0) {
+		$('.thumb.active').find('img').attr('img-url', url);
+	}
+	
+	$('.thumb.img-cropping').removeClass('img-cropping').find('.crop-btns').remove();
 	return $('.thumb.active').removeClass('active');
 }
 

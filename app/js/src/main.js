@@ -7,14 +7,22 @@ let app = new Vue({
 });
 */
 
+const textEditor = {
+	height: 300,
+	maxHeight: 250,
+	toolbar: [
+	  // [groupName, [list of button]]
+	  ['style', ['bold', 'italic', 'underline']],
+	  ['font', ['strikethrough', 'superscript', 'subscript']],
+	  ['fontsize', ['fontsize']],
+	  ['color', ['color']],
+	  ['para', ['ul', 'ol']],
+	  ['link', ['link', 'picture']],
+	  ['cancel', ['cancel']],
+	  ['submit', ['save']]
+	]
+};
 
-
-
-/***** example to get download link of a image *****/
-//const piglet = storageRef.child('images/piglet.png');
-//piglet.getDownloadURL().then((url) => {
-//	console.log(url);
-//});
 
 let SaveBtn = function (context) {
   const summernoteui = $.summernote.ui;
@@ -49,6 +57,7 @@ let CancelBtn = function (context) {
 	return button.render();
 }
 
+/***** TODO: make user able to change to styling themselves *****/
 let styleConfig = {
 	fontFamily: '"KievitOT", Verdana, Geneva, sans-serif',
 	fontBig: '20px',
@@ -112,19 +121,9 @@ function initTextEditor(elem) {
 	}
 
 	$('.editor-popup').summernote({
-		height: 300,
-		maxHeight: 250,
-		toolbar: [
-	    // [groupName, [list of button]]
-	    ['style', ['bold', 'italic', 'underline']],
-	    ['font', ['strikethrough', 'superscript', 'subscript']],
-	    ['fontsize', ['fontsize']],
-	    ['color', ['color']],
-	    ['para', ['ul', 'ol']],
-	    ['link', ['link', 'picture']],
-	    ['cancel', ['cancel']],
-	    ['submit', ['save']]
-	  ],
+		height: textEditor.height,
+		maxHeight: textEditor.maxHeight,
+		toolbar: textEditor.toolbar,
 	  buttons: {
 	    save: SaveBtn,
 	    cancel: CancelBtn
@@ -138,26 +137,12 @@ function destroyTextEditor() {
 }
 
 function showTextEditorPopup() {
-	/*
-	$('.canvas-container').css({
-		width: '80%',
-		'margin-left': '20%'
-	});
-	*/
-
 	$('.note-editor.panel').animate({
 		left: '20px'
 	}, 150);
 }
 
 function hideTextEditorPopup() {
-	/*
-	$('.canvas-container').css({
-		width: '100%',
-		'margin-left': '0'
-	});
-	*/
-
 	$('.note-editor.panel').animate({
 		left: '-100%'
 	}, 150, () => {
@@ -221,6 +206,26 @@ function changeTemplate() {
 	}
 }
 
+function exportNewsletter() {
+	const windowUrl = 'about:blank';
+
+	// also make a duplicate of the content so that we are not modifying the original contents
+	let content = document.querySelector('.canvas.active'),
+			dupContent = content.cloneNode(true),
+  		printWindow = window.open(windowUrl, 'gNYC Newsletter');		
+
+  let imgs = dupContent.querySelectorAll('.thumb img');
+  for(let i=0 ; i<imgs.length ; i++){
+  	let imgUrl = imgs[i].getAttribute('img-url') || null;
+
+  	if( imgUrl ){
+  		imgs[i].setAttribute('src', imgUrl);
+  	}
+  }
+
+  printWindow.document.write('<html><head><title>gNYC Newsletter</title></head><body>' + dupContent.innerHTML + "</body>");
+}
+
 $(function(){
 	$('.input.thumb').each(function(){
 		//let $tools = createToolPopup();
@@ -234,6 +239,7 @@ $(function(){
 				$('.thumb.active').find('img').attr('img-data', files[0].data);
 
 				uploadImg(base64data);
+				$('.upload-img-reminder').css('left', '-100%');
 			},
 			overClass: 'img-dragging',
 			removeDataUriScheme: true
@@ -242,23 +248,7 @@ $(function(){
 
 	$('.single-input input').on('keyup', checkInputValue);
 
-	$('.export').on('click', () => {
-		const windowUrl = 'about:blank';
-
-		let content = document.querySelector('.canvas.active'),
-    		printWindow = window.open(windowUrl, 'gNYC Newsletter');
-
-    let imgs = content.querySelectorAll('.thumb img');
-    for(let i=0 ; i<imgs.length ; i++){
-    	let imgUrl = imgs[i].getAttribute('img-url') || null;
-
-    	if( imgUrl ){
-    		imgs[i].setAttribute('src', imgUrl);
-    	}
-    }
-
-    printWindow.document.write('<html><head><title>gNYC Newsletter</title></head><body>' + content.innerHTML + "</body>");
-	});
+	$('.export').on('click', exportNewsletter);
 
 	$('.input:not(.thumb)').on('click', toggleEditing);
 	$('.input a').on('click', (e) => e.stopPropagation());
