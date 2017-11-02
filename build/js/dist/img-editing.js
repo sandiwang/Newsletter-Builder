@@ -1,35 +1,37 @@
-const hideModalAfterDuration = 1000;
-const icons = {
+'use strict';
+
+var hideModalAfterDuration = 1000;
+var icons = {
 	linking: 'ion-ios-infinite-outline',
 	cropping: 'ion-ios-crop',
 	close: 'ion-ios-close-outline',
 	cropRound: 'ion-ios-ionic-outline'
 };
 
-let imgCroppedData = {
+var imgCroppedData = {
 	dataURL: null,
 	data: null
 };
 
 function createToolPopup() {
-	let $popup = $('<ul>', { class: 'tool-popup' }),
-	    $linking = $('<li>').append(`<a class="linking" title="Hyperlink"><i class="${icons.linking}"></i></a>`),
-	    $cropping = $('<li>').append(`<a class="cropping" title="Crop Image"><i class="${icons.cropping}"></i></a>`);
+	var $popup = $('<ul>', { class: 'tool-popup' }),
+	    $linking = $('<li>').append('<a class="linking" title="Hyperlink"><i class="' + icons.linking + '"></i></a>'),
+	    $cropping = $('<li>').append('<a class="cropping" title="Crop Image"><i class="' + icons.cropping + '"></i></a>');
 
 	return $popup.append($linking).append($cropping);
 }
 
 function createCropBtns() {
-	let $btns = $('<ul>', { class: 'crop-btns' }),
-	    $cancelBtn = $('<li>', { class: 'cancel-crop' }).append(`<a title="Cancel"><i class="${icons.close}"></i></a>`),
-	    $cropRoundedBtn = $('<li>', { class: 'toggle-crop-rounded' }).append(`<a title="Rounded Crop Box"><i class="${icons.cropRound}"></i></a>`),
-	    $cropBtn = $('<li>', { class: 'confirm-crop' }).append(`<a title="Crop Image"><i class="${icons.cropping}"></i></a>`);
+	var $btns = $('<ul>', { class: 'crop-btns' }),
+	    $cancelBtn = $('<li>', { class: 'cancel-crop' }).append('<a title="Cancel"><i class="' + icons.close + '"></i></a>'),
+	    $cropRoundedBtn = $('<li>', { class: 'toggle-crop-rounded' }).append('<a title="Rounded Crop Box"><i class="' + icons.cropRound + '"></i></a>'),
+	    $cropBtn = $('<li>', { class: 'confirm-crop' }).append('<a title="Crop Image"><i class="' + icons.cropping + '"></i></a>');
 
 	return $btns.append($cancelBtn).append($cropRoundedBtn).append($cropBtn);
 }
 
 function populateCurrentLink(elem) {
-	let url = elem.find('a').attr('href');
+	var url = elem.find('a').attr('href');
 
 	$('#img-linking-modal input[name="img-url"]').val(url);
 	$('#img-linking-modal .url-form .single-input').addClass('has-value');
@@ -41,7 +43,7 @@ function clearCurrentLink() {
 }
 
 function showImgLinkModal() {
-	let imgContainer = $('.input.thumb.hovering').attr('data-id');
+	var imgContainer = $('.input.thumb.hovering').attr('data-id');
 
 	$('#img-linking-modal').find('.tab.active').removeClass('active');
 	$('#img-linking-modal').find('.tab.url-form').addClass('active');
@@ -57,7 +59,7 @@ function showImgLinkModal() {
 }
 
 function toggleRoundedCropBox(e) {
-	let $imgContainer = $('.input.thumb.img-cropping');
+	var $imgContainer = $('.input.thumb.img-cropping');
 
 	e.preventDefault();
 	e.stopPropagation();
@@ -67,7 +69,7 @@ function toggleRoundedCropBox(e) {
 
 function showImgCropping() {
 
-	let $img = $('.input.thumb.hovering').find('img'),
+	var $img = $('.input.thumb.hovering').find('img'),
 	    imgData = $img.attr('img-data') || null;
 
 	if (imgData) $img.attr('src', imgData);
@@ -80,10 +82,10 @@ function showImgCropping() {
 		movable: true,
 		autoCropArea: 0,
 		checkCrossOrigin: true,
-		built: () => {
+		built: function built() {
 			//$img.cropper("setCropBoxData", { width: "135", height: "135" })
 		},
-		crop: e => {
+		crop: function crop(e) {
 			// Output the result data for cropping image.
 			// console.log(e.x);
 			// console.log(e.y);
@@ -92,17 +94,19 @@ function showImgCropping() {
 		}
 	});
 
-	$img.on('ready', () => {
+	$img.on('ready', function () {
 		$img.cropper("setCropBoxData", { width: "135", height: "135" });
 
 		$img.parent().addClass('img-cropping');
-		$('.cropper-container').on('click', e => e.stopPropagation());
+		$('.cropper-container').on('click', function (e) {
+			return e.stopPropagation();
+		});
 		showCropBtns($img.parent());
 	});
 }
 
 function showCropBtns(elem) {
-	let popup = createCropBtns(elem);
+	var popup = createCropBtns(elem);
 
 	elem.append(popup);
 
@@ -115,9 +119,9 @@ function cropImg(e) {
 	e.preventDefault();
 	e.stopPropagation();
 
-	let $img = $('.input.thumb.img-cropping img'),
+	var $img = $('.input.thumb.img-cropping img'),
 	    rounded = $img.parent().hasClass('crop-rounded') ? 1 : 0,
-	    imgData;
+	    imgData = void 0;
 	//imgDataBase64 = $img.cropper('getCroppedCanvas') === null ? null : $img.cropper('getCroppedCanvas').toDataURL();
 
 	if (imgCroppedData.data === null) {
@@ -144,10 +148,10 @@ function cropImg(e) {
 }
 
 function getRoundedCanvas(data) {
-	const canvas = document.createElement('canvas');
-	const width = data.width;
-	const height = data.height;
-	let context = canvas.getContext('2d');
+	var canvas = document.createElement('canvas');
+	var width = data.width;
+	var height = data.height;
+	var context = canvas.getContext('2d');
 
 	canvas.width = width;
 	canvas.height = height;
@@ -166,7 +170,7 @@ function cancelCropping(e) {
 	e.preventDefault();
 	e.stopPropagation();
 
-	let $img = $('.input.thumb.img-cropping img');
+	var $img = $('.input.thumb.img-cropping img');
 
 	$img.cropper('destroy');
 	$img.parent().removeClass('img-cropping').find('.crop-btns').remove();
@@ -176,7 +180,7 @@ function doImageTask(e) {
 	e.preventDefault();
 	e.stopPropagation();
 
-	let task = $(this).attr('class');
+	var task = $(this).attr('class');
 
 	switch (task) {
 		case 'linking':
@@ -186,17 +190,17 @@ function doImageTask(e) {
 			showImgCropping();
 			break;
 		default:
-			console.log(`Not in the tool lists: ${task}`);
+			console.log('Not in the tool lists: ' + task);
 	}
 }
 
 function setImgLink() {
-	let $modal = $(this).parents('.modal'),
+	var $modal = $(this).parents('.modal'),
 	    $input = $modal.find('input[name="img-url"]'),
 	    target = $modal.attr('target-img'),
-	    $targetImgContainer = $(`.canvas-container .canvas.active .input.thumb[data-id=${target}]`),
+	    $targetImgContainer = $('.canvas-container .canvas.active .input.thumb[data-id=' + target + ']'),
 	    url = $input.val().trim(),
-	    link = `<a href="${url}" target="_blank"></a>`;
+	    link = '<a href="' + url + '" target="_blank"></a>';
 
 	if (url === '') return;
 
@@ -208,16 +212,18 @@ function setImgLink() {
 			$targetImgContainer.find('a').attr('href', url);
 		} else {
 			$targetImgContainer.find('img').wrap(link);
-			$targetImgContainer.find('a').on('click', e => {
+			$targetImgContainer.find('a').on('click', function (e) {
 				e.preventDefault();
 			});
 		}
 
 		$modal.find('.tab.message.success [data-id="link-added"]').show();
 		$modal.find('.tab.message.success').addClass('active');
-		setTimeout(() => $modal.modal('hide'), hideModalAfterDuration);
+		setTimeout(function () {
+			return $modal.modal('hide');
+		}, hideModalAfterDuration);
 	} catch (err) {
-		console.log(`Cannot add image link: ${err}`);
+		console.log('Cannot add image link: ' + err);
 		$modal.find('.tab.message.failed').addClass('active');
 	}
 
@@ -227,10 +233,10 @@ function setImgLink() {
 }
 
 function removeImgLink() {
-	let $modal = $(this).parents('.modal'),
+	var $modal = $(this).parents('.modal'),
 	    target = $modal.attr('target-img'),
-	    $targetImgContainer = $(`.canvas-container .canvas.active .input.thumb[data-id=${target}]`),
-	    contents;
+	    $targetImgContainer = $('.canvas-container .canvas.active .input.thumb[data-id=' + target + ']'),
+	    contents = void 0;
 
 	if ($targetImgContainer.find('a').length <= 0) return;
 
@@ -243,9 +249,11 @@ function removeImgLink() {
 
 		$modal.find('.tab.message.success [data-id="link-removed"]').show();
 		$modal.find('.tab.message.success').addClass('active');
-		setTimeout(() => $modal.modal('hide'), hideModalAfterDuration);
+		setTimeout(function () {
+			return $modal.modal('hide');
+		}, hideModalAfterDuration);
 	} catch (err) {
-		console.log(`Cannot remove image links: ${err}`);
+		console.log('Cannot remove image links: ' + err);
 		$modal.find('.tab.message.failed').addClass('active');
 	}
 
@@ -253,7 +261,7 @@ function removeImgLink() {
 }
 
 function showImgToolOptions() {
-	let $tools = createToolPopup();
+	var $tools = createToolPopup();
 	$(this).addClass('hovering').append($tools);
 
 	$tools.find('a').on('click', doImageTask);
@@ -270,7 +278,7 @@ function showImgUrlForm() {
 }
 
 function testLinkUrl() {
-	let url = $(this).siblings('input').val();
+	var url = $(this).siblings('input').val();
 
 	window.open(url);
 }

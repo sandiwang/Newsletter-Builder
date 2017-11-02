@@ -14,9 +14,9 @@ const textEditor = {
 	  // [groupName, [list of button]]
 	  ['style', ['bold', 'italic', 'underline']],
 	  ['font', ['strikethrough', 'superscript', 'subscript']],
-	  ['fontsize', ['fontsize']],
+	  ['fontsize', ['fontsize', 'height']],
 	  ['color', ['color']],
-	  ['para', ['ul', 'ol']],
+	  ['para', ['ul', 'ol', 'paragraph']],
 	  ['link', ['link', 'picture']],
 	  ['cancel', ['cancel']],
 	  ['submit', ['save']]

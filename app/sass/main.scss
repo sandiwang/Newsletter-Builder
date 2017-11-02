@@ -125,7 +125,8 @@ html, body{
 	padding-top: 10px;
 
 	img{
-		width: 100%;
+		max-width: 100%;
+		max-height: 230px;
 	}
 }
 
@@ -167,6 +168,7 @@ html, body{
 	height: $canvasH;
 	margin: 20px auto;
 	box-shadow: $dropshadow;
+	text-align: left;
 }
 
 .button{
@@ -290,7 +292,7 @@ html, body{
 }
 
 .upload-img-reminder{
-	position: absolute;
+	position: fixed;
 	top: 20px;
 	left: -100%;
 	padding: 20px 30px;
@@ -309,9 +311,9 @@ html, body{
 }
 
 .note-editor.panel{
-	position: absolute;
+	position: fixed;
 	left: 20px;
-	top: 400px;
+	top: 100px;
 	width: 500px;
 	height: 300px;
 	background-color: mix(#fff, $lightgrey, 98);

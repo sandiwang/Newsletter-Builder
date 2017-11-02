@@ -1,3 +1,5 @@
+"use strict";
+
 /***** example to get download link of a image *****/
 //const piglet = storageRef.child('images/piglet.png');
 //piglet.getDownloadURL().then((url) => {
@@ -5,7 +7,7 @@
 //});
 
 // Initialize Firebase
-let FirebaseConfig = {
+var FirebaseConfig = {
 	apiKey: "AIzaSyBlvNBOhRw5A1CrLod8UDwVZywpo5u3onU",
 	authDomain: "gensler-newsletter.firebaseapp.com",
 	databaseURL: "https://gensler-newsletter.firebaseio.com",
@@ -16,8 +18,8 @@ let FirebaseConfig = {
 
 firebase.initializeApp(FirebaseConfig);
 
-let storageRef = firebase.storage().ref();
-let imagesRef = storageRef.child('images');
+var storageRef = firebase.storage().ref();
+var imagesRef = storageRef.child('images');
 
 function updateImgSrc(url) {
 	if ($('.thumb.img-cropping').length > 0) {
@@ -31,8 +33,8 @@ function updateImgSrc(url) {
 }
 
 function uploadImg(data) {
-	let imgName = Date.now();
-	let imgRef = storageRef.child('images/' + imgName);
+	var imgName = Date.now();
+	var imgRef = storageRef.child('images/' + imgName);
 
 	/***** TODO: add progress bar *****/
 	/*
@@ -59,7 +61,7 @@ function uploadImg(data) {
  });
  */
 
-	return imgRef.putString(data, 'base64').then(snapshot => {
+	return imgRef.putString(data, 'base64').then(function (snapshot) {
 		//console.log('upload function:', snapshot.metadata.downloadURLs[0]);
 		updateImgSrc(snapshot.metadata.downloadURLs[0]);
 	});

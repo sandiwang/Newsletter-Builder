@@ -1,3 +1,5 @@
+'use strict';
+
 /*
 let app = new Vue({
   el: '#app',
@@ -7,21 +9,21 @@ let app = new Vue({
 });
 */
 
-const textEditor = {
+var textEditor = {
 	height: 300,
 	maxHeight: 250,
 	toolbar: [
 	// [groupName, [list of button]]
-	['style', ['bold', 'italic', 'underline']], ['font', ['strikethrough', 'superscript', 'subscript']], ['fontsize', ['fontsize']], ['color', ['color']], ['para', ['ul', 'ol']], ['link', ['link', 'picture']], ['cancel', ['cancel']], ['submit', ['save']]]
+	['style', ['bold', 'italic', 'underline']], ['font', ['strikethrough', 'superscript', 'subscript']], ['fontsize', ['fontsize', 'height']], ['color', ['color']], ['para', ['ul', 'ol', 'paragraph']], ['link', ['link', 'picture']], ['cancel', ['cancel']], ['submit', ['save']]]
 };
 
-let SaveBtn = function (context) {
-	const summernoteui = $.summernote.ui;
+var SaveBtn = function SaveBtn(context) {
+	var summernoteui = $.summernote.ui;
 
-	let button = summernoteui.button({
+	var button = summernoteui.button({
 		contents: 'SAVE',
 		tooltip: 'Save',
-		click: () => {
+		click: function click() {
 			updateContent();
 			hideTextEditorPopup();
 
@@ -32,13 +34,13 @@ let SaveBtn = function (context) {
 	return button.render();
 };
 
-let CancelBtn = function (context) {
-	const summernoteui = $.summernote.ui;
+var CancelBtn = function CancelBtn(context) {
+	var summernoteui = $.summernote.ui;
 
-	let button = summernoteui.button({
+	var button = summernoteui.button({
 		contents: 'CANCEL',
 		tooltip: 'Cancel',
-		click: () => {
+		click: function click() {
 			$('.editor-popup').summernote('reset');
 			hideTextEditorPopup();
 			$('.input.active').removeClass('active');
@@ -49,7 +51,7 @@ let CancelBtn = function (context) {
 };
 
 /***** TODO: make user able to change to styling themselves *****/
-let styleConfig = {
+var styleConfig = {
 	fontFamily: '"KievitOT", Verdana, Geneva, sans-serif',
 	fontBig: '20px',
 	fontSmall: '12px',
@@ -69,7 +71,7 @@ function checkInputValue() {
 }
 
 function updateContent() {
-	let content = $('.editor-popup').summernote('code');
+	var content = $('.editor-popup').summernote('code');
 
 	// if user is editing on titles, only allow plain text
 	if ($('.input.active').hasClass('input-no-style')) {
@@ -88,7 +90,7 @@ function styleParagraph(elem) {
 
 function styleLink(elem) {
 	elem.find('a').each(function () {
-		let elemStyle = {
+		var elemStyle = {
 			fontsize: $(this).css('fons-size') || styleConfig.fontSmall,
 			color: $(this).css('color') || styleConfig.linkColor
 		};
@@ -136,7 +138,7 @@ function showTextEditorPopup() {
 function hideTextEditorPopup() {
 	$('.note-editor.panel').animate({
 		left: '-100%'
-	}, 150, () => {
+	}, 150, function () {
 		destroyTextEditor();
 	});
 }
@@ -182,31 +184,31 @@ function toggleImgUploadUI() {
 
 function changeTemplate() {
 	// if user clicks on current template, nothing happens
-	let template = $(this).attr('data-template');
+	var template = $(this).attr('data-template');
 
 	if ($('.templates li.active').length > 0 && !$(this).hasClass('active')) {
 		$('.templates li.active').removeClass('active');
 		$(this).addClass('active');
 
 		$('.canvas.tab.active').removeClass('active');
-		$(`.canvas.tab[template=${template}]`).addClass('active');
+		$('.canvas.tab[template=' + template + ']').addClass('active');
 	} else if ($('.templates li.active').length <= 0) {
 		$(this).addClass('active');
-		$(`.canvas.tab[template=${template}]`).addClass('active');
+		$('.canvas.tab[template=' + template + ']').addClass('active');
 	}
 }
 
 function exportNewsletter() {
-	const windowUrl = 'about:blank';
+	var windowUrl = 'about:blank';
 
 	// also make a duplicate of the content so that we are not modifying the original contents
-	let content = document.querySelector('.canvas.active'),
+	var content = document.querySelector('.canvas.active'),
 	    dupContent = content.cloneNode(true),
 	    printWindow = window.open(windowUrl, 'gNYC Newsletter');
 
-	let imgs = dupContent.querySelectorAll('.thumb img');
-	for (let i = 0; i < imgs.length; i++) {
-		let imgUrl = imgs[i].getAttribute('img-url') || null;
+	var imgs = dupContent.querySelectorAll('.thumb img');
+	for (var i = 0; i < imgs.length; i++) {
+		var imgUrl = imgs[i].getAttribute('img-url') || null;
 
 		if (imgUrl) {
 			imgs[i].setAttribute('src', imgUrl);
@@ -222,8 +224,8 @@ $(function () {
 		//$(this).append($tools);
 
 		$(this).fileDrop({
-			onFileRead: files => {
-				let base64data = $.removeUriScheme(files[0].data);
+			onFileRead: function onFileRead(files) {
+				var base64data = $.removeUriScheme(files[0].data);
 
 				$('.thumb.active').find('img').attr('src', files[0].data);
 				$('.thumb.active').find('img').attr('img-data', files[0].data);
@@ -241,7 +243,9 @@ $(function () {
 	$('.export').on('click', exportNewsletter);
 
 	$('.input:not(.thumb)').on('click', toggleEditing);
-	$('.input a').on('click', e => e.stopPropagation());
+	$('.input a').on('click', function (e) {
+		return e.stopPropagation();
+	});
 
 	$('.input.thumb').on('click', toggleImgUploadUI);
 	$('.input.thumb').hover(showImgToolOptions, hideImgToolOptions);
