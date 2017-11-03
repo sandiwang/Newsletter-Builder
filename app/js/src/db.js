@@ -34,9 +34,13 @@ function createUser(userId, username) {
 }
 
 function saveContent(userId, username, contents) {
+	let today = new Date(),
+			todayStr = `${today.getFullYear()}${today.getMonth()+1}${today.getDate()}`;
+
 	let data = {
 		id: userId,
 		username,
+		uploadDate: todayStr,
 		contents
 	}
 
