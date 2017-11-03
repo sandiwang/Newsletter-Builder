@@ -39,6 +39,7 @@ $canvasW: 1000px;
 
 @import 'modal';
 @import 'form';
+@import 'login';
 
 *{
 	box-sizing: border-box;
@@ -86,6 +87,11 @@ html, body{
 	position: relative;
 	height: 100%;
 	font-size: 0;
+}
+
+.main{
+	opacity: 0;
+	transition: 0.2s all;
 }
 
 #app{
@@ -181,17 +187,30 @@ html, body{
 	transition: 0.3s all;
 	box-shadow: $dropshadow;
 	background-color: $darkpurple;
+	color: #fff;
 
 	&:hover{
 		background-color: #3F4253;
 	}
 }
 
-.export{
+.export, .save, .retrieve{
 	margin: 20px auto 40px;	
-	color: #fff;
 	text-transform: uppercase;
-	font-weight: 300;
+}
+
+.save{
+	background-color: mix($blue, #999);
+	&:hover{
+		background-color: mix($blue, #ccc);
+	}
+}
+
+.retrieve{
+	background-color: mix($teal, #999);
+	&:hover{
+		background-color: mix($teal, #ccc);
+	}
 }
 
 /* .editor-popup{

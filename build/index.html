@@ -419,10 +419,18 @@
 		      <div class="tabs">  
 			      <div class="tab url-form active">
 			      	<label class="single-input">
-			        	<input type="text" name="img-url">
+			        	<input type="text" name="img-url" link-type="web">
 			        	<div class="label-text">Type in Url here</div>
 			        	<div id="test-link"><i class="ion-share"></i></div>
 			      	</label>
+			      	<div class="single-select" id="select-link-type">
+			      		<input type="text" name="typeOfImgLink" value="Webpage" readonly>
+			      		<div class="down-arrow"></div>
+			      		<ul>
+			      			<li data-value="web">Webpage</li>
+			      			<li data-value="file">Files</li>
+			      		</ul>
+			      	</div>
 			      </div>
 			      <div class="tab message success">
 			      	<div data-id="link-added">Link successfully added to the image!</div>

@@ -54,7 +54,7 @@ var CancelBtn = function CancelBtn(context) {
 var styleConfig = {
 	fontFamily: '"KievitOT", Verdana, Geneva, sans-serif',
 	fontBig: '20px',
-	fontSmall: '12px',
+	fontSmall: '14px',
 	linkColor: '#0091ea'
 };
 
@@ -122,6 +122,7 @@ function initTextEditor(elem) {
 			cancel: CancelBtn
 		}
 	});
+	$('.note-editor > .modal').detach().appendTo('body');
 }
 
 function destroyTextEditor() {
@@ -218,7 +219,191 @@ function exportNewsletter() {
 	printWindow.document.write('<html><head><title>gNYC Newsletter</title></head><body>' + dupContent.innerHTML + "</body>");
 }
 
+var weatherConfig = {
+	key: 'CvzA3RKOLCUuqfAMyao7AFVyqDtrYMW7',
+	url: 'http://dataservice.accuweather.com/forecasts/v1/daily/5day',
+	locationKey: {
+		newyork: 349727
+	},
+	icons: {
+		sunny: 'weather_icon-01.png',
+		partlySunny: 'weather_icon-17.png',
+		cloudy: 'weather_icon-16.png',
+		fog: 'weather_icon-39.png',
+		showers: 'weather_icon-19.png',
+		sunnyShowers: 'weather_icon-20.png',
+		rain: 'weather_icon-36.png',
+		tStorm: 'weather_icon-28.png',
+		flurry: 'weather_icon-25.png',
+		sunnyFlurry: 'weather_icon-26.png',
+		snow: 'weather_icon-31.png',
+		sleet: 'weather_icon-22.png',
+		windy: 'weather_icon-57.png',
+		hot: 'weather_icon-65.png',
+		cold: 'weather_icon-62.png'
+	}
+};
+
+function getWeather() {
+	var url = weatherConfig.url + '/' + weatherConfig.locationKey.newyork + '?apikey=' + weatherConfig.key;
+
+	return $.ajax({
+		type: 'GET',
+		url: url,
+		contentType: 'jsonp',
+		dataType: 'jsonp'
+	}).done(function (data) {
+		// filter out the information that we don't need
+		var dailyForecastData = filterForecastData(data.DailyForecasts);
+	}).fail(function (err) {
+		console.log(err);
+		console.log(getWeatherIcon(1));
+	});
+}
+
+function filterForecastData(data) {
+	var filteredData = {
+		mon: {},
+		tue: {},
+		wed: {},
+		thr: {},
+		fri: {},
+		sat: {},
+		sun: {}
+	};
+
+	var _iteratorNormalCompletion = true;
+	var _didIteratorError = false;
+	var _iteratorError = undefined;
+
+	try {
+		for (var _iterator = data[Symbol.iterator](), _step; !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = true) {
+			var daily = _step.value;
+
+			//console.log(daily);
+			var day = convertDateToDay(daily.Date).toLowerCase();
+
+			filteredData[day].date = daily.Date;
+			filteredData[day].day = convertDateToDay(daily.Date);
+			filteredData[day].temperature = {
+				lowest: daily.Temperature.Minimum.Value,
+				highest: daily.Temperature.Maximum.Value
+			};
+			filteredData[day].dayWeather = getWeatherIcon(daily.Day.Icon);
+		}
+	} catch (err) {
+		_didIteratorError = true;
+		_iteratorError = err;
+	} finally {
+		try {
+			if (!_iteratorNormalCompletion && _iterator.return) {
+				_iterator.return();
+			}
+		} finally {
+			if (_didIteratorError) {
+				throw _iteratorError;
+			}
+		}
+	}
+
+	return filteredData;
+}
+
+function convertDateToDay(date) {
+	// convert date string into date object
+	// 0 is Sunday, 1 is Monday
+	var dateObj = new Date(date).getDay(),
+	    day = void 0;
+
+	switch (dateObj) {
+		case 0:
+			// Sunday
+			day = 'Sun';
+			break;
+		case 1:
+			// Monday
+			day = 'Mon';
+			break;
+		case 2:
+			day = 'Tue';
+			break;
+		case 3:
+			day = 'Wed';
+			break;
+		case 4:
+			day = 'Thr';
+			break;
+		case 5:
+			day = 'Fri';
+			break;
+		case 6:
+			// Saturday
+			day = 'Sat';
+			break;
+	}
+
+	return day;
+}
+
+function getWeatherIcon(iconNum) {
+	var path = 'img/weather/',
+	    num = Number(iconNum);
+
+	if (num === 1 || num === 2) {
+		path += weatherConfig.icons.sunny;
+	} else if (num >= 3 || num <= 5) {
+		path += weatherConfig.icons.partlySunny;
+	} else if (num >= 6 || num <= 8) {
+		path += weatherConfig.icons.cloudy;
+	} else if (num === 11) {
+		path += weatherConfig.icons.fog;
+	} else if (num >= 12 || num <= 13) {
+		path += weatherConfig.icons.showers;
+	} else if (num === 14) {
+		path += weatherConfig.icons.sunnyShowers;
+	} else if (num >= 15 || num <= 17) {
+		path += weatherConfig.icons.tStorm;
+	} else if (num === 18) {
+		path += weatherConfig.icons.rain;
+	} else if (num >= 19 || num <= 20) {
+		path += weatherConfig.icons.flurry;
+	} else if (num === 21) {
+		path += weatherConfig.icons.sunnyFlurry;
+	} else if (num >= 22 || num <= 23) {
+		path += weatherConfig.icons.snow;
+	} else if (num >= 24 || num <= 26) {
+		path += weatherConfig.icons.sleet;
+	} else if (num === 29) {
+		// rain and snow
+	} else if (num === 30) {
+		path += weatherConfig.icons.hot;
+	} else if (num === 31) {
+		path += weatherConfig.icons.cold;
+	} else if (num === 31) {
+		path += weatherConfig.icons.windy;
+	}
+
+	return path;
+}
+
+function toggleSelectDropdown() {
+	var $wrapper = $(this).parent();
+	$wrapper.toggleClass('active');
+}
+
+function selectImgLinkType() {
+	var $wrapper = $(this).parents('.single-select'),
+	    $input = $wrapper.find('input'),
+	    type = $(this).attr('data-value');
+
+	$input.val($(this).html());
+	$('input[name="img-url"]').attr('link-type', type);
+	$wrapper.removeClass('active');
+}
+
 $(function () {
+	// getWeather();
+
 	$('.input.thumb').each(function () {
 		//let $tools = createToolPopup();
 		//$(this).append($tools);
@@ -252,6 +437,8 @@ $(function () {
 
 	$('.templates li').on('click', changeTemplate);
 
+	$('#select-link-type > input').on('click', toggleSelectDropdown);
+	$('#select-link-type ul li').on('click', selectImgLinkType);
 	$('#setImgLink').on('click', setImgLink);
 	$('#removeImgLink').on('click', removeImgLink);
 	$('#img-linking-modal .tab.message.failed .sub-message').on('click', showImgUrlForm);

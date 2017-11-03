@@ -16,8 +16,42 @@ let FirebaseConfig = {
 
 firebase.initializeApp(FirebaseConfig);
 
+let db = firebase.database();
+
 let storageRef = firebase.storage().ref();
 let imagesRef = storageRef.child('images');
+
+function createUser(userId, username) {
+	db.ref(`Users/${userId}`).set({
+		id: userId,
+		username
+	}).then(() => {
+		console.log('successfully create user at database');
+		loginSuccess();
+	}, (err) => {
+		console.log(`Error: ${err}`);
+	});
+}
+
+function saveContent(userId, username, contents) {
+	let data = {
+		id: userId,
+		username,
+		contents
+	}
+
+	let newPostKey = db.ref().child('updates').push().key;
+
+	let updates = {};
+	updates[`/updates/${newPostKey}`] = data;
+	updates[`/Users/${userId}/${newPostKey}`] = data;
+
+	return db.ref().update(updates).then(() => {
+		console.log('Successfully saved contents');
+	}, (err) => {
+		console.log('Error:', err);
+	});	
+}
 
 function updateImgSrc(url) {
 	if($('.thumb.img-cropping').length > 0) {

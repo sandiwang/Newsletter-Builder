@@ -18,8 +18,42 @@ var FirebaseConfig = {
 
 firebase.initializeApp(FirebaseConfig);
 
+var db = firebase.database();
+
 var storageRef = firebase.storage().ref();
 var imagesRef = storageRef.child('images');
+
+function createUser(userId, username) {
+	db.ref("Users/" + userId).set({
+		id: userId,
+		username: username
+	}).then(function () {
+		console.log('successfully create user at database');
+		loginSuccess();
+	}, function (err) {
+		console.log("Error: " + err);
+	});
+}
+
+function saveContent(userId, username, contents) {
+	var data = {
+		id: userId,
+		username: username,
+		contents: contents
+	};
+
+	var newPostKey = db.ref().child('updates').push().key;
+
+	var updates = {};
+	updates["/updates/" + newPostKey] = data;
+	updates["/Users/" + userId + "/" + newPostKey] = data;
+
+	return db.ref().update(updates).then(function () {
+		console.log('Successfully saved contents');
+	}, function (err) {
+		console.log('Error:', err);
+	});
+}
 
 function updateImgSrc(url) {
 	if ($('.thumb.img-cropping').length > 0) {

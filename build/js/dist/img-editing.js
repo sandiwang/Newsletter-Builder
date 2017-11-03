@@ -197,12 +197,14 @@ function doImageTask(e) {
 function setImgLink() {
 	var $modal = $(this).parents('.modal'),
 	    $input = $modal.find('input[name="img-url"]'),
+	    type = $input.attr('link-type'),
 	    target = $modal.attr('target-img'),
 	    $targetImgContainer = $('.canvas-container .canvas.active .input.thumb[data-id=' + target + ']'),
 	    url = $input.val().trim(),
 	    link = '<a href="' + url + '" target="_blank"></a>';
 
 	if (url === '') return;
+	if (type === 'file') url = 'file:///' + url;
 
 	$modal.find('.tab.active').removeClass('active');
 	$modal.find('.tab.message.success div').hide();
