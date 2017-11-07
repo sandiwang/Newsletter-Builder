@@ -23,6 +23,10 @@ var db = firebase.database();
 var storageRef = firebase.storage().ref();
 var imagesRef = storageRef.child('images');
 
+function getCurrentUserID() {
+	return Cookies.getJSON().name.userID;
+}
+
 function createUser(userId, username) {
 	db.ref("Users/" + userId).set({
 		id: userId,
@@ -36,26 +40,28 @@ function createUser(userId, username) {
 }
 
 function saveContent(userId, username, template, contents) {
-	var today = new Date(),
-	    todayStr = "" + today.getFullYear() + (today.getMonth() + 1) + today.getDate(),
-	    now = today.getTime(),
-	    nowStr = today.toString();
+	var today = moment(),
+	    todayStr = today.format('YYYYMMDD'),
+	    now = today.format('HHmmss'),
+	    timestamp = today.unix();
 	// let newPostKey = db.ref().child('updates').push().key;
 
 	var data = {
 		id: userId,
 		username: username,
 		uploadDate: todayStr,
+		uploadTime: now,
 		template: template,
 		contents: contents
 	};
 
 	var updates = {};
-	updates["/updates/" + now] = data;
-	updates["/Users/" + userId + "/histories/" + todayStr + "/" + now] = data;
+	updates["/Updates/" + timestamp] = data;
+	updates["/Users/" + userId + "/histories/" + todayStr + "/" + timestamp] = data;
 
 	return db.ref().update(updates).then(function () {
-		console.log('Successfully saved contents');
+		console.log('Successfully saved contents to database!');
+		return saveContentSuccess();
 	}, function (err) {
 		console.log('Error:', err);
 	});
@@ -66,10 +72,11 @@ function getUserHistory(userId) {
 	var userRef = db.ref("/Users/" + userId + "/histories").orderByKey();
 
 	return userRef.once('value').then(function (snapshot) {
-		var histories = snapshot.val() || null;
-		console.log(snapshot.val());
+		return snapshot.val();
 	}, function (err) {
-		conosle.log('Error when retrieving data:', err);
+		return conosle.log('Error when retrieving data:', err);
+	}).then(function (data) {
+		return displayHistories(data);
 	});
 }
 
@@ -85,8 +92,9 @@ function updateImgSrc(url) {
 }
 
 function uploadImg(data) {
-	var imgName = Date.now();
-	var imgRef = storageRef.child('images/' + imgName);
+	var imgName = moment().unix(),
+	    userID = getCurrentUserID();
+	var imgRef = storageRef.child("images/" + userID + "/" + imgName);
 
 	/***** TODO: add progress bar *****/
 	/*

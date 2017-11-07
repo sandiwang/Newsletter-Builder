@@ -1,3 +1,5 @@
+$historiesHeight: 750px;
+
 $closeSize: 20px;
 
 @mixin verticalCenter {
@@ -8,11 +10,23 @@ $closeSize: 20px;
 }
 
 .modal{
-	.closeModal{
+
+	&.wide .modal-dialog{
+		@media (min-width: 1280px) {
+			width: 80%;
+		}
+
+		@media (max-width: 1280px) {
+			width: 90%;
+		}
+	}
+
+	.closeModal, .history-preview > .closePreview{
 		float: none;
 		position: absolute;
 		top: 10px;
 		right: 10px;
+		z-index: 9;
 		
 		> div{
 			position: relative;
@@ -150,4 +164,164 @@ $closeSize: 20px;
 	i{
 		font-size: $font24;
 	}
+}
+
+#user-histories{
+	
+	.modal-content{
+		max-height: $historiesHeight;
+		overflow: auto;
+	}
+
+	.modal-title{
+		font-size: $font22;
+		position: relative;
+		padding-right: 50%;
+	}
+
+	.current-user{
+		@include verticalCenter;
+		position: absolute;
+		right: 20px;
+		font-size: $font12;
+
+		> span{
+			font-size: $font16;
+		}
+
+		a{
+			color: $darkgrey;
+			text-decoration: none;
+
+			&:hover{
+				color: $blue;
+				text-decoration: none;
+			}
+		}
+	}
+
+	.histories-lists{
+		display: none;
+		margin: 15px 0;
+		padding: 15px 0;
+		border-top: 1px solid $lightgrey;
+	}
+
+	.date{
+		padding: 15px 0;
+		border-bottom: 1px solid $lightgrey;
+		
+		&:first-child{
+			padding-top: 0;
+		}
+
+		&:last-child{
+			border-bottom: 0;
+			padding-bottom: 0;
+		}
+
+		> span{
+			font-size: $font18;
+			color: $blue;
+			letter-spacing: 1px;
+			display: inline-block;
+			margin-bottom: 5px;
+		}
+
+		ul{
+			list-style: none;
+			padding: 0;
+			margin-bottom: 5px;
+			font-size: 0;
+		}
+
+		li{
+			display: inline-block;
+			width: 25%;
+			font-size: 1rem;
+			padding: 0 15px;
+			margin: 10px 0;
+			text-align: center;
+		}	
+	}
+
+	.card{
+		box-shadow: $dropshadow;
+		background: rgba($lightgrey, 0.1);
+		transition: 0.3s all;
+		font-size: $font16;
+
+		&:hover{
+			background: rgba($lightgrey, 0.3);
+		}
+
+		> a{
+			display: block;
+			padding: 10px 0;
+			color: #333;
+
+			&:hover, &:focus, &:active{
+				text-decoration: none;
+			}
+		}
+
+		.template, .time{
+			letter-spacing: 0.5px;
+			padding: 3px 0;
+		}
+	}
+
+	.history-preview{
+		display: none;
+		position: absolute;
+		margin: 20px;
+		left: 50%;
+		transform: translateX(-50%);
+		border: 1px solid $grey;
+		top: 40px;
+		background: #fff;
+		z-index: 1;
+		box-shadow: $dropshadow;
+
+		> .closePreview > div:after, > .closePreview > div:before{
+			background: rgba($darkpurple, 0.7);
+		}
+		> .closePreview:hover > div:after, > .closePreview:hover > div:before{
+			background: $darkpurple;
+		}
+
+		> .title{
+			margin: 10px;
+			padding: 10px 0;
+			border-bottom: 1px solid $lightgrey;
+			font-size: $font18;
+			color: $blue;
+		}
+	}
+
+	.preview{
+		margin: 10px;
+		box-shadow: $dropshadow;
+
+		.input:hover{
+			border: 0;
+			cursor: default;
+		}
+	}
+
+	.actions{
+		margin: 10px;
+		padding: 20px 0 10px;
+		border-top: 1px solid $lightgrey;
+		text-align: center;
+
+		> div{
+			display: inline-block;
+			padding: 0.7rem 2rem;
+			font-size: $font16;
+			text-transform: uppercase;
+			letter-spacing: 1px;
+		}
+	}
+
 }

@@ -63,7 +63,7 @@
 				</ul>
 			</div>
 			<div class="canvas-container">
-				<div class="canvas tab" template="1">
+				<div class="canvas tab active" template="1">
 					<table width="1000" height="700" cellpadding="0" cellspacing="0" border="0" align="center" style="padding:0; border-collapse: collapse; border-spacing: 0; font-family: 'KievitOT', Verdana, Geneva, sans-serif;">
 						<tr>
 							<td width="350" align="center">
@@ -342,7 +342,7 @@
 						</tr>
 					</table>
 				</div>
-				<div class="canvas tab active" template="3" style="width: 640px; height: auto;">
+				<div class="canvas tab" template="3" style="width: 640px; height: auto;">
 					<table width="640" cellpadding="0" cellspacing="0" border="0" align="center" style="padding:0; border-collapse: collapse; border-spacing: 0; font-family: 'KievitOT', Verdana, Geneva, sans-serif; border-left: 1px solid #858585; border-right: 1px solid #858585; border-bottom: 1px solid #858585;">
 						<tr>
 							<td height="140" style="padding: 10px 40px; background-color: #000;">
@@ -362,7 +362,7 @@
 							</td>
 						</tr>
 						<tr>
-							<td width="640" style="padding: 20px 40px;">
+							<td width="640" class="input thumb" style="padding: 20px 40px;">
 								<!-- <img src="img/sample-weather.png" width="560"> -->
 								<table class="weather" width="560" cellpadding="0" cellspacing="0" border="0">
 									<tr>
@@ -553,13 +553,27 @@
 						Template 4
 					</table>
 				</div>
-				<div id="getSaved" class="button retrieve">Retrieve Data</div>
+				<div id="getHistories" class="button retrieve">Retrieve Data</div>
 				<div id="save" class="button save">Save</div>
 				<div id="export" class="button export">Export</div>
 			</div>
 		</div>
 		<div class="editor-popup"></div>
 		<div class="upload-img-reminder"><span>Drag and drop your image to upload</span></div>
+		<div class="loading-overlay">
+			<div class="loading">
+				<div class="sk-folding-cube">
+				  <div class="sk-cube1 sk-cube"></div>
+				  <div class="sk-cube2 sk-cube"></div>
+				  <div class="sk-cube4 sk-cube"></div>
+				  <div class="sk-cube3 sk-cube"></div>
+				</div>
+				<p>LOADING...</p>
+			</div>
+			<div class="message success">
+				<span>Save Successful!</span>
+			</div>
+		</div>
 	</div>
 
 	<div class="modal fade" id="img-linking-modal" tabindex="-1" role="dialog">
@@ -601,6 +615,50 @@
 	    </div>
 	  </div>
 	</div>
+
+	<div class="modal fade wide" id="user-histories" tabindex="-1" role="dialog">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-body">
+					<div class="closeModal" data-dismiss="modal" aria-label="Close"><div></div></div>
+					<h4 class="modal-title">Histories <div class="current-user"><span></span> <a id="logout" href="" title="Log Out">(Not <span></span>? Log out here.)</a></div></h4>
+					<div class="histories-lists">
+						<div class="date">
+							<span>2017117</span>
+							<ul>
+							</ul>
+						</div>
+						<div class="date">
+							<span>2017116</span>
+							<ul>
+								<li>
+									<div class="card"><a href="#">Template 4</a></div>
+								</li>
+							</ul>
+						</div>
+					</div>
+					<div class="loading">
+						<div class="sk-folding-cube">
+						  <div class="sk-cube1 sk-cube"></div>
+						  <div class="sk-cube2 sk-cube"></div>
+						  <div class="sk-cube4 sk-cube"></div>
+						  <div class="sk-cube3 sk-cube"></div>
+						</div>
+						<p>LOADING...</p>
+					</div>
+				</div>
+			</div>
+			<div class="history-preview">
+				<div class="closePreview"><div></div></div>
+				<div class="title">History Preview - <span></span></div>
+				<div class="preview"></div>
+				<div class="actions">
+					<div class="button outlined closePreview">Cancel</div>
+					<div class="primary-btn select-history">Select</div>
+				</div>
+			</div>
+		</div>
+	</div>
 </body>
 </html>
 
@@ -611,6 +669,7 @@
 <script src="js/vendors/dropzone/dist/min/dropzone.min.js"></script>
 <script src="js/vendors/summernote/dist/summernote.min.js"></script>
 <script src="js/vendors/FileDrop/jQuery.FileDrop.js"></script>
+<script src="js/vendors/moment/min/moment.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/4.6.0/firebase.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/cropper/3.1.3/cropper.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>

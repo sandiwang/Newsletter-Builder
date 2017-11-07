@@ -95,6 +95,10 @@ function checkInputValue() {
 	}
 }
 
+function getCurrentUsername() {
+	return Cookies.getJSON().name.username;
+}
+
 function updateContent() {
 	var content = $('.editor-popup').summernote('code');
 
@@ -244,20 +248,152 @@ function exportNewsletter() {
 	printWindow.document.write('<html><head><title>gNYC Newsletter</title></head><body>' + dupContent.innerHTML + "</body>");
 }
 
-function saveCurrentProgress() {
+function setLoaderHeight(loader) {
+	var $loader = loader || $('.loading-overlay'),
+	    canvasH = $('.canvas-container').outerHeight(),
+	    sidebarH = $('.sidebar').outerHeight(),
+	    mainH = Math.max(canvasH, sidebarH),
+	    windowH = $(window).height();
+
+	if (mainH < windowH) {
+		$loader.css('height', windowH);
+	} else {
+		$loader.css('height', mainH);
+	}
+}
+
+function saveHistories() {
 	var id = Cookies.getJSON().name.userID,
 	    username = Cookies.getJSON().name.username,
 	    contents = $('.canvas.active').html(),
 	    template = $('.templates li.active').attr('data-template');
 	//console.log(`${id}: ${contents}`);
 
+	setLoaderHeight();
+	$('.loading-overlay').show();
+
 	return saveContent(id, username, template, contents);
 }
 
-function getSavedData() {
+function saveContentSuccess() {
+	var $loader = $('.loading-overlay');
+
+	$loader.find('.loading').hide();
+	$loader.find('.message.success').show();
+	setTimeout(function () {
+		$loader.fadeOut(150);
+		$loader.find('.message.success').hide();
+		$loader.find('.loading').show();
+	}, 1000);
+}
+
+function getHistories() {
 	var userId = Cookies.getJSON().name.userID;
+	$('#user-histories').modal('show');
 
 	return getUserHistory(userId);
+}
+
+function displayHistories(datas) {
+	var $histories = $('#user-histories .histories-lists'),
+	    username = getCurrentUsername();
+
+	// clear the previous contents on the modal
+	clearModalHistories();
+
+	$('#user-histories .current-user').find('span').html(username);
+
+	var _loop = function _loop(list) {
+		var d = moment(list).format('MMMM DD, YYYY - dddd');
+		var $date = $('<div>', { class: 'date' }).append('<span>' + d + '</span>').append('<ul></ul>');
+
+		var _loop2 = function _loop2(key) {
+			// console.log(datas[list][key]);
+			var template = datas[list][key].template,
+			    contents = datas[list][key].contents || '',
+			    time = datas[list][key].uploadTime || null,
+			    timeFormatted = time ? moment(time, 'HHmmss').format('HH : mm : ss') : '&nbsp;',
+			    dataId = key,
+			    $li = $('<li>'),
+			    $card = $('<div>', { class: "card", "data-id": dataId, "template": template }).append('<a href="#"></a>'),
+			    $textTemplate = $('<div>', { class: 'template' }).html('Template ' + template),
+			    $textTime = $('<div>', { class: 'time' }).html(timeFormatted);
+
+			$card.find('a').append($textTemplate).append($textTime);
+			$li.append($card);
+
+			$date.append($li);
+			$li.on('click', function (e) {
+				e.preventDefault();
+				showHistoryPreview(d, timeFormatted, template, contents);
+			});
+		};
+
+		for (var key in datas[list]) {
+			_loop2(key);
+		}
+		$histories.append($date);
+	};
+
+	for (var list in datas) {
+		_loop(list);
+	}
+
+	$('#user-histories .loading').hide();
+	$histories.show();
+}
+
+function showHistoryPreview(date, time, template, contents) {
+	var $preview = $('#user-histories .history-preview'),
+	    contentsStipped = contents;
+
+	$preview.find('.title span').empty().html(date + ' - ' + time);
+	$preview.find('.preview').empty().append(contents);
+	$preview.attr('template', template).css({
+		display: 'block',
+		opacity: 0,
+		top: '200px'
+	}).animate({
+		opacity: 1,
+		top: 0
+	}, 150);
+}
+
+function closeHistoryPreview() {
+	var _this = this;
+
+	$(this).parents('.history-preview').fadeOut(100, function () {
+		return $(_this).parents('.history-preview').find('.preview').empty();
+	});
+}
+
+function selectHistory() {
+	var template = $('#user-histories .history-preview').attr('template'),
+	    contents = $('#user-histories .history-preview .preview').html();
+
+	updateTableCanvas(template, contents);
+	$('#user-histories .history-preview').slideUp(150);
+	$('#user-histories').modal('hide');
+}
+
+function updateTableCanvas(template, contents) {
+	var $canvas = $('.canvas-container .canvas[template=' + template + ']'),
+	    $templateMenuItem = $('.nav.templates li[data-template=' + template + ']');
+
+	$canvas.empty().append(contents);
+
+	// update the canvas tab and side bar navigation
+	$('.canvas-container .canvas.active, .nav.templates li.active').removeClass('active');
+	$canvas.addClass('active');
+	$templateMenuItem.addClass('active');
+
+	$('#user-histories').modal('hide');
+}
+
+function clearModalHistories() {
+	var $modal = $('#user-histories');
+
+	$modal.find('.histories-lists').empty();
 }
 
 function buildWeatherForecast(data) {
@@ -485,6 +621,12 @@ function loginSuccess() {
 	}, 1300);
 }
 
+function doLogout(e) {
+	e.preventDefault();
+	Cookies.remove('name');
+	location.reload();
+}
+
 function hasVisited() {
 	return $.isEmptyObject(Cookies.get()) ? 0 : 1;
 }
@@ -501,7 +643,7 @@ function checkVisted() {
 
 $(function () {
 	getWeather();
-	//setCookie();
+	setLoaderHeight();
 
 	$('#submit-username').on('click', submitUsername);
 
@@ -527,8 +669,8 @@ $(function () {
 	$('.single-input input').on('keyup', checkInputValue);
 
 	$('#export').on('click', exportNewsletter);
-	$('#save').on('click', saveCurrentProgress);
-	$('#getSaved').on('click', getSavedData);
+	$('#save').on('click', saveHistories);
+	$('#getHistories').on('click', getHistories);
 
 	$('.input:not(.thumb)').on('click', toggleEditing);
 	$('.input a').on('click', function (e) {
@@ -546,6 +688,15 @@ $(function () {
 	$('#removeImgLink').on('click', removeImgLink);
 	$('#img-linking-modal .tab.message.failed .sub-message').on('click', showImgUrlForm);
 	$('#test-link').on('click', testLinkUrl);
+
+	$('#user-histories .history-preview .closePreview').on('click', closeHistoryPreview);
+	$('#user-histories .history-preview .select-history').on('click', selectHistory);
+
+	$('#logout').on('click', doLogout);
+
+	$(window).on('resize', function () {
+		setLoaderHeight();
+	});
 });
 
 $(window).on('load', function () {
