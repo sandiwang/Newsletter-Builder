@@ -35,27 +35,41 @@ function createUser(userId, username) {
 	});
 }
 
-function saveContent(userId, username, contents) {
+function saveContent(userId, username, template, contents) {
 	var today = new Date(),
-	    todayStr = "" + today.getFullYear() + (today.getMonth() + 1) + today.getDate();
+	    todayStr = "" + today.getFullYear() + (today.getMonth() + 1) + today.getDate(),
+	    now = today.getTime(),
+	    nowStr = today.toString();
+	// let newPostKey = db.ref().child('updates').push().key;
 
 	var data = {
 		id: userId,
 		username: username,
 		uploadDate: todayStr,
+		template: template,
 		contents: contents
 	};
 
-	var newPostKey = db.ref().child('updates').push().key;
-
 	var updates = {};
-	updates["/updates/" + newPostKey] = data;
-	updates["/Users/" + userId + "/" + newPostKey] = data;
+	updates["/updates/" + now] = data;
+	updates["/Users/" + userId + "/histories/" + todayStr + "/" + now] = data;
 
 	return db.ref().update(updates).then(function () {
 		console.log('Successfully saved contents');
 	}, function (err) {
 		console.log('Error:', err);
+	});
+}
+
+function getUserHistory(userId) {
+	// list comes back in a ascending order: old to new
+	var userRef = db.ref("/Users/" + userId + "/histories").orderByKey();
+
+	return userRef.once('value').then(function (snapshot) {
+		var histories = snapshot.val() || null;
+		console.log(snapshot.val());
+	}, function (err) {
+		conosle.log('Error when retrieving data:', err);
 	});
 }
 

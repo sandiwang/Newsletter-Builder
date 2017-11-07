@@ -254,14 +254,38 @@ function exportNewsletter() {
 function saveCurrentProgress() {
 	let id = Cookies.getJSON().name.userID,
 			username = Cookies.getJSON().name.username,
-			contents = $('.canvas.active').html();
+			contents = $('.canvas.active').html(),
+			template = $('.templates li.active').attr('data-template');
 	//console.log(`${id}: ${contents}`);
 
-	return saveContent(id, username, contents);
+	return saveContent(id, username, template, contents);
 }
 
 function getSavedData() {
+	let userId = Cookies.getJSON().name.userID;
 	
+	return getUserHistory(userId);
+}
+
+function buildWeatherForecast(data) {
+	let $weatherContainer = $('.canvas .weather'),
+			$day = $weatherContainer.find('.day-of-week'),
+			$dailyweather = $weatherContainer.find('.daily-weather'),
+			$high = $weatherContainer.find('.daily-temperature-high'),
+			$low = $weatherContainer.find('.daily-temperature-low'),
+			count = 0;
+
+	for(let daily in data){
+		// console.log(data[daily]);
+		if(jQuery.isEmptyObject(data[daily])) continue;
+
+		$day.eq(count).html(data[daily].day);
+		$dailyweather.eq(count).attr('src', data[daily].dayWeather);
+		$high.eq(count).html(data[daily].temperature.highest);
+		$low.eq(count).html(data[daily].temperature.lowest);
+		count++;
+	}
+
 }
 
 function getWeather() {
@@ -276,11 +300,10 @@ function getWeather() {
 					.done((data) => {
 						// filter out the information that we don't need
 						let dailyForecastData = filterForecastData(data.DailyForecasts);
-
+						buildWeatherForecast(dailyForecastData);
 					})
 					.fail((err) => {
 						console.log(err);
-						console.log(getWeatherIcon(1));
 					});
 }
 
@@ -465,7 +488,7 @@ function checkVisted() {
 }
 
 $(function(){
-	// getWeather();
+	getWeather();
 	//setCookie();
 
 	$('#submit-username').on('click', submitUsername);

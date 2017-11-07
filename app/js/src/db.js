@@ -33,28 +33,42 @@ function createUser(userId, username) {
 	});
 }
 
-function saveContent(userId, username, contents) {
+function saveContent(userId, username, template, contents) {
 	let today = new Date(),
-			todayStr = `${today.getFullYear()}${today.getMonth()+1}${today.getDate()}`;
+			todayStr = `${today.getFullYear()}${today.getMonth()+1}${today.getDate()}`,
+			now = today.getTime(),
+			nowStr = today.toString();
+	// let newPostKey = db.ref().child('updates').push().key;
 
 	let data = {
 		id: userId,
 		username,
 		uploadDate: todayStr,
+		template,
 		contents
 	}
 
-	let newPostKey = db.ref().child('updates').push().key;
-
 	let updates = {};
-	updates[`/updates/${newPostKey}`] = data;
-	updates[`/Users/${userId}/${newPostKey}`] = data;
+	updates[`/updates/${now}`] = data;
+	updates[`/Users/${userId}/histories/${todayStr}/${now}`] = data;
 
 	return db.ref().update(updates).then(() => {
 		console.log('Successfully saved contents');
 	}, (err) => {
 		console.log('Error:', err);
 	});	
+}
+
+function getUserHistory(userId) {
+	// list comes back in a ascending order: old to new
+	let userRef = db.ref(`/Users/${userId}/histories`).orderByKey();
+
+	return userRef.once('value').then((snapshot) => {
+		let histories = snapshot.val() || null;
+		console.log(snapshot.val());
+	}, (err) => {
+		conosle.log('Error when retrieving data:', err);
+	});
 }
 
 function updateImgSrc(url) {
