@@ -201,7 +201,12 @@ function setImgLink() {
 			link = `<a href="${url}" target="_blank"></a>`;
 
 	if(url === '') return;
-	if(type === 'file') url = 'file:///' + url;
+
+	if(type === 'file') {
+		url = `file:///${url}`;
+	} else if (type === 'email') {
+		url = `mailto:${url}`;
+	}
 
 	$modal.find('.tab.active').removeClass('active');
 	$modal.find('.tab.message.success div').hide();
@@ -210,7 +215,7 @@ function setImgLink() {
 		if($targetImgContainer.find('a').length > 0) {
 			$targetImgContainer.find('a').attr('href', url);
 		} else {
-			$targetImgContainer.find('img').wrap(link);
+			$targetImgContainer.find('img').wrap(`<a href="${url}" target="_blank"></a>`);
 			$targetImgContainer.find('a').on('click', (e) => {
 				e.preventDefault();
 			});

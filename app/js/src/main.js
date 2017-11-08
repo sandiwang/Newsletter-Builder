@@ -155,6 +155,20 @@ function initTextEditor(elem) {
 	  buttons: {
 	    save: SaveBtn,
 	    cancel: CancelBtn
+	  },
+	  onCreateLink: (url) => {
+	  	let email = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i
+      let phone = /^\+?[\d()-,.]+/
+      let schemed = /^[a-z]+:/i
+      url = url.trim();
+      if (email.test(url)) {
+          url = 'mailto:' + url;
+      } else if (phone.test(url)) {
+                  url = 'tel:' + url.replace(/[ ().\-]/g,'');
+      } else if (!schemed.test(url)) {
+          url = 'http://' + url;
+      }
+      return url;
 	  }
 	});
 	$('.note-editor > .modal').detach().appendTo('body');
@@ -276,7 +290,7 @@ function saveHistories() {
 			template = $('.templates li.active').attr('data-template');
 	//console.log(`${id}: ${contents}`);
 
-	setLoaderHeight();
+	// setLoaderHeight();
 	$('.loading-overlay').show();
 
 	return saveContent(id, username, template, contents);
@@ -287,11 +301,14 @@ function saveContentSuccess() {
 
 	$loader.find('.loading').hide();
 	$loader.find('.message.success').show();
+	
+	
 	setTimeout(() => {
 		$loader.fadeOut(150);
 		$loader.find('.message.success').hide();
 		$loader.find('.loading').show();
 	}, 1000);
+	
 }
 
 function getHistories() {
