@@ -14,8 +14,9 @@ const textEditor = {
 	  // [groupName, [list of button]]
 	  ['style', ['bold', 'italic', 'underline']],
 	  ['font', ['strikethrough', 'superscript', 'subscript']],
-	  ['fontsize', ['fontsize', 'height']],
+	  ['fontsize', ['fontsize', 'height', 'clear']],
 	  ['color', ['color']],
+	  ['code', ['codeview']],
 	  ['para', ['ul', 'ol', 'paragraph']],
 	  ['link', ['link', 'picture']],
 	  ['cancel', ['cancel']],
@@ -162,11 +163,11 @@ function initTextEditor(elem) {
       let schemed = /^[a-z]+:/i
       url = url.trim();
       if (email.test(url)) {
-          url = 'mailto:' + url;
+        url = 'mailto:' + url;
       } else if (phone.test(url)) {
-                  url = 'tel:' + url.replace(/[ ().\-]/g,'');
+        url = 'tel:' + url.replace(/[ ().\-]/g,'');
       } else if (!schemed.test(url)) {
-          url = 'http://' + url;
+        url = 'http://' + url;
       }
       return url;
 	  }
@@ -635,8 +636,16 @@ function checkVisted() {
 }
 
 $(function(){
-	getWeather();
+	// getWeather();
 	setLoaderHeight();
+
+	/*
+	$.getJSON('https://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20weather.forecast%20where%20woeid%3D2459115&format=json', (data) => {
+		console.log(data.query.results.channel.item.forecast);
+	}, (err) => {
+		console.lot(err);
+	});
+	*/
 
 	$('#submit-username').on('click', submitUsername);
 

@@ -14,7 +14,7 @@ var textEditor = {
 	maxHeight: 250,
 	toolbar: [
 	// [groupName, [list of button]]
-	['style', ['bold', 'italic', 'underline']], ['font', ['strikethrough', 'superscript', 'subscript']], ['fontsize', ['fontsize', 'height']], ['color', ['color']], ['para', ['ul', 'ol', 'paragraph']], ['link', ['link', 'picture']], ['cancel', ['cancel']], ['submit', ['save']]]
+	['style', ['bold', 'italic', 'underline']], ['font', ['strikethrough', 'superscript', 'subscript']], ['fontsize', ['fontsize', 'height', 'clear']], ['color', ['color']], ['code', ['codeview']], ['para', ['ul', 'ol', 'paragraph']], ['link', ['link', 'picture']], ['cancel', ['cancel']], ['submit', ['save']]]
 };
 
 var weatherConfig = {
@@ -657,8 +657,16 @@ function checkVisted() {
 }
 
 $(function () {
-	getWeather();
+	// getWeather();
 	setLoaderHeight();
+
+	/*
+ $.getJSON('https://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20weather.forecast%20where%20woeid%3D2459115&format=json', (data) => {
+ 	console.log(data.query.results.channel.item.forecast);
+ }, (err) => {
+ 	console.lot(err);
+ });
+ */
 
 	$('#submit-username').on('click', submitUsername);
 
