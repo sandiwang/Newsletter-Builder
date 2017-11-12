@@ -1,6 +1,6 @@
 # Newsletter-Builder
 
-Genseler's internal weekly newsletter builder.<br><br>
+Gensler's internal weekly newsletter builder.<br><br>
 Special Requirement for this project:<br>
 1. Font must be Kievit.
 
