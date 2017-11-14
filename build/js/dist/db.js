@@ -18,8 +18,67 @@ var FirebaseConfig = {
 
 firebase.initializeApp(FirebaseConfig);
 
+var db = firebase.database();
+
 var storageRef = firebase.storage().ref();
 var imagesRef = storageRef.child('images');
+
+function getCurrentUserID() {
+	return Cookies.getJSON().name.userID;
+}
+
+function createUser(userId, username) {
+	db.ref("Users/" + userId).set({
+		id: userId,
+		username: username
+	}).then(function () {
+		console.log('successfully create user at database');
+		loginSuccess();
+	}, function (err) {
+		console.log("Error: " + err);
+	});
+}
+
+function saveContent(userId, username, template, contents) {
+	var today = moment(),
+	    todayStr = today.format('YYYYMMDD'),
+	    now = today.format('HHmmss'),
+	    timestamp = today.unix();
+	// let newPostKey = db.ref().child('updates').push().key;
+
+	var data = {
+		id: userId,
+		username: username,
+		uploadDate: todayStr,
+		uploadTime: now,
+		template: template,
+		contents: contents
+	};
+
+	var updates = {};
+	updates["/Updates/" + timestamp] = data;
+	updates["/Users/" + userId + "/histories/" + todayStr + "/" + timestamp] = data;
+
+	return db.ref().update(updates).then(function () {
+		console.log('Successfully saved contents to database!');
+		return saveContentSuccess();
+	}, function (err) {
+		console.log('Error:', err);
+	});
+}
+
+function getUserHistory(userID) {
+	// list comes back in a ascending order: old to new
+	var userRef = db.ref("/Users/" + userID + "/histories").orderByKey();
+
+	return userRef.once('value').then(function (snapshot) {
+		return snapshot.val();
+	}, function (err) {
+		return conosle.log('Error when retrieving data:', err);
+	}).then(function (data) {
+		return displayHistories(data);
+	});
+}
 
 function updateImgSrc(url) {
 	if ($('.thumb.img-cropping').length > 0) {
@@ -32,9 +91,21 @@ function updateImgSrc(url) {
 	return $('.thumb.active').removeClass('active');
 }
 
+function deleteUserHistory(userID, dataID, date) {
+	var dataRef = db.ref("Users/" + userID + "/histories/" + date + "/" + dataID);
+
+	return dataRef.remove().then(function () {
+		console.log('Successfully delete history.');
+		removeHistoryCard(dataID);
+	}).catch(function (err) {
+		console.log('Error when deleting history:', err);
+	});
+}
+
 function uploadImg(data) {
-	var imgName = Date.now();
-	var imgRef = storageRef.child('images/' + imgName);
+	var imgName = moment().unix(),
+	    userID = getCurrentUserID();
+	var imgRef = storageRef.child("images/" + userID + "/" + imgName);
 
 	/***** TODO: add progress bar *****/
 	/*

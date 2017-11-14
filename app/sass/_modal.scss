@@ -250,6 +250,9 @@ $closeSize: 20px;
 		background: rgba($lightgrey, 0.1);
 		transition: 0.3s all;
 		font-size: $font16;
+		position: relative;
+		overflow: hidden;
+		vertical-align: top;
 
 		&:hover{
 			background: rgba($lightgrey, 0.3);
@@ -265,9 +268,74 @@ $closeSize: 20px;
 			}
 		}
 
+		.delete-card{
+			position: absolute;
+			padding: 0 3px;
+			top: 2px;
+			right: 5px;
+
+			i{
+				font-size: $font20;
+			}
+		}
+
 		.template, .time{
 			letter-spacing: 0.5px;
 			padding: 3px 0;
+		}
+	}
+
+	.card-overlay{
+		display: none;
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100%;
+		height: 100%;
+		background-color: $red;
+		border-radius: 4px;
+		animation-duration: 0.3s;
+		animation-name: slidein;
+		text-align: center;
+
+		&.slideout{
+			animation-name: slideOut;
+			animation-duration: 0.3s;
+		}
+
+		.buttons{
+			display: inline-block;
+			position: relative;
+			top: 50%;
+			@include verticalCenter;
+		}
+
+		.buttons .button{
+			text-transform: uppercase;
+			margin: 0 5px;
+			animation-name: delayFadein;
+			animation-duration: 0.5s;
+		}
+
+		.cancel{
+			color: $darkpurple;
+			background-color: rgba($lightgrey, 0.9);
+
+			&:hover{
+				background-color: $lightgrey;
+			}
+		}
+
+		.message.success{
+			display: none;
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			transform: translateY(-50%) translateX(-50%);
+			margin: 0;
+			background-color: transparent;
+			color: #fff;
+			letter-spacing: 0.5px;
 		}
 	}
 
@@ -324,4 +392,43 @@ $closeSize: 20px;
 		}
 	}
 
+}
+
+
+@keyframes slidein {
+  from {
+    margin-left: -50%;
+    width: 0;
+  }
+
+  to {
+    margin-left: 0%;
+    width: 100%;
+  }
+}
+
+@keyframes slideOut {
+	from {
+    margin-left: 0;
+    width: 100%;
+  }
+
+  to {
+    margin-left: -50%;
+    width: 0;
+  }
+}
+
+@keyframes delayFadein {
+	0% {
+		opacity: 0;
+	}
+
+	50% {
+		opacity: 0;
+	}
+
+	100% {
+		opacity: 1;
+	}
 }

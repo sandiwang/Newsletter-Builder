@@ -11,10 +11,35 @@ let app = new Vue({
 
 var textEditor = {
 	height: 300,
-	maxHeight: 250,
+	maxHeight: 220,
 	toolbar: [
 	// [groupName, [list of button]]
-	['style', ['bold', 'italic', 'underline']], ['font', ['strikethrough', 'superscript', 'subscript']], ['fontsize', ['fontsize', 'height']], ['color', ['color']], ['para', ['ul', 'ol', 'paragraph']], ['link', ['link', 'picture']], ['cancel', ['cancel']], ['submit', ['save']]]
+	['style', ['bold', 'italic', 'underline']], ['font', ['strikethrough', 'superscript', 'subscript']], ['fontsize', ['fontsize', 'height', 'clear']], ['color', ['color']], ['code', ['codeview']], ['para', ['ul', 'ol', 'paragraph']], ['link', ['link', 'picture']], ['cancel', ['cancel']], ['submit', ['save']]]
+};
+
+var weatherConfig = {
+	key: 'CvzA3RKOLCUuqfAMyao7AFVyqDtrYMW7',
+	url: 'http://dataservice.accuweather.com/forecasts/v1/daily/5day',
+	locationKey: {
+		newyork: 349727
+	},
+	icons: {
+		sunny: 'weather_icon-01.png',
+		partlySunny: 'weather_icon-17.png',
+		cloudy: 'weather_icon-16.png',
+		fog: 'weather_icon-39.png',
+		showers: 'weather_icon-19.png',
+		sunnyShowers: 'weather_icon-20.png',
+		rain: 'weather_icon-36.png',
+		tStorm: 'weather_icon-28.png',
+		flurry: 'weather_icon-25.png',
+		sunnyFlurry: 'weather_icon-26.png',
+		snow: 'weather_icon-31.png',
+		sleet: 'weather_icon-22.png',
+		windy: 'weather_icon-57.png',
+		hot: 'weather_icon-65.png',
+		cold: 'weather_icon-62.png'
+	}
 };
 
 var SaveBtn = function SaveBtn(context) {
@@ -25,8 +50,7 @@ var SaveBtn = function SaveBtn(context) {
 		tooltip: 'Save',
 		click: function click() {
 			updateContent();
-			hideTextEditorPopup();
-
+			TextEditor.hidePopup();
 			$('.input.active').removeClass('active');
 		}
 	});
@@ -42,7 +66,7 @@ var CancelBtn = function CancelBtn(context) {
 		tooltip: 'Cancel',
 		click: function click() {
 			$('.editor-popup').summernote('reset');
-			hideTextEditorPopup();
+			TextEditor.hidePopup();
 			$('.input.active').removeClass('active');
 		}
 	});
@@ -50,8 +74,204 @@ var CancelBtn = function CancelBtn(context) {
 	return button.render();
 };
 
-/***** TODO: make user able to change to styling themselves *****/
-var styleConfig = {
+var TextEditor = {
+	init: function init(elem) {
+		if (elem && elem.html().trim() !== '') {
+			$('.editor-popup').html(elem.html());
+		}
+
+		$('.editor-popup').summernote({
+			height: textEditor.height,
+			maxHeight: textEditor.maxHeight,
+			toolbar: textEditor.toolbar,
+			buttons: {
+				save: SaveBtn,
+				cancel: CancelBtn
+			},
+			onCreateLink: function onCreateLink(url) {
+				var email = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i;
+				var phone = /^\+?[\d()-,.]+/;
+				var schemed = /^[a-z]+:/i;
+				url = url.trim();
+				if (email.test(url)) {
+					url = 'mailto:' + url;
+				} else if (phone.test(url)) {
+					url = 'tel:' + url.replace(/[ ().\-]/g, '');
+				} else if (!schemed.test(url)) {
+					url = 'http://' + url;
+				}
+				return url;
+			}
+		});
+		$('.note-editor > .modal').detach().appendTo('body');
+	},
+	destroy: function destroy() {
+		$('.editor-popup').summernote('destroy');
+		$('.editor-popup').html('');
+	},
+	showPopup: function showPopup() {
+		$('.note-editor.panel').animate({
+			left: '20px'
+		}, 150);
+	},
+	hidePopup: function hidePopup() {
+		$('.note-editor.panel').animate({
+			left: '-100%'
+		}, 150, function () {
+			//destroyTextEditor();
+			TextEditor.destroy();
+		});
+	}
+};
+
+var UserHistories = {
+	get: function get() {
+		var userId = Cookies.getJSON().name.userID;
+		$('#user-histories').modal('show');
+
+		return getUserHistory(userId);
+	},
+	save: function save() {
+		var id = Cookies.getJSON().name.userID,
+		    username = Cookies.getJSON().name.username,
+		    contents = $('.canvas.active').html(),
+		    template = $('.templates li.active').attr('data-template');
+		//console.log(`${id}: ${contents}`);
+
+		// setLoaderHeight();
+		$('.loading-overlay').show();
+
+		return saveContent(id, username, template, contents);
+	},
+	display: function display(datas) {
+		var $histories = $('#user-histories .histories-lists'),
+		    username = getCurrentUsername();
+
+		// clear the previous contents on the modal
+		clearModalHistories();
+
+		$('#user-histories .current-user').find('span').html(username);
+
+		var _loop = function _loop(list) {
+			var d = moment(list).format('MMMM DD, YYYY - dddd');
+			var $date = $('<div>', { class: 'date' }).append('<span>' + d + '</span>').append('<ul></ul>');
+
+			var _loop2 = function _loop2(key) {
+				// console.log(datas[list][key]);
+				var template = datas[list][key].template,
+				    contents = datas[list][key].contents || '',
+				    time = datas[list][key].uploadTime || null,
+				    timeFormatted = time ? moment(time, 'HHmmss').format('HH : mm : ss') : '&nbsp;',
+				    dataId = key,
+				    $li = $('<li>'),
+				    $card = $('<div>', { class: "card", "data-id": dataId, "data-date": list, "template": template }).append('<a href="#"></a>'),
+				    $overlay = buildCardOverlay(),
+				    $message = $('<div>', { class: 'message success' }).html('Delete Successed'),
+				    $delete = $('<div>', { class: "delete-card" }).append('<i class="ion-ios-trash-outline"></i>'),
+				    $textTemplate = $('<div>', { class: 'template' }).html('Template ' + template),
+				    $textTime = $('<div>', { class: 'time' }).html(timeFormatted);
+
+				$overlay.append($message);
+				$card.append($overlay);
+				$card.find('a').append($delete).append($textTemplate).append($textTime);
+				$li.append($card);
+
+				$date.append($li);
+				$li.on('click', function (e) {
+					e.preventDefault();
+					UserHistories.showPreview(d, timeFormatted, template, contents);
+				});
+				$delete.on('click', function (e) {
+					e.stopPropagation();
+					UserHistories.deleteAlert(e.currentTarget, 'show');
+				});
+				$overlay.find('.cancel').on('click', function (e) {
+					e.stopPropagation();
+					UserHistories.deleteAlert(e.currentTarget.parentNode, 'hide');
+				});
+				$overlay.find('.delete').on('click', function (e) {
+					e.stopPropagation();
+
+					var userID = getCurrentUserID(),
+					    dataID = e.currentTarget.parentNode.parentNode.parentNode.getAttribute('data-id');
+
+					//removeHistoryCard(dataID);
+					return deleteUserHistory(userID, dataID, list);
+				});
+			};
+
+			for (var key in datas[list]) {
+				_loop2(key);
+			}
+			$histories.append($date);
+		};
+
+		for (var list in datas) {
+			_loop(list);
+		}
+
+		$('#user-histories .loading').hide();
+		$histories.show();
+	},
+	deleteAlert: function deleteAlert(elem, toggle) {
+		var overlay = elem.parentNode.parentNode.querySelector('.card-overlay');
+
+		if (toggle === 'show') {
+			overlay.classList.remove('slideout');
+			overlay.style.display = 'block';
+		} else if (toggle === 'hide') {
+			overlay.classList.add('slideout');
+			setTimeout(function () {
+				return overlay.style.display = 'none';
+			}, 300);
+		}
+	},
+	removeHistoryCard: function removeHistoryCard(dataID) {
+		var $card = $('#user-histories .histories-lists .card[data-id=' + dataID + ']'),
+		    $buttons = $card.find('.buttons'),
+		    buttonsH = $buttons.outerHeight(),
+		    buttonsW = $buttons.outerWidth(),
+		    $message = $card.find('.message.success');
+
+		$message.css({
+			height: buttonsH,
+			'line-height': buttonsH + 'px',
+			width: buttonsW
+		});
+
+		$buttons.fadeOut(150);
+		$message.delay(100).fadeIn(300);
+
+		setTimeout(function () {
+			$card.parent('li').remove();
+		}, 1000);
+	},
+	showPreview: function showPreview(date, time, template, contents) {
+		var $preview = $('#user-histories .history-preview'),
+		    contentsStipped = contents;
+
+		$preview.find('.title span').empty().html(date + ' - ' + time);
+		$preview.find('.preview').empty().append(contents);
+		$preview.attr('template', template).css({
+			display: 'block',
+			opacity: 0,
+			top: '200px'
+		}).animate({
+			opacity: 1,
+			top: 0
+		}, 150);
+	},
+	select: function select() {
+		var template = $('#user-histories .history-preview').attr('template'),
+		    contents = $('#user-histories .history-preview .preview').html();
+
+		updateTableCanvas(template, contents);
+		$('#user-histories .history-preview').slideUp(150);
+		$('#user-histories').modal('hide');
+	}
+
+	/***** TODO: make user able to change to styling themselves *****/
+};var styleConfig = {
 	fontFamily: '"KievitOT", Verdana, Geneva, sans-serif',
 	fontBig: '20px',
 	fontSmall: '14px',
@@ -68,6 +288,63 @@ function checkInputValue() {
 	} else {
 		$(this).parent().addClass('has-value');
 	}
+}
+
+function getCurrentUsername() {
+	return Cookies.getJSON().name.username;
+}
+
+function getContentMaxHeight() {
+	var canvasH = $('.canvas-container').outerHeight(),
+	    sidebarH = $('.sidebar').outerHeight();
+	return Math.max(canvasH, sidebarH);
+}
+
+function setLayout() {
+	var sideBarW = $('.sidebar').outerWidth();
+
+	$('.main .canvas-container').css({
+		'margin-left': sideBarW + 'px',
+		width: 'calc(100% - ' + sideBarW + 'px)'
+	});
+}
+
+function sidebarNavigate(e) {
+	e.preventDefault();
+
+	var target = $(this).attr('data-target'),
+	    current = $('.sidebar .narrow-navs li.active').attr('data-target'),
+	    $targetNav = $('.sidebar .nav.' + target);
+
+	if (current === undefined) {
+		$(this).addClass('active');
+		showNav($targetNav);
+	} else if (target === current) {
+		$(this).removeClass('active');
+		hideNav($targetNav);
+	} else {
+		$('.sidebar .narrow-navs li[data-target=' + current + ']').removeClass('active');
+		$(this).addClass('active');
+
+		hideNav($('.sidebar .nav.' + current));
+		showNav($targetNav);
+	}
+}
+
+function showNav(elem) {
+	var sidebarW = $('.sidebar').outerWidth();
+
+	elem.animate({
+		left: sidebarW + 'px'
+	}, 200);
+}
+
+function hideNav(elem) {
+	var ele = elem || $('.sidebar .nav');
+
+	elem.animate({
+		left: '-999px'
+	}, 150);
 }
 
 function updateContent() {
@@ -108,58 +385,22 @@ function modifyStyles(elem) {
 	styleLink(elem);
 }
 
-function initTextEditor(elem) {
-	if (elem && elem.html().trim() !== '') {
-		$('.editor-popup').html(elem.html());
-	}
-
-	$('.editor-popup').summernote({
-		height: textEditor.height,
-		maxHeight: textEditor.maxHeight,
-		toolbar: textEditor.toolbar,
-		buttons: {
-			save: SaveBtn,
-			cancel: CancelBtn
-		}
-	});
-	$('.note-editor > .modal').detach().appendTo('body');
-}
-
-function destroyTextEditor() {
-	$('.editor-popup').summernote('destroy');
-	$('.editor-popup').html('');
-}
-
-function showTextEditorPopup() {
-	$('.note-editor.panel').animate({
-		left: '20px'
-	}, 150);
-}
-
-function hideTextEditorPopup() {
-	$('.note-editor.panel').animate({
-		left: '-100%'
-	}, 150, function () {
-		destroyTextEditor();
-	});
-}
-
 function toggleEditing() {
 	$('.upload-img-reminder').css('left', '-100%');
 
 	if ($('.input.active').length > 0 && !$(this).hasClass('active')) {
 		$('.input.active').removeClass('active');
-		hideTextEditorPopup();
+		TextEditor.hidePopup();
 
 		$(this).addClass('active');
-		initTextEditor($(this));
-		showTextEditorPopup();
+		TextEditor.init($(this));
+		TextEditor.showPopup();
 	} else if ($(this).hasClass('active')) {
 		$(this).removeClass('active');
-		hideTextEditorPopup();
+		TextEditor.hidePopup();
 	} else {
-		initTextEditor($(this));
-		showTextEditorPopup();
+		TextEditor.init($(this));
+		TextEditor.showPopup();
 		$(this).addClass('active');
 	}
 }
@@ -167,7 +408,7 @@ function toggleEditing() {
 function toggleImgUploadUI() {
 	if ($('.input.active:not(.thumb)').length > 0) {
 		$('.input.active:not(.thumb)').removeClass('active');
-		hideTextEditorPopup();
+		TextEditor.hidePopup();
 	}
 	// other elems is has active class, remove them first
 	if ($('.input.thumb.active').length > 0 && !$(this).hasClass('active')) {
@@ -199,6 +440,16 @@ function changeTemplate() {
 	}
 }
 
+function formatLineHeight(contents) {
+	var texts = contents.querySelectorAll('.input div');
+
+	texts.forEach(function (val, index, obj) {
+		if (val.style.lineHeight !== '') {
+			val.style.lineHeight = val.style.lineHeight + '00%';
+		}
+	});
+}
+
 function exportNewsletter() {
 	var windowUrl = 'about:blank';
 
@@ -206,6 +457,8 @@ function exportNewsletter() {
 	var content = document.querySelector('.canvas.active'),
 	    dupContent = content.cloneNode(true),
 	    printWindow = window.open(windowUrl, 'gNYC Newsletter');
+
+	formatLineHeight(dupContent);
 
 	var imgs = dupContent.querySelectorAll('.thumb img');
 	for (var i = 0; i < imgs.length; i++) {
@@ -219,30 +472,133 @@ function exportNewsletter() {
 	printWindow.document.write('<html><head><title>gNYC Newsletter</title></head><body>' + dupContent.innerHTML + "</body>");
 }
 
-var weatherConfig = {
-	key: 'CvzA3RKOLCUuqfAMyao7AFVyqDtrYMW7',
-	url: 'http://dataservice.accuweather.com/forecasts/v1/daily/5day',
-	locationKey: {
-		newyork: 349727
-	},
-	icons: {
-		sunny: 'weather_icon-01.png',
-		partlySunny: 'weather_icon-17.png',
-		cloudy: 'weather_icon-16.png',
-		fog: 'weather_icon-39.png',
-		showers: 'weather_icon-19.png',
-		sunnyShowers: 'weather_icon-20.png',
-		rain: 'weather_icon-36.png',
-		tStorm: 'weather_icon-28.png',
-		flurry: 'weather_icon-25.png',
-		sunnyFlurry: 'weather_icon-26.png',
-		snow: 'weather_icon-31.png',
-		sleet: 'weather_icon-22.png',
-		windy: 'weather_icon-57.png',
-		hot: 'weather_icon-65.png',
-		cold: 'weather_icon-62.png'
+function setLoaderHeight(loader) {
+	var $loader = loader || $('.loading-overlay'),
+	    mainH = getContentMaxHeight(),
+	    windowH = $(window).height();
+
+	if (mainH < windowH) {
+		$loader.css('height', windowH);
+	} else {
+		$loader.css('height', mainH);
 	}
-};
+}
+
+function buildCardOverlay() {
+	var $overlay = $('<div>', { class: 'card-overlay' }),
+	    $deleteBtn = $('<div>', { class: 'button outlined delete' }).html('Delete'),
+	    $cancelBtn = $('<div>', { class: 'button outlined cancel' }).html('Cancel'),
+	    $buttons = $('<div>', { class: 'buttons' }).append($cancelBtn).append($deleteBtn);
+
+	return $overlay.append($buttons);
+}
+
+function saveContentSuccess() {
+	var $loader = $('.loading-overlay');
+
+	$loader.find('.loading').hide();
+	$loader.find('.message.success').show();
+
+	setTimeout(function () {
+		$loader.fadeOut(150);
+		$loader.find('.message.success').hide();
+		$loader.find('.loading').show();
+	}, 1000);
+}
+
+function displayHistories(datas) {
+	return UserHistories.display(datas);
+}
+
+function removeHistoryCard(dataID) {
+	var $card = $('#user-histories .histories-lists .card[data-id=' + dataID + ']'),
+	    $buttons = $card.find('.buttons'),
+	    buttonsH = $buttons.outerHeight(),
+	    buttonsW = $buttons.outerWidth(),
+	    $message = $card.find('.message.success');
+
+	$message.css({
+		height: buttonsH,
+		'line-height': buttonsH + 'px',
+		width: buttonsW
+	});
+
+	$buttons.fadeOut(150);
+	$message.delay(100).fadeIn(300);
+
+	setTimeout(function () {
+		$card.parent('li').remove();
+	}, 1000);
+}
+
+function closeHistoryPreview() {
+	var _this = this;
+
+	$(this).parents('.history-preview').fadeOut(100, function () {
+		return $(_this).parents('.history-preview').find('.preview').empty();
+	});
+}
+
+function updateTableCanvas(template, contents) {
+	var $canvas = $('.canvas-container .canvas[template=' + template + ']'),
+	    $templateMenuItem = $('.nav.templates li[data-template=' + template + ']');
+
+	$canvas.empty().append(contents);
+	$canvas.find('.input.thumb').hover(showImgToolOptions, hideImgToolOptions);
+	$canvas.find('.input.thumb').on('click', toggleImgUploadUI);
+	$canvas.find('.input.thumb').each(function () {
+		$(this).fileDrop({
+			onFileRead: function onFileRead(files) {
+				var base64data = $.removeUriScheme(files[0].data);
+
+				$('.thumb.active').find('img').attr('src', files[0].data);
+				$('.thumb.active').find('img').attr('img-data', files[0].data);
+
+				uploadImg(base64data);
+				$('.upload-img-reminder').css('left', '-100%');
+			},
+			overClass: 'img-dragging',
+			removeDataUriScheme: true
+		});
+	});
+
+	$canvas.find('.input:not(.thumb)').on('click', toggleEditing);
+	$canvas.find('.input a').on('click', function (e) {
+		return e.stopPropagation();
+	});
+
+	// update the canvas tab and side bar navigation
+	$('.canvas-container .canvas.active, .nav.templates li.active').removeClass('active');
+	$canvas.addClass('active');
+	$templateMenuItem.addClass('active');
+
+	$('#user-histories').modal('hide');
+}
+
+function clearModalHistories() {
+	var $modal = $('#user-histories');
+
+	$modal.find('.histories-lists').empty();
+}
+
+function buildWeatherForecast(data) {
+	var $weatherContainer = $('.canvas .weather'),
+	    $day = $weatherContainer.find('.day-of-week'),
+	    $dailyweather = $weatherContainer.find('.daily-weather'),
+	    $high = $weatherContainer.find('.daily-temperature-high'),
+	    $low = $weatherContainer.find('.daily-temperature-low'),
+	    count = 0;
+
+	for (var daily in data) {
+		if (jQuery.isEmptyObject(data[daily])) continue;
+
+		$day.eq(count).html(data[daily].day);
+		$dailyweather.eq(count).attr('src', data[daily].dayWeather);
+		$high.eq(count).html(data[daily].temperature.highest);
+		$low.eq(count).html(data[daily].temperature.lowest);
+		count++;
+	}
+}
 
 function getWeather() {
 	var url = weatherConfig.url + '/' + weatherConfig.locationKey.newyork + '?apikey=' + weatherConfig.key;
@@ -255,9 +611,9 @@ function getWeather() {
 	}).done(function (data) {
 		// filter out the information that we don't need
 		var dailyForecastData = filterForecastData(data.DailyForecasts);
+		buildWeatherForecast(dailyForecastData);
 	}).fail(function (err) {
 		console.log(err);
-		console.log(getWeatherIcon(1));
 	});
 }
 
@@ -401,8 +757,89 @@ function selectImgLinkType() {
 	$wrapper.removeClass('active');
 }
 
+function submitUsername() {
+	var $input = $(this).parents('.login-wrapper').find('input'),
+	    name = $input.val().trim();
+
+	if (name === '') {
+		console.log('username cannot be empty');
+		return;
+	}
+
+	if (existingUsername(name)) {
+		console.log('username already existed');
+		$('.login-wrapper .message.failed').html('Username already existed!').css('display', 'inline-block');
+	} else {
+		var userId = Date.now();
+		setCookie(userId, name);
+		createUser(userId, name);
+	}
+}
+
+function existingUsername(name) {
+	var nameStr = name.replace(/\s+/g, ''),
+	    existing = void 0;
+
+	return existing = Cookies.get()[nameStr] ? 1 : 0;
+}
+
+function setCookie(userId, name) {
+	//let nameStr = name.replace(/\s+/g, '');
+
+	Cookies.set('name', {
+		username: name,
+		userID: userId,
+		expires: 30
+	});
+}
+
+function loginSuccess() {
+	$('.login-wrapper .message.success').fadeIn(300).show();
+	setTimeout(function () {
+		$('.login-wrapper').animate({
+			width: 0,
+			height: 0
+		}, 300, function () {
+			return $('.login-wrapper').hide();
+		});
+	}, 1300);
+}
+
+function doLogout(e) {
+	e.preventDefault();
+	Cookies.remove('name');
+	location.reload();
+}
+
+function hasVisited() {
+	return $.isEmptyObject(Cookies.get()) ? 0 : 1;
+}
+
+function checkVisted() {
+	var visited = hasVisited();
+	if (visited) {
+		$('.login-wrapper').hide();
+	} else {
+		$('.login-wrapper').show();
+	}
+	$('.main').css('opacity', 1);
+}
+
 $(function () {
 	// getWeather();
+	setLoaderHeight();
+	setLayout();
+
+	/*
+ $.getJSON('https://query.yahooapis.com/v1/public/yql?q=select%20*%20from%20weather.forecast%20where%20woeid%3D2459115&format=json', (data) => {
+ 	console.log(data.query.results.channel.item.forecast);
+ }, (err) => {
+ 	console.lot(err);
+ });
+ */
+
+	$('#submit-username').on('click', submitUsername);
+	$('.sidebar .narrow-navs li').on('click', sidebarNavigate);
 
 	$('.input.thumb').each(function () {
 		//let $tools = createToolPopup();
@@ -425,7 +862,9 @@ $(function () {
 
 	$('.single-input input').on('keyup', checkInputValue);
 
-	$('.export').on('click', exportNewsletter);
+	$('#export').on('click', exportNewsletter);
+	$('#save').on('click', UserHistories.save);
+	$('#getHistories').on('click', UserHistories.get);
 
 	$('.input:not(.thumb)').on('click', toggleEditing);
 	$('.input a').on('click', function (e) {
@@ -443,4 +882,18 @@ $(function () {
 	$('#removeImgLink').on('click', removeImgLink);
 	$('#img-linking-modal .tab.message.failed .sub-message').on('click', showImgUrlForm);
 	$('#test-link').on('click', testLinkUrl);
+
+	$('#user-histories .history-preview .closePreview').on('click', closeHistoryPreview);
+	$('#user-histories .history-preview .select-history').on('click', UserHistories.select);
+
+	$('#logout').on('click', doLogout);
+
+	$(window).on('resize', function () {
+		setLoaderHeight();
+		setLayout();
+	});
+});
+
+$(window).on('load', function () {
+	checkVisted();
 });

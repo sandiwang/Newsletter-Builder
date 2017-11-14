@@ -36,6 +36,7 @@ $dropshadow-2: 0 4px 5px 0 rgba(0,0,0,0.14), 0 1px 10px 0 rgba(0,0,0,0.12), 0 2p
 $sidebarW: 400px;
 $canvasH: 700px;
 $canvasW: 1000px;
+$userPhoto: 40px;
 
 @mixin verticalCenter {
 	top: 50%;
@@ -91,6 +92,32 @@ html, body{
 	}
 }
 
+.text-divider{
+	position: relative;
+	height: 18px;
+	margin: 10px 0;
+
+	&:after{
+		content: '';
+		height: 2px;
+		background-color: $lightgrey;
+		width: 100%;
+		display: block;
+		position: absolute;
+		@include verticalCenter;
+	}
+
+	span{
+		position: absolute;
+		@include verticalCenter;
+		background-color: #fff;
+		padding: 5px 10px;
+		z-index: 9;
+		left: 50%;
+		transform: translateX(-50%) translateY(-50%); 
+	}
+}
+
 #app, .main, .sidebar{
 	position: relative;
 	height: 100%;
@@ -107,10 +134,124 @@ html, body{
 	overflow-x: hidden;
 }
 
+.sidebar{
+	position: absolute;
+	display: inline-block;
+	vertical-align: top;
+	font-size: 1rem;
+	background-color: $darkpurple;
+	z-index: 5;
+
+	&.active{
+		width: $sidebarW;
+	}
+
+	.nav{
+		//display: none;
+
+		&.active{
+			display: block;
+		}
+	}
+
+	#user-avartar{
+		position: absolute;
+		bottom: 10px;
+		background-color: #fff;
+		box-shadow: $dropshadow;
+		left: 50%;
+		transform: translateX(-50%);
+		border-radius: 100%;
+		padding: 2px;
+		width: $userPhoto + 4px;
+		height: $userPhoto + 4px;
+		line-height: $userPhoto + 4px;
+		text-align: center;
+		letter-spacing: 1px;
+		color: $darkpurple;
+		font-size: $font16;
+		cursor: pointer;
+
+		&.active{
+			background-color: $yellow;
+		}
+
+		img{
+			display: block;
+			width: $userPhoto;
+			height: $userPhoto;
+			border-radius: 100%;
+		}
+	}
+}
+
+.narrow-navs{
+	list-style: none;
+	padding-left: 0;
+	color: #fff;
+	z-index: 11;
+
+	li{
+		font-size: $font26;
+		transition: 0.3s all;
+
+		&:not(.active):hover a{
+			color: $yellow;
+		}
+
+		&.active{
+			background-color: $yellow;
+		}
+	}
+
+	a{
+		color: #fff;
+		transition: 0.3s all;
+		padding: 20px;
+		display: block;
+	}
+}
+
+#user-profile{
+	font-size: 1rem;
+	position: absolute;
+	bottom: 0;
+	z-index: 0;
+	width: 300px;
+	padding: 10px 10px 10px 80px;
+	height: auto;
+	left: -100%;
+	border: 1px solid $grey;
+	border-radius: 4px;
+	background-color: #fff;
+	box-shadow: $dropshadow;
+	opacity: 0.75;
+	transform: translateY(-50%);
+	transition: 0.3s all;
+	transition-timing-function: cubic-bezier(.31,.96,.66,.95);
+
+	&.active{
+		left: 0px;
+		z-index: 0;
+		opacity: 1;
+	}
+
+	ul{
+		padding-left: 0;
+		list-style: none;
+	}
+}
+
 .nav{
+	position: absolute;
 	background-color: #fff;
 	clear: both;
-	margin-bottom: 15px;
+	width: 300px;
+	top: 0;
+	height: 100%;
+	z-index: 4;
+	box-shadow: $dropshadow;
+	left: -999px;
 
 	li{
 		display: inline-block;
@@ -145,22 +286,6 @@ html, body{
 	}
 }
 
-.sidebar{
-	display: inline-block;
-	vertical-align: top;
-	width: $sidebarW;
-	font-size: 1rem;
-	padding: 20px;
-
-	&.active{
-		display: inline-block;
-
-		&+.canvas-container{
-			width: calc(100% - #{$sidebarW});
-		}
-	}
-}
-
 .tab{
 	display: none;
 
@@ -171,10 +296,12 @@ html, body{
 
 .canvas-container{
 	display: inline-block;
-	width: calc(100% - 400px);
+	width: 100%;
 	transition: 0.3s all;
 	font-size: 1rem;
 	text-align: center;
+	height: 100%;
+	overflow: auto;
 }
 
 .canvas{
@@ -332,6 +459,7 @@ html, body{
 	border-radius: 4px;
 	letter-spacing: 0.5px;
 	background-color: $blue;
+	z-index: 99;
 
 	span{
 		font-size: $font18;
@@ -350,7 +478,7 @@ html, body{
 	border-radius: 4px;
 	font-size: 1rem;
 	transition: 0.2s all;
-
+	z-index: 11;
 	.note-resizebar{
 		display: none !important;
 	}

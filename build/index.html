@@ -14,13 +14,32 @@
 	<title>gNYC Newsletter Builder</title>
 </head>
 <body>
+	
 	<div id="app">
 		<!-- 
 		<p>{{ message }}</p>
 		<input v-model="message">
 		-->
+		<div class="login-wrapper">
+			<div>
+				<div class="login-heading">Type in your username</div>
+				<div class="login-sub-heading">so we can save your working progress. we use cookie to remember your username so you don't have to type in again next time.</div>
+				<label class="single-input">
+        	<input type="text" name="username">
+        	<div class="label-text">Username</div>
+      	</label>
+      	<div class="message failed">Username already existed!</div>
+      	<br>
+      	<div id="submit-username" class="button">Submit</div>
+      	<div class="message success"><span>Username registered successfully</span></div>
+			</div>
+		</div>
 		<div class="main">
 			<div class="sidebar">
+				<ul class="narrow-navs">
+					<li data-target="templates"><a href="" title="Templates"><i class="ion-ios-folder-outline"></i></a></li>
+					<!-- <li data-target="profile"><a href="" title="profile"><i class="ion-ios-person-outline"></i></a></li> -->
+				</ul>
 				<ul class="nav templates">
 					<li class="active" data-template="1">
 						<div class="template-name">Template 1</div>
@@ -47,6 +66,11 @@
 						</div>
 					</li>
 				</ul>
+				<!--
+				<ul class="nav profile">
+					<li>sfsfs</li>
+				</ul>
+				-->
 			</div>
 			<div class="canvas-container">
 				<div class="canvas tab active" template="1">
@@ -75,7 +99,7 @@
 											<table width="160" height="135" cellpadding="0" cellspacing="0" border="0">
 												<tr>
 													<td class="input thumb" data-id="1">
-														<img src="img/sample.png" height="135">
+														<img src="img/upload-img-rounded.png" height="135">
 													</td>
 												</tr>
 											</table>
@@ -83,14 +107,10 @@
 										<td width="460" style="text-align: center; vertical-align: top; padding: 20px 0 20px 10px;">
 											<table width="440" cellpadding="0" cellspacing="0" border="0" style="text-align: left;">
 												<tr>
-													<td class="input input-no-style title" style="font-family: 'KievitOT', Verdana, Geneva, sans-serif; vertical-align: top; background-color: #eee; font-weight: 600; font-size: 20px; color: #000; padding: 3px 10px;">
-														Titles here
-													</td>
+													<td class="input input-no-style title" style="font-family: 'KievitOT', Verdana, Geneva, sans-serif; vertical-align: top; background-color: #eee; font-weight: 600; font-size: 20px; color: #000; padding: 3px 10px;">Titles here</td>
 												</tr>
 												<tr>
-													<td class="input desc" style="font-family: 'KievitOT', Verdana, Geneva, sans-serif; color:#000; font-size: 14px; padding: 5px 10px;">
-														Contents here...
-													</td>
+													<td class="input desc" style="font-family: 'KievitOT', Verdana, Geneva, sans-serif; color:#000; font-size: 14px; padding: 5px 10px;"><div style="line-height: 20px;">Contents here...</div></td>
 												</tr>
 											</table>
 										</td>
@@ -100,7 +120,7 @@
 											<table width="160" height="135" cellpadding="0" cellspacing="0" border="0">
 												<tr>
 													<td class="input thumb" data-id="2">
-														<img src="img/sample.png" height="135">
+														<img src="img/upload-img-rounded.png" height="135">
 													</td>
 												</tr>
 											</table>
@@ -108,14 +128,10 @@
 										<td width="460" style="text-align: center; vertical-align: top; padding: 20px 0 20px 10px;">
 											<table width="440" cellpadding="0" cellspacing="0" border="0" style="text-align: left;">
 												<tr>
-													<td class="input input-no-style title" style="font-family: 'KievitOT', Verdana, Geneva, sans-serif; vertical-align: top; background-color: #eee; font-weight: 600; font-size: 20px; color: #000; padding: 3px 10px;">
-														Titles here
-													</td>
+													<td class="input input-no-style title" style="font-family: 'KievitOT', Verdana, Geneva, sans-serif; vertical-align: top; background-color: #eee; font-weight: 600; font-size: 20px; color: #000; padding: 3px 10px;">Titles here</td>
 												</tr>
 												<tr>
-													<td class="input desc" style="font-family: 'KievitOT', Verdana, Geneva, sans-serif; color:#000; font-size: 14px; padding: 5px 10px;">
-														Contents here...
-													</td>
+													<td class="input desc" style="font-family: 'KievitOT', Verdana, Geneva, sans-serif; color:#000; font-size: 14px; padding: 5px 10px;"><div style="line-height: 20px;">Contents here...</div></td>
 												</tr>
 											</table>
 										</td>
@@ -125,7 +141,7 @@
 											<table width="160" height="135" cellpadding="0" cellspacing="0" border="0">
 												<tr>
 													<td class="input thumb" data-id="3">
-														<img src="img/sample.png" height="135">
+														<img src="img/upload-img-rounded.png" height="135">
 													</td>
 												</tr>
 											</table>
@@ -133,14 +149,10 @@
 										<td width="460" style="text-align: center; vertical-align: top; padding: 20px 0 20px 10px;">
 											<table width="440" cellpadding="0" cellspacing="0" border="0" style="text-align: left;">
 												<tr>
-													<td class="input input-no-style title" style="font-family: 'KievitOT', Verdana, Geneva, sans-serif; vertical-align: top; background-color: #eee; font-weight: 600; font-size: 20px; color: #000; padding: 3px 10px;">
-														Titles here
-													</td>
+													<td class="input input-no-style title" style="font-family: 'KievitOT', Verdana, Geneva, sans-serif; vertical-align: top; background-color: #eee; font-weight: 600; font-size: 20px; color: #000; padding: 3px 10px;">Titles here</td>
 												</tr>
 												<tr>
-													<td class="input desc" style="font-family: 'KievitOT', Verdana, Geneva, sans-serif; color:#000; font-size: 14px; padding: 5px 10px;">
-														Contents here...
-													</td>
+													<td class="input desc" style="font-family: 'KievitOT', Verdana, Geneva, sans-serif; color:#000; font-size: 14px; padding: 5px 10px;"><div style="line-height: 20px;">Contents here...</div></td>
 												</tr>
 											</table>
 										</td>
@@ -150,7 +162,7 @@
 											<table width="160" height="135" cellpadding="0" cellspacing="0" border="0">
 												<tr>
 													<td class="input thumb" data-id="4">
-														<img src="img/sample.png" height="135">
+														<img src="img/upload-img-rounded.png" height="135">
 													</td>
 												</tr>
 											</table>
@@ -158,14 +170,10 @@
 										<td width="460" style="text-align: center; vertical-align: top; padding: 20px 0 20px 10px;">
 											<table width="440" cellpadding="0" cellspacing="0" border="0" style="text-align: left;">
 												<tr>
-													<td class="input input-no-style title" style="font-family: 'KievitOT', Verdana, Geneva, sans-serif; vertical-align: top; background-color: #eee; font-weight: 600; font-size: 20px; color: #000; padding: 3px 10px;">
-														Titles here
-													</td>
+													<td class="input input-no-style title" style="font-family: 'KievitOT', Verdana, Geneva, sans-serif; vertical-align: top; background-color: #eee; font-weight: 600; font-size: 20px; color: #000; padding: 3px 10px;">Titles here</td>
 												</tr>
 												<tr>
-													<td class="input desc" style="font-family: 'KievitOT', Verdana, Geneva, sans-serif; color:#000; font-size: 14px; padding: 5px 10px;">
-														Contents here...
-													</td>
+													<td class="input desc" style="font-family: 'KievitOT', Verdana, Geneva, sans-serif; color:#000; font-size: 14px; padding: 5px 10px;"><div style="line-height: 20px;">Contents here...</div></td>
 												</tr>
 											</table>
 										</td>
@@ -191,71 +199,126 @@
 							<td colspan="2" height="30" style="background-color: #000;">&nbsp;</td>
 						</tr>
 						<tr>
-							<td width="300" height="300" align="center" valign="middle" class="input thumb" style="background-color: #d1d3d3;">
-								<img src="" width="300">
+							<td width="300" height="300" align="center" valign="middle" class="input thumb">
+								<img src="img/upload-img.png" width="300">
 							</td>
-							<td width="300" height="300" valign="middle" style="padding: 20px;">
+							<td width="300" height="300" valign="middle" style="padding: 0 20px;">
 								<div class="input title" style="font-size: 22px; font-family:'KievitOT Light', Verdana, Geneva, sans-serif;">
 									Next Week: Town Hall!
 								</div>
 								<div style="width: 260px; height: 10px; background-color: #fff;">&nbsp;</div>
-								<div class="input desc" style="font-family: 'KievitOT Light', Verdana, Geneva, sans-serif; padding-top: 5px;">
-									We look forward to seeing you next Tuesday, 10/31 for our October Town Hall! Please be sure to allow adequate time to make it over to AXA and be in the auditorium by 12:00pm.
-									<br><br>
-									More details to follow.
-								</div>
+								<div class="input desc" style="font-family: 'KievitOT Light', Verdana, Geneva, sans-serif; padding-top: 5px;"><div style="line-height: 20px;">Contents here...</div></div>
 							</td>
 						</tr>
 						<tr>
-							<td width="300" valign="middle" style="padding: 20px;">
+							<td width="300" valign="middle" style="padding: 0 20px;">
 								<div class="input title" style="font-size: 22px; font-family:'KievitOT Light', Verdana, Geneva, sans-serif;">
 									Fine Fair 2017
 								</div>
 								<div style="width: 260px; height: 10px; background-color: #fff;">&nbsp;</div>
-								<div class="input desc" style="font-family: 'KievitOT Light', Verdana, Geneva, sans-serif; padding-top: 5px;">
-									you're all cordially invited to the 3rd Annual Fine Fair for an evening of food, wine, music and plenty of vendors (with a good amount of gNYC makers joining the ranks!) selling one of a kind pieces.
-											<br><br>
-											10/25 | 6:00-9:00pm | 125 Fifth Ave. | RSVP here
-								</div>
+								<div class="input desc" style="font-family: 'KievitOT Light', Verdana, Geneva, sans-serif; padding-top: 5px;"><div style="line-height: 20px;">Contents here...</div></div>
 							</td>
-							<td width="300" height="300" align="center" valign="middle" class="input thumb" style="background-color: #d1d3d3;">
-								<img src="" width="300">
+							<td width="300" height="300" align="center" valign="middle" class="input thumb">
+								<img src="img/upload-img.png">
 							</td>
 						</tr>
 						<tr>
-							<td width="300" height="300" align="center" valign="middle" class="input thumb" style="background-color: #d1d3d3;">
-								<img src="" width="300">
+							<td width="300" height="300" align="center" valign="middle" class="input thumb">
+								<img src="img/upload-img.png">
 							</td>
-							<td width="300" valign="middle" style="padding: 20px;">
+							<td width="300" valign="middle" style="padding: 0 20px;">
 								<div class="input title" style="font-size: 22px; font-family:'KievitOT Light', Verdana, Geneva, sans-serif;">
 									Deals & Happenings
 								</div>
 								<div style="width: 260px; height: 10px; background-color: #fff;">&nbsp;</div>
-								<div class="input desc" style="font-family: 'KievitOT Light', Verdana, Geneva, sans-serif; padding-top: 5px;">
-									<div style="font-size: 16px;">Gregory's coffee</div>
-									<div>Stop by Gregory's tomorrow at 50th & 7th to get the drink of your choice (any size) for $2! Smoothies and single origin AeroPress coffees are excluded, but you get 50% off of those! If you don't already have their app, be sure to download it for a $5 credit.</div>
-								</div>
+								<div class="input desc" style="font-family: 'KievitOT Light', Verdana, Geneva, sans-serif; padding-top: 5px;"><div style="line-height: 20px;">Contents here...</div></div>
 							</td>
 						</tr>
 						<tr>
-							<td width="300" valign="middle" style="padding: 20px;">
+							<td width="300" valign="middle" style="padding: 0 20px;">
 								<div class="input title" style="font-size: 22px; font-family:'KievitOT Light', Verdana, Geneva, sans-serif;">
 									Giving a Tour?
 								</div>
 								<div style="width: 260px; height: 10px; background-color: #fff;">&nbsp;</div>
-								<div class="input desc" style="font-family: 'KievitOT Light', Verdana, Geneva, sans-serif; padding-top: 5px;">
-									Check out our "Guide to Backstage Tours" and other helpful resources in the Office Experience Folder.
-									<br><br>
-									<div style="font-size: 12px;">G Drive > NY Office > Resources > Office Experience</div>
-								</div>
+								<div class="input desc" style="font-family: 'KievitOT Light', Verdana, Geneva, sans-serif; padding-top: 5px;"><div style="line-height: 20px;">Contents here...</div></div>
 							</td>
-							<td width="300" height="300" align="center" valign="middle" class="input thumb" style="background-color: #d1d3d3;">
-								<img src="img/sample-piglet.png" width="300">
+							<td width="300" height="300" align="center" valign="middle" class="input thumb">
+								<img src="img/upload-img.png" width="300">
 							</td>
 						</tr>
 						<tr>
-							<td colspan="2" class="input thumb">
+							<td colspan="2" class="input thumb" style="padding: 20px 0;">
 								<img width="600" src="img/sample-weather.png">
+								<!--
+								<table class="weather" width="600" cellpadding="0" cellspacing="0" border="0">
+									<tr>
+										<td width="120" align="center" class="day-of-week" style="font-family: 'KievitOT', Verdana, Geneva, sans-serif; font-size: 13px; color: #838386;">
+											Mon
+										</td>
+										<td width="120" align="center" class="day-of-week" style="font-family: 'KievitOT', Verdana, Geneva, sans-serif; font-size: 13px; color: #838386;">
+											Tue
+										</td>
+										<td width="120" align="center" class="day-of-week" style="font-family: 'KievitOT', Verdana, Geneva, sans-serif; font-size: 13px; color: #838386;">
+											Wed
+										</td>
+										<td width="120" align="center" class="day-of-week" style="font-family: 'KievitOT', Verdana, Geneva, sans-serif; font-size: 13px; color: #838386;">
+											Thu
+										</td>
+										<td width="120" align="center" class="day-of-week" style="font-family: 'KievitOT', Verdana, Geneva, sans-serif; font-size: 13px; color: #838386;">
+											Fri
+										</td>
+									</tr>
+									<tr>
+										<td align="center">
+											<img width="60" class="daily-weather" src="img/weather/weather_icon-01.png">
+										</td>
+										<td align="center">
+											<img width="60" class="daily-weather" src="img/weather/weather_icon-16.png">
+										</td>
+										<td align="center">
+											<img width="60" class="daily-weather" src="img/weather/weather_icon-39.png">
+										</td>
+										<td align="center">
+											<img width="60" class="daily-weather" src="img/weather/weather_icon-20.png">
+										</td>
+										<td align="center">
+											<img width="60" class="daily-weather" src="img/weather/weather_icon-17.png">
+										</td>
+									</tr>
+									<tr>
+										<td align="center" class="daily-temperature">
+											<span class="daily-temperature-high" style="font-family: 'KievitOT', Verdana, Geneva, sans-serif; font-size: 13px; color: #838386; font-weight: bold;">73</span>
+											<span style="font-family: 'KievitOT', Verdana, Geneva, sans-serif; font-size: 13px; color: #838386;">°</span>
+											<span class="daily-temperature-low" style="font-family: 'KievitOT Light', Verdana, Geneva, sans-serif; font-size: 13px; color: #838386;">68</span>
+											<span style="font-family: 'KievitOT Light', Verdana, Geneva, sans-serif; font-size: 13px; color: #838386;">°</span>
+										</td>
+										<td align="center" class="daily-temperature">
+											<span class="daily-temperature-high" style="font-family: 'KievitOT', Verdana, Geneva, sans-serif; font-size: 13px; color: #838386; font-weight: bold;">73</span>
+											<span style="font-family: 'KievitOT', Verdana, Geneva, sans-serif; font-size: 13px; color: #838386;">°</span>
+											<span class="daily-temperature-low" style="font-family: 'KievitOT Light', Verdana, Geneva, sans-serif; font-size: 13px; color: #838386;">68</span>
+											<span style="font-family: 'KievitOT Light', Verdana, Geneva, sans-serif; font-size: 13px; color: #838386;">°</span>
+										</td>
+										<td align="center" class="daily-temperature">
+											<span class="daily-temperature-high" style="font-family: 'KievitOT', Verdana, Geneva, sans-serif; font-size: 13px; color: #838386; font-weight: bold;">73</span>
+											<span style="font-family: 'KievitOT', Verdana, Geneva, sans-serif; font-size: 13px; color: #838386;">°</span>
+											<span class="daily-temperature-low" style="font-family: 'KievitOT Light', Verdana, Geneva, sans-serif; font-size: 13px; color: #838386;">68</span>
+											<span style="font-family: 'KievitOT Light', Verdana, Geneva, sans-serif; font-size: 13px; color: #838386;">°</span>
+										</td>
+										<td align="center" class="daily-temperature">
+											<span class="daily-temperature-high" style="font-family: 'KievitOT', Verdana, Geneva, sans-serif; font-size: 13px; color: #838386; font-weight: bold;">73</span>
+											<span style="font-family: 'KievitOT', Verdana, Geneva, sans-serif; font-size: 13px; color: #838386;">°</span>
+											<span class="daily-temperature-low" style="font-family: 'KievitOT Light', Verdana, Geneva, sans-serif; font-size: 13px; color: #838386;">68</span>
+											<span style="font-family: 'KievitOT Light', Verdana, Geneva, sans-serif; font-size: 13px; color: #838386;">°</span>
+										</td>
+										<td align="center" class="daily-temperature">
+											<span class="daily-temperature-high" style="font-family: 'KievitOT', Verdana, Geneva, sans-serif; font-size: 13px; color: #838386; font-weight: bold;">73</span>
+											<span style="font-family: 'KievitOT', Verdana, Geneva, sans-serif; font-size: 13px; color: #838386;">°</span>
+											<span class="daily-temperature-low" style="font-family: 'KievitOT Light', Verdana, Geneva, sans-serif; font-size: 13px; color: #838386;">68</span>
+											<span style="font-family: 'KievitOT Light', Verdana, Geneva, sans-serif; font-size: 13px; color: #838386;">°</span>
+										</td>
+									</tr>
+								</table>
+								-->
 							</td>
 						</tr>
 					</table>
@@ -282,6 +345,76 @@
 						<tr>
 							<td width="640" class="input thumb" style="padding: 20px 40px;">
 								<img src="img/sample-weather.png" width="560">
+								<!--
+								<table class="weather" width="560" cellpadding="0" cellspacing="0" border="0">
+									<tr>
+										<td width="112" align="center" class="day-of-week" style="font-family: 'KievitOT', Verdana, Geneva, sans-serif; font-size: 13px; color: #838386;">
+											Mon
+										</td>
+										<td width="112" align="center" class="day-of-week" style="font-family: 'KievitOT', Verdana, Geneva, sans-serif; font-size: 13px; color: #838386;">
+											Tue
+										</td>
+										<td width="112" align="center" class="day-of-week" style="font-family: 'KievitOT', Verdana, Geneva, sans-serif; font-size: 13px; color: #838386;">
+											Wed
+										</td>
+										<td width="112" align="center" class="day-of-week" style="font-family: 'KievitOT', Verdana, Geneva, sans-serif; font-size: 13px; color: #838386;">
+											Thu
+										</td>
+										<td width="112" align="center" class="day-of-week" style="font-family: 'KievitOT', Verdana, Geneva, sans-serif; font-size: 13px; color: #838386;">
+											Fri
+										</td>
+									</tr>
+									<tr>
+										<td align="center">
+											<img width="60" class="daily-weather" src="img/weather/weather_icon-01.png">
+										</td>
+										<td align="center">
+											<img width="60" class="daily-weather" src="img/weather/weather_icon-16.png">
+										</td>
+										<td align="center">
+											<img width="60" class="daily-weather" src="img/weather/weather_icon-39.png">
+										</td>
+										<td align="center">
+											<img width="60" class="daily-weather" src="img/weather/weather_icon-20.png">
+										</td>
+										<td align="center">
+											<img width="60" class="daily-weather" src="img/weather/weather_icon-17.png">
+										</td>
+									</tr>
+									<tr>
+										<td align="center" class="daily-temperature">
+											<span class="daily-temperature-high" style="font-family: 'KievitOT', Verdana, Geneva, sans-serif; font-size: 13px; color: #838386; font-weight: bold;">73</span>
+											<span style="font-family: 'KievitOT', Verdana, Geneva, sans-serif; font-size: 13px; color: #838386;">°</span>
+											<span class="daily-temperature-low" style="font-family: 'KievitOT Light', Verdana, Geneva, sans-serif; font-size: 13px; color: #838386;">68</span>
+											<span style="font-family: 'KievitOT Light', Verdana, Geneva, sans-serif; font-size: 13px; color: #838386;">°</span>
+										</td>
+										<td align="center" class="daily-temperature">
+											<span class="daily-temperature-high" style="font-family: 'KievitOT', Verdana, Geneva, sans-serif; font-size: 13px; color: #838386; font-weight: bold;">73</span>
+											<span style="font-family: 'KievitOT', Verdana, Geneva, sans-serif; font-size: 13px; color: #838386;">°</span>
+											<span class="daily-temperature-low" style="font-family: 'KievitOT Light', Verdana, Geneva, sans-serif; font-size: 13px; color: #838386;">68</span>
+											<span style="font-family: 'KievitOT Light', Verdana, Geneva, sans-serif; font-size: 13px; color: #838386;">°</span>
+										</td>
+										<td align="center" class="daily-temperature">
+											<span class="daily-temperature-high" style="font-family: 'KievitOT', Verdana, Geneva, sans-serif; font-size: 13px; color: #838386; font-weight: bold;">73</span>
+											<span style="font-family: 'KievitOT', Verdana, Geneva, sans-serif; font-size: 13px; color: #838386;">°</span>
+											<span class="daily-temperature-low" style="font-family: 'KievitOT Light', Verdana, Geneva, sans-serif; font-size: 13px; color: #838386;">68</span>
+											<span style="font-family: 'KievitOT Light', Verdana, Geneva, sans-serif; font-size: 13px; color: #838386;">°</span>
+										</td>
+										<td align="center" class="daily-temperature">
+											<span class="daily-temperature-high" style="font-family: 'KievitOT', Verdana, Geneva, sans-serif; font-size: 13px; color: #838386; font-weight: bold;">73</span>
+											<span style="font-family: 'KievitOT', Verdana, Geneva, sans-serif; font-size: 13px; color: #838386;">°</span>
+											<span class="daily-temperature-low" style="font-family: 'KievitOT Light', Verdana, Geneva, sans-serif; font-size: 13px; color: #838386;">68</span>
+											<span style="font-family: 'KievitOT Light', Verdana, Geneva, sans-serif; font-size: 13px; color: #838386;">°</span>
+										</td>
+										<td align="center" class="daily-temperature">
+											<span class="daily-temperature-high" style="font-family: 'KievitOT', Verdana, Geneva, sans-serif; font-size: 13px; color: #838386; font-weight: bold;">73</span>
+											<span style="font-family: 'KievitOT', Verdana, Geneva, sans-serif; font-size: 13px; color: #838386;">°</span>
+											<span class="daily-temperature-low" style="font-family: 'KievitOT Light', Verdana, Geneva, sans-serif; font-size: 13px; color: #838386;">68</span>
+											<span style="font-family: 'KievitOT Light', Verdana, Geneva, sans-serif; font-size: 13px; color: #838386;">°</span>
+										</td>
+									</tr>
+								</table>
+								-->
 							</td>
 						</tr>
 						<tr>
@@ -289,8 +422,8 @@
 								<table width="560" cellpadding="0" cellspacing="0" border="0">
 									<tr>
 										<td width="20" style="border-left: 1px solid #000;">&nbsp;</td>
-										<td width="170" height="170" class="input thumb" style="background-color: #eee;">
-											<img src="" width="170">
+										<td width="170" valign="top" height="170" class="input thumb">
+											<img src="img/upload-img.png" width="170">
 										</td>
 										<td width="370" valign="top" style="padding-left: 20px;">
 											<table width="350" cellspacing="0" cellpadding="0" border="0">
@@ -301,9 +434,7 @@
 												</tr>
 												<tr>
 													<td class="input desc" style="padding-top: 10px; font-family: 'KievitOT Light', Verdana, Geneva, sans-serif;">
-														<div style="font-size: 14px;">We look forward to seeing you next Tuesday, 10/31 for our October Town Hall! Please be sure to allow adequate time to make it over to AXA and be in the auditorium by 12:00pm.
-														<br><br>
-														More details to follow.</div>
+														<div style="font-size: 14px;">Contents here...</div>
 													</td>
 												</tr>
 											</table>
@@ -325,15 +456,13 @@
 												</tr>
 												<tr>
 													<td class="input desc" style="padding-top: 10px; font-family: 'KievitOT Light', Verdana, Geneva, sans-serif;">
-														<div style="text-align: right; font-size: 14px;">Check out our "Guide to Backage Tours" and other helpful resources in the Office Experience Folder.
-														<br><br>
-														G Drive > NY Office > Resources > Office Experience</div>
+														<div style="text-align: right; font-size: 14px;">Contents here...</div>
 													</td>
 												</tr>
 											</table>
 										</td>
-										<td width="170" height="170" class="input thumb" style="background-color: #eee;">
-											<img src="" width="170">
+										<td width="170" valign="top" height="170" class="input thumb">
+											<img src="img/upload-img.png" width="170">
 										</td>
 										<td width="20" style="border-right: 1px solid #000;">&nbsp;</td>
 									</tr>
@@ -341,12 +470,12 @@
 							</td>
 						</tr>
 						<tr>
-							<td width="640" style="padding: 20px 30px;">
+							<td width="640" style="padding: 20px 40px;">
 								<table width="560" cellpadding="0" cellspacing="0" border="0">
 									<tr>
 										<td width="20" style="border-left: 1px solid #000;">&nbsp;</td>
-										<td width="170" height="170" class="input thumb" style="background-color: #eee;">
-											<img src="" width="170">
+										<td width="170" valign="top" height="170" class="input thumb">
+											<img src="img/upload-img.png" width="170">
 										</td>
 										<td width="370" valign="top" style="padding-left: 20px;">
 											<table width="350" cellspacing="0" cellpadding="0" border="0">
@@ -357,9 +486,7 @@
 												</tr>
 												<tr>
 													<td class="input desc" style="padding-top: 10px; font-family: 'KievitOT Light', Verdana, Geneva, sans-serif;">
-														<div style="font-size: 14px;">You're all cordially invited to the 3rd Annual Fine Fair for an evening of food, wine, music, and plenty of vendors (with a good amount of gNYC makers joining the ranks!) selling one of a kind pieces.
-														<br><br>
-														10/25 | 6:00-9:00pm | 125 Fifth Ave. | RSVP here</div>
+														<div style="font-size: 14px;">Contents here...</div>
 													</td>
 												</tr>
 											</table>
@@ -381,15 +508,13 @@
 												</tr>
 												<tr>
 													<td class="input desc" style="padding-top: 10px; font-family: 'KievitOT Light', Verdana, Geneva, sans-serif;">
-														<div style="text-align: right; font-size: 14px;">Check out our "Guide to Backage Tours" and other helpful resources in the Office Experience Folder.
-														<br><br>
-														G Drive > NY Office > Resources > Office Experience</div>
+														<div style="text-align: right; font-size: 14px;">Contents here...</div>
 													</td>
 												</tr>
 											</table>
 										</td>
-										<td width="170" height="170" class="input thumb" style="background-color: #eee;">
-											<img src="" width="170">
+										<td width="170" valign="top" height="170" class="input thumb">
+											<img src="img/upload-img.png" width="170">
 										</td>
 										<td width="20" style="border-right: 1px solid #000;">&nbsp;</td>
 									</tr>
@@ -403,11 +528,27 @@
 						Template 4
 					</table>
 				</div>
-				<div class="button export">Export</div>
+				<div id="getHistories" class="button retrieve">Retrieve Data</div>
+				<div id="save" class="button save">Save</div>
+				<div id="export" class="button export">Export</div>
 			</div>
 		</div>
 		<div class="editor-popup"></div>
 		<div class="upload-img-reminder"><span>Drag and drop your image to upload</span></div>
+		<div class="loading-overlay">
+			<div class="loading">
+				<div class="sk-folding-cube">
+				  <div class="sk-cube1 sk-cube"></div>
+				  <div class="sk-cube2 sk-cube"></div>
+				  <div class="sk-cube4 sk-cube"></div>
+				  <div class="sk-cube3 sk-cube"></div>
+				</div>
+				<p>LOADING...</p>
+			</div>
+			<div class="message success">
+				<span>Save Successful!</span>
+			</div>
+		</div>
 	</div>
 
 	<div class="modal fade" id="img-linking-modal" tabindex="-1" role="dialog">
@@ -429,6 +570,7 @@
 			      		<ul>
 			      			<li data-value="web">Webpage</li>
 			      			<li data-value="file">Files</li>
+			      			<li data-value="email">Email</li>
 			      		</ul>
 			      	</div>
 			      </div>
@@ -449,6 +591,50 @@
 	    </div>
 	  </div>
 	</div>
+
+	<div class="modal fade wide" id="user-histories" tabindex="-1" role="dialog">
+		<div class="modal-dialog" role="document">
+			<div class="modal-content">
+				<div class="modal-body">
+					<div class="closeModal" data-dismiss="modal" aria-label="Close"><div></div></div>
+					<h4 class="modal-title">Histories <div class="current-user"><span></span> <a id="logout" href="" title="Log Out">(Not <span></span>? Log out here.)</a></div></h4>
+					<div class="histories-lists">
+						<div class="date">
+							<span>2017117</span>
+							<ul>
+							</ul>
+						</div>
+						<div class="date">
+							<span>2017116</span>
+							<ul>
+								<li>
+									<div class="card"><a href="#">Template 4</a></div>
+								</li>
+							</ul>
+						</div>
+					</div>
+					<div class="loading">
+						<div class="sk-folding-cube">
+						  <div class="sk-cube1 sk-cube"></div>
+						  <div class="sk-cube2 sk-cube"></div>
+						  <div class="sk-cube4 sk-cube"></div>
+						  <div class="sk-cube3 sk-cube"></div>
+						</div>
+						<p>LOADING...</p>
+					</div>
+				</div>
+			</div>
+			<div class="history-preview">
+				<div class="closePreview"><div></div></div>
+				<div class="title">History Preview - <span></span></div>
+				<div class="preview"></div>
+				<div class="actions">
+					<div class="button outlined closePreview">Cancel</div>
+					<div class="primary-btn select-history">Select</div>
+				</div>
+			</div>
+		</div>
+	</div>
 </body>
 </html>
 
@@ -459,8 +645,10 @@
 <script src="js/vendors/dropzone/dist/min/dropzone.min.js"></script>
 <script src="js/vendors/summernote/dist/summernote.min.js"></script>
 <script src="js/vendors/FileDrop/jQuery.FileDrop.js"></script>
+<script src="js/vendors/moment/min/moment.min.js"></script>
 <script src="https://www.gstatic.com/firebasejs/4.6.0/firebase.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/cropper/3.1.3/cropper.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
 <!-- <script src="js/vendors/file-saver/FileSaver.min.js"></script> -->
 <!-- <script src="http://danml.com/js/download2.js"></script> -->
 

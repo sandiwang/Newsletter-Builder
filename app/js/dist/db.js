@@ -23,19 +23,72 @@ var db = firebase.database();
 var storageRef = firebase.storage().ref();
 var imagesRef = storageRef.child('images');
 
+var google = new firebase.auth.GoogleAuthProvider();
+var facebook = new firebase.auth.FacebookAuthProvider();
+
+firebase.auth().onAuthStateChanged(function (user) {
+	if (user) {
+		var displayName = user.displayName,
+		    id = user.uid,
+		    email = user.email,
+		    photoURL = user.photoURL;
+		console.log(user);
+
+		$('.login-wrapper').hide();
+		$('.main').css('opacity', 1);
+		createUser(id, displayName);
+		buildUserProfile(displayName, email, photoURL);
+	} else {
+		$('.login-wrapper').show();
+		console.log('logged out');
+	}
+});
+
+function loginGoogle() {
+	firebase.auth().signInWithRedirect(google).then(function (result) {
+		return result.user;
+	}).then(function (user) {
+		return createUser(user.uid, user.displayName);
+	}).catch(function (error) {
+		var errorCode = error.code;
+		var errorMessage = error.message;
+		var email = error.email;
+
+		console.log("Cannot Login: " + email + " - " + errorCode + ": " + errorMessage);
+	});
+}
+
+function loginFB() {
+	firebase.auth().signInWithRedirect(facebook).catch(function (error) {
+		var errorCode = error.code;
+		var errorMessage = error.message;
+		var email = error.email;
+
+		console.log("Cannot Login: " + email + " - " + errorCode + ": " + errorMessage);
+	});
+}
+
+function logout() {
+	firebase.auth().signOut().then(function () {
+		console.log('log out successful');
+	}).catch(function (error) {
+		console.log("Error when logging out: " + error);
+	});
+}
+
 function getCurrentUserID() {
-	return Cookies.getJSON().name.userID;
+	return firebase.auth().currentUser.uid;
 }
 
 function createUser(userId, username) {
-	db.ref("Users/" + userId).set({
+	return db.ref("Users/" + userId).set({
 		id: userId,
 		username: username
 	}).then(function () {
 		console.log('successfully create user at database');
 		loginSuccess();
 	}, function (err) {
-		console.log("Error: " + err);
+		console.log("Error when creating user: " + err);
 	});
 }
 
@@ -63,13 +116,13 @@ function saveContent(userId, username, template, contents) {
 		console.log('Successfully saved contents to database!');
 		return saveContentSuccess();
 	}, function (err) {
-		console.log('Error:', err);
+		console.log('Error when saving contents:', err);
 	});
 }
 
-function getUserHistory(userId) {
+function getUserHistory(userID) {
 	// list comes back in a ascending order: old to new
-	var userRef = db.ref("/Users/" + userId + "/histories").orderByKey();
+	var userRef = db.ref("/Users/" + userID + "/histories").orderByKey();
 
 	return userRef.once('value').then(function (snapshot) {
 		return snapshot.val();
@@ -89,6 +142,17 @@ function updateImgSrc(url) {
 
 	$('.thumb.img-cropping').removeClass('img-cropping').find('.crop-btns').remove();
 	return $('.thumb.active').removeClass('active');
+}
+
+function deleteUserHistory(userID, dataID, date) {
+	var dataRef = db.ref("Users/" + userID + "/histories/" + date + "/" + dataID);
+
+	return dataRef.remove().then(function () {
+		console.log('Successfully delete history.');
+		removeHistoryCard(dataID);
+	}).catch(function (err) {
+		console.log('Error when deleting history:', err);
+	});
 }
 
 function uploadImg(data) {

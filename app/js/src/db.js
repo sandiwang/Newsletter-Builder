@@ -21,19 +21,72 @@ let db = firebase.database();
 let storageRef = firebase.storage().ref();
 let imagesRef = storageRef.child('images');
 
+let google = new firebase.auth.GoogleAuthProvider();
+let facebook = new firebase.auth.FacebookAuthProvider();
+
+firebase.auth().onAuthStateChanged((user) => {
+  if (user) {
+    let displayName = user.displayName,
+    		id = user.uid,
+        email = user.email,
+        photoURL = user.photoURL;
+    console.log(user);
+    
+    $('.login-wrapper').hide();
+  	$('.main').css('opacity', 1);
+  	createUser(id, displayName);
+  	buildUserProfile(displayName, email, photoURL);
+  } else {
+    $('.login-wrapper').show();
+    console.log('logged out');
+  }
+});
+
+function loginGoogle() {
+	firebase.auth().signInWithRedirect(google)
+	.then((result) => result.user)
+	.then((user) => createUser(user.uid, user.displayName))
+	.catch((error) => {
+	  let errorCode = error.code;
+	  let errorMessage = error.message;
+	  let email = error.email;
+
+	  console.log(`Cannot Login: ${email} - ${errorCode}: ${errorMessage}`);
+	});
+}
+
+function loginFB() {
+	firebase.auth().signInWithRedirect(facebook)
+	.catch((error) => {
+	  let errorCode = error.code;
+	  let errorMessage = error.message;
+	  let email = error.email;
+
+	  console.log(`Cannot Login: ${email} - ${errorCode}: ${errorMessage}`);
+	});
+}
+
+function logout() {
+	firebase.auth().signOut().then(() => {
+	  console.log('log out successful');
+	}).catch(function(error) {
+	  console.log(`Error when logging out: ${error}`);
+	});
+}
+
 function getCurrentUserID() {
-	return Cookies.getJSON().name.userID;
+	return firebase.auth().currentUser.uid;
 }
 
 function createUser(userId, username) {
-	db.ref(`Users/${userId}`).set({
+	return db.ref(`Users/${userId}`).set({
 		id: userId,
 		username
 	}).then(() => {
 		console.log('successfully create user at database');
 		loginSuccess();
 	}, (err) => {
-		console.log(`Error: ${err}`);
+		console.log(`Error when creating user: ${err}`);
 	});
 }
 
@@ -61,19 +114,19 @@ function saveContent(userId, username, template, contents) {
 		console.log('Successfully saved contents to database!');
 		return saveContentSuccess();
 	}, (err) => {
-		console.log('Error:', err);
+		console.log('Error when saving contents:', err);
 	});	
 }
 
-function getUserHistory(userId) {
+function getUserHistory(userID) {
 	// list comes back in a ascending order: old to new
-	let userRef = db.ref(`/Users/${userId}/histories`).orderByKey();
+	let userRef = db.ref(`/Users/${userID}/histories`).orderByKey();
 
 	return userRef
-					.once('value')
-					.then((snapshot) => snapshot.val(), 
-								(err) => conosle.log('Error when retrieving data:', err))
-					.then((data) => displayHistories(data));
+		.once('value')
+		.then((snapshot) => snapshot.val(), 
+					(err) => conosle.log('Error when retrieving data:', err))
+		.then((data) => displayHistories(data));
 }
 
 function updateImgSrc(url) {
@@ -85,6 +138,19 @@ function updateImgSrc(url) {
 	
 	$('.thumb.img-cropping').removeClass('img-cropping').find('.crop-btns').remove();
 	return $('.thumb.active').removeClass('active');
+}
+
+function deleteUserHistory(userID, dataID, date) {
+	let dataRef = db.ref(`Users/${userID}/histories/${date}/${dataID}`);
+
+	return dataRef.remove()
+		.then(() => {
+			console.log('Successfully delete history.')
+			removeHistoryCard(dataID);
+		})
+		.catch((err) => {
+			console.log('Error when deleting history:', err);
+		});
 }
 
 function uploadImg(data) {
