@@ -118,7 +118,8 @@ function cropImg(e){
 
 	let $img = $('.input.thumb.img-cropping img'),
 			rounded = $img.parent().hasClass('crop-rounded') ? 1 : 0,
-			imgData;
+			imgData,
+			uploadingImg;
 	//imgDataBase64 = $img.cropper('getCroppedCanvas') === null ? null : $img.cropper('getCroppedCanvas').toDataURL();
 
 	if(imgCroppedData.data === null) {
@@ -130,15 +131,19 @@ function cropImg(e){
 		imgData = getRoundedCanvas(imgCroppedData.data);
 
 		$img.attr('data-img', imgData.toDataURL()).attr('src', imgData.toDataURL());
-		uploadImg($.removeUriScheme(imgData.toDataURL()));
+		uploadingImg = uploadImg($.removeUriScheme(imgData.toDataURL()));
 
 		$img.parent().removeClass('crop-rounded')
 	} else {
 		imgData = $.removeUriScheme(imgCroppedData.dataURL);
 
 		$img.attr('data-img', imgCroppedData.dataURL).attr('src', imgCroppedData.dataURL);
-		uploadImg(imgData)
+		uploadingImg = uploadImg(imgData)
 	}
+
+	uploadingImg.then((result) => {
+		if(result) doAutosave();
+	});
 
 	//$img.parent().removeClass('img-cropping').find('.crop-btns').remove();
 	$img.cropper('destroy');
@@ -213,9 +218,19 @@ function setImgLink() {
 
 	try {
 		if($targetImgContainer.find('a').length > 0) {
+			if(type === 'email') {
+				$targetImgContainer.find('a').attr('target', '_self');
+			} else {
+				$targetImgContainer.find('a').attr('target', '_blank');
+			}
+
 			$targetImgContainer.find('a').attr('href', url);
 		} else {
-			$targetImgContainer.find('img').wrap(`<a href="${url}" target="_blank"></a>`);
+			if(type === 'email') {
+				$targetImgContainer.find('img').wrap(`<a href="${url}" target="_self"></a>`);
+			} else {
+				$targetImgContainer.find('img').wrap(`<a href="${url}" target="_blank"></a>`);
+			}
 			$targetImgContainer.find('a').on('click', (e) => {
 				e.preventDefault();
 			});
@@ -224,6 +239,7 @@ function setImgLink() {
 		$modal.find('.tab.message.success [data-id="link-added"]').show();
 		$modal.find('.tab.message.success').addClass('active');
 		setTimeout(() => $modal.modal('hide') , hideModalAfterDuration);
+		doAutosave();
 	}
 	catch (err) {
 		console.log(`Cannot add image link: ${err}`);
@@ -253,6 +269,7 @@ function removeImgLink() {
 		$modal.find('.tab.message.success [data-id="link-removed"]').show();
 		$modal.find('.tab.message.success').addClass('active');
 		setTimeout(() => $modal.modal('hide') , hideModalAfterDuration);
+		doAutosave();
 	}
 	catch (err) {
 		console.log(`Cannot remove image links: ${err}`);

@@ -32,11 +32,13 @@ firebase.auth().onAuthStateChanged(function (user) {
 		    id = user.uid,
 		    email = user.email,
 		    photoURL = user.photoURL;
-		console.log(user);
+		//console.log(user);
 
 		$('.login-wrapper').hide();
 		$('.main').css('opacity', 1);
+
 		createUser(id, displayName);
+
 		buildUserProfile(displayName, email, photoURL);
 	} else {
 		$('.login-wrapper').show();
@@ -81,7 +83,7 @@ function getCurrentUserID() {
 }
 
 function createUser(userId, username) {
-	return db.ref("Users/" + userId).set({
+	return db.ref("Users/" + userId).update({
 		id: userId,
 		username: username
 	}).then(function () {
@@ -92,11 +94,12 @@ function createUser(userId, username) {
 	});
 }
 
-function saveContent(userId, username, template, contents) {
+function saveContent(userId, username, template, contents, autoSave) {
 	var today = moment(),
 	    todayStr = today.format('YYYYMMDD'),
 	    now = today.format('HHmmss'),
-	    timestamp = today.unix();
+	    timestamp = today.unix(),
+	    updates = {};
 	// let newPostKey = db.ref().child('updates').push().key;
 
 	var data = {
@@ -105,18 +108,35 @@ function saveContent(userId, username, template, contents) {
 		uploadDate: todayStr,
 		uploadTime: now,
 		template: template,
-		contents: contents
-	};
+		contents: contents,
+		autoSave: autoSave || 0
 
-	var updates = {};
-	updates["/Updates/" + timestamp] = data;
-	updates["/Users/" + userId + "/histories/" + todayStr + "/" + timestamp] = data;
+		// updates[`/Updates/${timestamp}`] = data;
+	};if (autoSave) {
+		updates["/Users/" + userId + "/histories/autosave/" + todayStr + now] = data;
+	} else {
+		// when user manually saves, we can delete all the autosave data
+		deleteAutosave(userId);
+		updates["/Users/" + userId + "/histories/" + todayStr + "/" + timestamp] = data;
+	}
 
 	return db.ref().update(updates).then(function () {
 		console.log('Successfully saved contents to database!');
 		return saveContentSuccess();
 	}, function (err) {
 		console.log('Error when saving contents:', err);
+	});
+}
+
+function getCurrAutosaveNum(userID) {
+	var userRef = db.ref("/Users/" + userID + "/histories/autosave");
+
+	return userRef.once('value').then(function (snapshot) {
+		if (snapshot.val()) return snapshot.val();else return {};
+	}).then(function (data) {
+		return Object.keys(data).length;
+	}).catch(function (err) {
+		return console.log("Error when getting current autosave record number: " + err);
 	});
 }
 
@@ -155,6 +175,33 @@ function deleteUserHistory(userID, dataID, date) {
 	});
 }
 
+function deleteAutosave(userID, dataID) {
+	var dataRef = db.ref("Users/" + userID + "/histories/autosave"),
+	    removePromise = void 0;
+
+	if (!dataID) {
+		removePromise = dataRef.remove();
+	}
+
+	return removePromise.then(function () {
+		return console.log('Successfully delete autosave');
+	}).catch(function (err) {
+		return console.log("Error when deleting autosave data: " + err);
+	});
+}
+
+function deleteOldestRecord(userID, type) {
+	var id = userID || firebase.auth().currentUser.uid,
+	    dataType = type || 'histories',
+	    oldestDataRef = db.ref("Users/" + userID + "/histories/autosave");
+
+	return oldestDataRef.remove().then(function () {
+		return console.log('successfully removed the oldest autosaved data');
+	}).catch(function (err) {
+		return console.log(err);
+	});
+}
+
 function uploadImg(data) {
 	var imgName = moment().unix(),
 	    userID = getCurrentUserID();
@@ -188,5 +235,8 @@ function uploadImg(data) {
 	return imgRef.putString(data, 'base64').then(function (snapshot) {
 		//console.log('upload function:', snapshot.metadata.downloadURLs[0]);
 		updateImgSrc(snapshot.metadata.downloadURLs[0]);
+		return true;
+	}).catch(function (err) {
+		console.log("Error when uploading iamge: " + err);
 	});
 }

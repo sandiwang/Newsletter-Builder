@@ -30,11 +30,13 @@ firebase.auth().onAuthStateChanged((user) => {
     		id = user.uid,
         email = user.email,
         photoURL = user.photoURL;
-    console.log(user);
+    //console.log(user);
     
     $('.login-wrapper').hide();
   	$('.main').css('opacity', 1);
+  	
   	createUser(id, displayName);
+
   	buildUserProfile(displayName, email, photoURL);
   } else {
     $('.login-wrapper').show();
@@ -79,7 +81,7 @@ function getCurrentUserID() {
 }
 
 function createUser(userId, username) {
-	return db.ref(`Users/${userId}`).set({
+	return db.ref(`Users/${userId}`).update({
 		id: userId,
 		username
 	}).then(() => {
@@ -90,11 +92,12 @@ function createUser(userId, username) {
 	});
 }
 
-function saveContent(userId, username, template, contents) {
+function saveContent(userId, username, template, contents, autoSave) {
 	let today = moment(),
 			todayStr = today.format('YYYYMMDD'),
 			now = today.format('HHmmss'),
-			timestamp = today.unix();
+			timestamp = today.unix(),
+			updates = {};
 	// let newPostKey = db.ref().child('updates').push().key;
 
 	let data = {
@@ -103,12 +106,18 @@ function saveContent(userId, username, template, contents) {
 		uploadDate: todayStr,
 		uploadTime: now,
 		template,
-		contents
+		contents,
+		autoSave: autoSave || 0
 	}
 
-	let updates = {};
-	updates[`/Updates/${timestamp}`] = data;
-	updates[`/Users/${userId}/histories/${todayStr}/${timestamp}`] = data;
+	// updates[`/Updates/${timestamp}`] = data;
+	if(autoSave) {
+		updates[`/Users/${userId}/histories/autosave/${todayStr}${now}`] = data;
+	} else {
+		// when user manually saves, we can delete all the autosave data
+		deleteAutosave(userId);
+		updates[`/Users/${userId}/histories/${todayStr}/${timestamp}`] = data;
+	}
 
 	return db.ref().update(updates).then(() => {
 		console.log('Successfully saved contents to database!');
@@ -116,6 +125,18 @@ function saveContent(userId, username, template, contents) {
 	}, (err) => {
 		console.log('Error when saving contents:', err);
 	});	
+}
+
+function getCurrAutosaveNum(userID) {
+	let userRef = db.ref(`/Users/${userID}/histories/autosave`);
+
+	return userRef.once('value')
+		.then((snapshot) => {
+			if(snapshot.val()) return snapshot.val();
+			else return {};
+		})
+		.then((data) => Object.keys(data).length)
+		.catch((err) => console.log(`Error when getting current autosave record number: ${err}`));
 }
 
 function getUserHistory(userID) {
@@ -153,6 +174,30 @@ function deleteUserHistory(userID, dataID, date) {
 		});
 }
 
+function deleteAutosave(userID, dataID) {
+	let dataRef = db.ref(`Users/${userID}/histories/autosave`),
+			removePromise;
+
+	if(!dataID) {
+		removePromise = dataRef.remove();
+	}
+
+	return removePromise
+		.then(() => console.log('Successfully delete autosave'))
+		.catch((err) => console.log(`Error when deleting autosave data: ${err}`));
+}
+
+function deleteOldestRecord(userID, type) {
+	let id = userID || firebase.auth().currentUser.uid,
+			dataType = type || 'histories',
+			oldestDataRef = db.ref(`Users/${userID}/histories/autosave`);
+
+	return oldestDataRef
+		.remove()
+		.then(() => console.log('successfully removed the oldest autosaved data'))
+		.catch((err) => console.log(err));
+}
+
 function uploadImg(data) {
 	let imgName = moment().unix(),
 			userID = getCurrentUserID();
@@ -183,8 +228,13 @@ function uploadImg(data) {
 	});
 	*/
 
-	return imgRef.putString(data, 'base64').then((snapshot) => {
-		//console.log('upload function:', snapshot.metadata.downloadURLs[0]);
-		updateImgSrc(snapshot.metadata.downloadURLs[0]);
-	});
+	return imgRef.putString(data, 'base64')
+		.then((snapshot) => {
+			//console.log('upload function:', snapshot.metadata.downloadURLs[0]);
+			updateImgSrc(snapshot.metadata.downloadURLs[0]);
+			return true;
+		})
+		.catch((err) => {
+			console.log(`Error when uploading iamge: ${err}`);
+		});
 }

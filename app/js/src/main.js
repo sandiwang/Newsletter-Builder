@@ -59,6 +59,7 @@ let SaveBtn = function (context) {
     	updateContent();
     	TextEditor.hidePopup();
     	$('.input.active').removeClass('active');
+    	doAutosave();
     }
   });
 
@@ -159,8 +160,8 @@ let UserHistories = {
 
 		$('#user-histories .current-user').find('span').html(username);
 
-		for(let list in datas) {
-			let d = moment(list).format('MMMM DD, YYYY - dddd');
+		for(let list in datas) { 
+			let d = list === 'autosave' ? 'Autosave' : moment(list).format('MMMM DD, YYYY - dddd');
 			let $date = $('<div>', {class: 'date'}).append(`<span>${d}</span>`).append('<ul></ul>');
 
 			for(let key in datas[list]) {
@@ -305,6 +306,10 @@ function setLayout() {
 		'margin-left': `${sideBarW}px`,
 		width: `calc(100% - ${sideBarW}px)`
 	});
+
+	$('#user-profile').css({
+		left: `${sideBarW}px`
+	})
 }
 
 function sidebarNavigate(e) {
@@ -312,7 +317,7 @@ function sidebarNavigate(e) {
 
 	let target = $(this).attr('data-target'),
 			current = $('.sidebar .narrow-navs li.active').attr('data-target'),
-			$targetNav = $(`.sidebar .nav.${target}`);
+			$targetNav = $(`.nav.${target}`);
 
 	if (current === undefined) {
 		$(this).addClass('active');
@@ -343,6 +348,46 @@ function hideNav(elem) {
 	elem.animate({
 		left: '-999px'
 	}, 150);
+}
+
+function initFileDrop(elem) {
+	elem.fileDrop({
+		onFileRead: (files) => {
+			let base64data = $.removeUriScheme(files[0].data);
+
+			$('.thumb.active').find('img').attr('src', files[0].data);
+			$('.thumb.active').find('img').attr('img-data', files[0].data);
+
+			let uploadingImg = uploadImg(base64data);
+			uploadingImg.then((result) => {
+				if(result) {
+					doAutosave();
+				}
+			});
+
+			$('.upload-img-reminder').css('left', '-100%');
+		},
+		overClass: 'img-dragging',
+		removeDataUriScheme: true
+	});
+}
+
+function doAutosave() {
+	let userID = getCurrentUserID(),
+			username = getCurrentUsername(),
+			contents = $('.canvas.active').html(),
+			template = $('.templates li.active').attr('data-template'),
+			autoSave = 1,
+			currAutosaveNum = getCurrAutosaveNum(userID);
+	
+	return currAutosaveNum
+		.then((num) => {
+			if(num >= 1) {
+				deleteOldestRecord(userID, 'autosave');
+			}
+			return saveContent(userID, username, template, contents, autoSave);
+		})
+		.catch((err) => console.log(`Error: cannot get number of autosave records: ${err}`));
 }
 
 function getInitial(name) {
@@ -513,12 +558,12 @@ function buildCardOverlay() {
 
 
 function saveContentSuccess() {
-	let $loader = $('.loading-overlay');
+	let $loader = $('.loading-overlay'),
+			userID = getCurrentUserID();
 
 	$loader.find('.loading').hide();
 	$loader.find('.message.success').show();
-	
-	
+
 	setTimeout(() => {
 		$loader.fadeOut(150);
 		$loader.find('.message.success').hide();
@@ -565,19 +610,7 @@ function updateTableCanvas(template, contents) {
 	$canvas.find('.input.thumb').hover(showImgToolOptions, hideImgToolOptions);
 	$canvas.find('.input.thumb').on('click', toggleImgUploadUI);
 	$canvas.find('.input.thumb').each(function(){
-		$(this).fileDrop({
-			onFileRead: (files) => {
-				let base64data = $.removeUriScheme(files[0].data);
-
-				$('.thumb.active').find('img').attr('src', files[0].data);
-				$('.thumb.active').find('img').attr('img-data', files[0].data);
-
-				uploadImg(base64data);
-				$('.upload-img-reminder').css('left', '-100%');
-			},
-			overClass: 'img-dragging',
-			removeDataUriScheme: true
-		});
+		initFileDrop($(this));
 	});
 
 	$canvas.find('.input:not(.thumb)').on('click', toggleEditing);
@@ -642,19 +675,13 @@ function getWeather() {
 }
 
 function filterForecastData(data) {
-	let filteredData = {
-		mon: {},
-		tue: {},
-		wed: {},
-		thr: {},
-		fri: {},
-		sat: {},
-		sun: {}
-	};
+	// assume data comes in in order
+	let filteredData = {};
 
 	for (let daily of data) {
 		//console.log(daily);
 		let day = convertDateToDay(daily.Date).toLowerCase();
+		filteredData[day] = {};
 
 		filteredData[day].date = daily.Date;
 		filteredData[day].day = convertDateToDay(daily.Date);
@@ -758,6 +785,28 @@ function toggleUserProfile() {
 	$profile.toggleClass('active');
 }
 
+function toggleUserActions() {
+	let action = $(this).attr('action');
+
+	if($(this).hasClass('active')) {
+		$(this).removeClass('active');
+	} else {
+		$('#user-profile li.active').removeClass('active');
+		$(this).addClass('active');
+	}
+
+	switch (action) {
+		case 'logout': 
+			doLogout();
+			break;
+		case 'profile':
+			console.log('profile');
+			break;
+		default:
+			console.log('Error: action is not in the list');
+	}
+}
+
 function selectImgLinkType() {
 	let $wrapper = $(this).parents('.single-select'),
 			$input = $wrapper.find('input'),
@@ -779,7 +828,7 @@ function loginSuccess() {
 }
 
 function doLogout(e) {
-	e.preventDefault();
+	if(e) e.preventDefault();
 	logout();
 	location.reload();
 }
@@ -797,8 +846,8 @@ $(function(){
 		console.lot(err);
 	});
 	*/
-
 	$('#user-avartar').on('click', toggleUserProfile);
+	$('#user-profile li').on('click', toggleUserActions);
 	$('#login-google').on('click', loginGoogle);
 	$('#login-facebook').on('click', loginFB);
 	$('.sidebar .narrow-navs li').on('click', sidebarNavigate);
@@ -806,20 +855,7 @@ $(function(){
 	$('.input.thumb').each(function(){
 		//let $tools = createToolPopup();
 		//$(this).append($tools);
-
-		$(this).fileDrop({
-			onFileRead: (files) => {
-				let base64data = $.removeUriScheme(files[0].data);
-
-				$('.thumb.active').find('img').attr('src', files[0].data);
-				$('.thumb.active').find('img').attr('img-data', files[0].data);
-
-				uploadImg(base64data);
-				$('.upload-img-reminder').css('left', '-100%');
-			},
-			overClass: 'img-dragging',
-			removeDataUriScheme: true
-		});
+		initFileDrop($(this));
 	});
 
 	$('.single-input input').on('keyup', checkInputValue);

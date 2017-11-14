@@ -590,7 +590,7 @@ html, body {
     .narrow-navs li.active {
       background-color: #f2b632; }
   .narrow-navs a {
-    color: #fff;
+    color: rgba(255, 255, 255, 0.8);
     transition: 0.3s all;
     padding: 20px;
     display: block; }
@@ -599,26 +599,29 @@ html, body {
   font-size: 1rem;
   position: absolute;
   bottom: 0;
-  z-index: 0;
-  width: 300px;
-  padding: 10px 10px 10px 80px;
-  height: auto;
-  left: -100%;
-  border: 1px solid #b5b5b7;
+  z-index: 4;
+  margin-left: -999px;
   border-radius: 4px;
   background-color: #fff;
   box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
-  opacity: 0.75;
-  transform: translateY(-50%);
-  transition: 0.3s all;
-  transition-timing-function: cubic-bezier(0.31, 0.96, 0.66, 0.95); }
+  transition: 0.3s all; }
   #user-profile.active {
-    left: 0px;
-    z-index: 0;
+    margin-left: 0px;
     opacity: 1; }
   #user-profile ul {
     padding-left: 0;
-    list-style: none; }
+    list-style: none;
+    margin-bottom: 0; }
+  #user-profile li {
+    letter-spacing: 1px;
+    padding: 10px 30px;
+    cursor: pointer;
+    transition: 0.3s all; }
+    #user-profile li:hover {
+      color: #f2b632; }
+    #user-profile li.active {
+      background-color: #f2b632;
+      color: #fff; }
 
 .nav {
   position: absolute;
@@ -627,7 +630,7 @@ html, body {
   width: 300px;
   top: 0;
   height: 100%;
-  z-index: 4;
+  z-index: 3;
   box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
   left: -999px; }
   .nav li {
@@ -826,7 +829,8 @@ html, body {
   width: 100%;
   height: 100%;
   background-color: rgba(131, 131, 134, 0.8);
-  display: none; }
+  display: none;
+  z-index: 99; }
   .loading-overlay .loading, .loading-overlay .message.success {
     position: relative;
     margin: 0;
