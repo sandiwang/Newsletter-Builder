@@ -82,7 +82,7 @@
 					</div>
 				</li>
 			</ul>
-			<div id="user-profile">
+			<div id="user-profile" tabindex="-1">
 				<ul>
 					<li action="profile">Profile</li>
 					<li action="logout">Logout</li>
@@ -648,6 +648,31 @@
 				</div>
 			</div>
 		</div>
+	</div>
+
+	<div class="modal fade" id="user-profile-modal" tabindex="-1" role="dialog">
+	  <div class="modal-dialog" role="document">
+	    <div class="modal-content">
+	      <div class="modal-body">
+	      	<div class="closeModal" data-dismiss="modal" aria-label="Close"><div></div></div>
+		      
+		      <div class="user-infos main">  
+						<div class="user-photo"><img src=""></div>
+		      	<h4 class="modal-title">User Name</h4>
+		      	<div class="logout"><a href="" title="Log out">Not <span></span>?<br>Log out here</a></div>
+		      </div>
+		      <ul class="user-infos detail">
+		      	<li><div class="label">Email:</div><div class="user-email"></div></li>
+		      </ul>
+	      </div>
+	      <!--
+	      <div class="modal-footer">
+	      	<button id="removeImgLink" type="button" class="primary-btn danger">Delete Link</button>
+	        <button id="setImgLink" type="button" class="primary-btn">Save</button>
+	      </div>
+	    	-->
+	    </div>
+	  </div>
 	</div>
 </body>
 </html>

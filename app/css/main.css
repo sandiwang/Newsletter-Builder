@@ -63,7 +63,8 @@
   letter-spacing: 0.5px; }
 
 .modal-content {
-  border-radius: 0; }
+  border-radius: 0;
+  box-shadow: 0 4px 5px 0 rgba(0, 0, 0, 0.14), 0 1px 10px 0 rgba(0, 0, 0, 0.12), 0 2px 4px -1px rgba(0, 0, 0, 0.3); }
 
 .modal-footer {
   border-top: 0; }
@@ -282,6 +283,50 @@
     font-size: 1.143rem;
     text-transform: uppercase;
     letter-spacing: 1px; }
+
+#user-profile-modal {
+  font-size: 0; }
+  #user-profile-modal .modal-body {
+    padding: 30px 15px; }
+  #user-profile-modal .user-infos {
+    font-size: 1rem;
+    display: inline-block;
+    vertical-align: top;
+    padding: 30px 20px;
+    list-style: none;
+    margin-bottom: 0; }
+  #user-profile-modal .user-infos.main {
+    width: 40%;
+    text-align: center;
+    border-right: 1px solid #c9c9ca; }
+    #user-profile-modal .user-infos.main img {
+      display: inline-block;
+      margin: 0 0 10px;
+      max-width: 100%;
+      border-radius: 100%; }
+  #user-profile-modal .user-infos.detail {
+    width: 60%; }
+  #user-profile-modal .modal-title {
+    margin: 10px 0 20px;
+    font-size: 1.571rem; }
+  #user-profile-modal li > div {
+    display: inline-block;
+    font-size: 1.143rem;
+    letter-spacing: 1px; }
+  #user-profile-modal .label {
+    color: inherit;
+    padding: 0;
+    margin-right: 10px;
+    font-weight: 400;
+    border-radius: 0; }
+  #user-profile-modal .logout {
+    font-size: 0.8571rem; }
+    #user-profile-modal .logout a {
+      color: rgba(131, 131, 134, 0.8);
+      transition: 0.3s all; }
+      #user-profile-modal .logout a:hover {
+        color: #0091ea;
+        text-decoration: none; }
 
 @keyframes slidein {
   from {
@@ -602,6 +647,7 @@ html, body {
   z-index: 4;
   margin-left: -999px;
   border-radius: 4px;
+  outline: 0;
   background-color: #fff;
   box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
   transition: 0.3s all; }

@@ -399,7 +399,12 @@ function getInitial(name) {
 
 function buildUserProfile(name, email, photo) {
 	var $avartar = $('#user-avartar'),
-	    $userPhoto = $avartar.find('img');
+	    $userPhoto = $avartar.find('img'),
+	    $profileModal = $('#user-profile-modal');
+
+	$profileModal.find('.modal-title').html(name);
+	$profileModal.find('.logout span').html(name);
+	$profileModal.find('.user-email').html(email);
 
 	if (!photo) {
 		$userPhoto.hide();
@@ -407,6 +412,7 @@ function buildUserProfile(name, email, photo) {
 		return;
 	}
 
+	$profileModal.find('.user-photo img').attr('src', photo);
 	$userPhoto.attr('src', photo).show();
 }
 
@@ -807,6 +813,14 @@ function toggleUserProfile() {
 	var $profile = $('#user-profile'),
 	    $avartar = $('#user-avartar');
 
+	if ($profile.hasClass('active')) {
+		$profile.find('li.active').removeClass('active');
+		$profile.off('blur', toggleUserProfile);
+	} else {
+		$profile.focus();
+		$profile.on('blur', toggleUserProfile);
+	}
+
 	$avartar.toggleClass('active');
 	$profile.toggleClass('active');
 }
@@ -826,11 +840,18 @@ function toggleUserActions() {
 			doLogout();
 			break;
 		case 'profile':
+			showUserProfileModal();
 			console.log('profile');
 			break;
 		default:
 			console.log('Error: action is not in the list');
 	}
+}
+
+function showUserProfileModal() {
+	var $modal = $('#user-profile-modal');
+
+	$modal.modal('show');
 }
 
 function selectImgLinkType() {
@@ -911,7 +932,7 @@ $(function () {
 	$('#user-histories .history-preview .closePreview').on('click', closeHistoryPreview);
 	$('#user-histories .history-preview .select-history').on('click', UserHistories.select);
 
-	$('#logout').on('click', doLogout);
+	$('#logout, .logout').on('click', doLogout);
 
 	$(window).on('resize', function () {
 		setLoaderHeight();

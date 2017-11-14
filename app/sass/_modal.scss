@@ -101,6 +101,7 @@ $closeSize: 20px;
 
 .modal-content{
 	border-radius: 0;
+	box-shadow: $dropshadow-2;
 }
 
 .modal-footer{
@@ -391,7 +392,73 @@ $closeSize: 20px;
 			letter-spacing: 1px;
 		}
 	}
+}
 
+#user-profile-modal{
+	font-size: 0;
+
+	.modal-body{
+		padding: 30px 15px;
+	}
+
+	.user-infos{
+		font-size: 1rem;
+		display: inline-block;
+		vertical-align: top;
+		padding: 30px 20px;
+		list-style: none;
+		margin-bottom: 0;
+	}
+
+	.user-infos.main{
+		width: 40%;
+		text-align: center;
+		border-right: 1px solid $lightgrey;
+
+		img{
+			display: inline-block;
+			margin: 0 0 10px;
+			max-width: 100%;
+			border-radius: 100%;
+		}
+	}
+
+	.user-infos.detail{
+		width: 60%;
+	}
+
+	.modal-title{
+		margin: 10px 0 20px;
+		font-size: $font22;
+	}
+
+	li > div{
+		display: inline-block;
+		font-size: $font16;
+		letter-spacing: 1px;
+	}
+
+	.label{
+		color: inherit;
+		padding: 0;
+		margin-right: 10px;
+		font-weight: 400;
+		border-radius: 0;
+	}
+
+	.logout{
+		font-size: $font12;
+
+		a{
+			color: rgba($darkgrey, 0.8);
+			transition: 0.3s all;
+
+			&:hover{
+				color: $blue;
+				text-decoration: none;
+			}
+		}
+	}
 }
 
 
