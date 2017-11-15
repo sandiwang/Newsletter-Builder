@@ -306,10 +306,6 @@ function setLayout() {
 		'margin-left': `${sideBarW}px`,
 		width: `calc(100% - ${sideBarW}px)`
 	});
-
-	$('#user-profile').css({
-		left: `${sideBarW}px`
-	})
 }
 
 function sidebarNavigate(e) {
@@ -395,14 +391,19 @@ function getInitial(name) {
 	return words[1][0] + words[0][0];
 }
 
-function buildUserProfile(name, email, photo) {
+function buildUserProfile(user) {
 	let $avartar = $('#user-avartar'),
 			$userPhoto = $avartar.find('img'),
-			$profileModal = $('#user-profile-modal');
+			$profileModal = $('#user-profile-modal'),
+			name = user.displayName,
+			email = user.email,
+			photo = user.photoURL,
+			provider = user.providerData[0].providerId;
 
 	$profileModal.find('.modal-title').html(name);
 	$profileModal.find('.logout span').html(name);
 	$profileModal.find('.user-email').html(email);
+	$profileModal.find('.user-provider').html(provider);
 
 	if(!photo) {
 		$userPhoto.hide();
@@ -783,20 +784,42 @@ function toggleSelectDropdown() {
 	$wrapper.toggleClass('active');
 }
 
-function toggleUserProfile() {
+function toggleUserProfile(e) {
 	let $profile = $('#user-profile'),
 			$avartar = $('#user-avartar');
 
-	if($profile.hasClass('active')) {
-		$profile.find('li.active').removeClass('active');
-		$profile.off('blur', toggleUserProfile);
-	} else {
-		$profile.focus();
-		$profile.on('blur', toggleUserProfile);
-	}
+	if(e) e.preventDefault();
 
-	$avartar.toggleClass('active');
-	$profile.toggleClass('active');
+	if(!$profile.hasClass('active')) {
+		$profile.focus();
+		showUserProfile();
+	} else {
+		closeUserProfile();
+	}
+}
+
+function closeUserProfile() {
+	let $profile = $('#user-profile'),
+			$avartar = $('#user-avartar');
+
+	$profile.removeClass('active').find('li.active').removeClass('active');
+	$avartar.removeClass('active');
+	$('#user-profile').css({
+		left: `-999px`
+	});
+}
+
+function showUserProfile() {
+	let $profile = $('#user-profile'),
+			$avartar = $('#user-avartar'),
+			sideBarW = $('.sidebar').outerWidth();
+
+	$profile.addClass('active').focus();
+	$avartar.addClass('active');
+
+	$('#user-profile').css({
+		left: `${sideBarW}px`
+	});
 }
 
 function toggleUserActions() {
@@ -815,7 +838,6 @@ function toggleUserActions() {
 			break;
 		case 'profile':
 			showUserProfileModal();
-			console.log('profile');
 			break;
 		default:
 			console.log('Error: action is not in the list');
@@ -867,7 +889,8 @@ $(function(){
 		console.lot(err);
 	});
 	*/
-	$('#user-avartar').on('click', toggleUserProfile);
+	$('#user-avartar').on('mousedown', toggleUserProfile);
+	$('#user-profile').on('blur', closeUserProfile);
 	$('#user-profile li').on('click', toggleUserActions);
 	$('#login-google').on('click', loginGoogle);
 	$('#login-facebook').on('click', loginFB);

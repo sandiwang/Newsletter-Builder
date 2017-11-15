@@ -294,14 +294,20 @@
     vertical-align: top;
     padding: 30px 20px;
     list-style: none;
-    margin-bottom: 0; }
+    margin-bottom: 0;
+    position: relative; }
   #user-profile-modal .user-infos.main {
     width: 40%;
     text-align: center;
     border-right: 1px solid #c9c9ca; }
+    #user-profile-modal .user-infos.main > div > div {
+      display: inline-block;
+      padding: 5px;
+      border-radius: 100%;
+      border: 1px solid #c9c9ca;
+      margin-bottom: 10px; }
     #user-profile-modal .user-infos.main img {
       display: inline-block;
-      margin: 0 0 10px;
       max-width: 100%;
       border-radius: 100%; }
   #user-profile-modal .user-infos.detail {
@@ -309,6 +315,8 @@
   #user-profile-modal .modal-title {
     margin: 10px 0 20px;
     font-size: 1.571rem; }
+  #user-profile-modal li {
+    padding: 5px 0; }
   #user-profile-modal li > div {
     display: inline-block;
     font-size: 1.143rem;
@@ -320,7 +328,12 @@
     font-weight: 400;
     border-radius: 0; }
   #user-profile-modal .logout {
-    font-size: 0.8571rem; }
+    font-size: 0.8571rem;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    line-height: 1rem; }
     #user-profile-modal .logout a {
       color: rgba(131, 131, 134, 0.8);
       transition: 0.3s all; }

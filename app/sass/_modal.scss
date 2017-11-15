@@ -408,6 +408,7 @@ $closeSize: 20px;
 		padding: 30px 20px;
 		list-style: none;
 		margin-bottom: 0;
+		position: relative;
 	}
 
 	.user-infos.main{
@@ -415,9 +416,17 @@ $closeSize: 20px;
 		text-align: center;
 		border-right: 1px solid $lightgrey;
 
+		> div > div{
+			display: inline-block;
+			padding: 5px;
+			border-radius: 100%;
+			border: 1px solid $lightgrey;
+			margin-bottom: 10px;
+		}
+
 		img{
 			display: inline-block;
-			margin: 0 0 10px;
+			//margin: 0 0 10px;
 			max-width: 100%;
 			border-radius: 100%;
 		}
@@ -430,6 +439,10 @@ $closeSize: 20px;
 	.modal-title{
 		margin: 10px 0 20px;
 		font-size: $font22;
+	}
+
+	li{
+		padding: 5px 0;
 	}
 
 	li > div{
@@ -448,6 +461,11 @@ $closeSize: 20px;
 
 	.logout{
 		font-size: $font12;
+		position: absolute;
+		bottom: 0;
+		left: 0;
+		right: 0;
+		line-height: 1rem;
 
 		a{
 			color: rgba($darkgrey, 0.8);

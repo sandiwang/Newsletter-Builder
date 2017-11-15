@@ -30,14 +30,13 @@ firebase.auth().onAuthStateChanged((user) => {
     		id = user.uid,
         email = user.email,
         photoURL = user.photoURL;
-    //console.log(user);
+    console.log(user);
     
     $('.login-wrapper').hide();
   	$('.main').css('opacity', 1);
   	
+  	buildUserProfile(user);
   	createUser(id, displayName);
-
-  	buildUserProfile(displayName, email, photoURL);
   } else {
     $('.login-wrapper').show();
     console.log('logged out');
