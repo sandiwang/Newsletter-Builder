@@ -24,21 +24,23 @@ var weatherConfig = {
 		newyork: 349727
 	},
 	icons: {
-		sunny: 'weather_icon-01.png',
-		partlySunny: 'weather_icon-17.png',
-		cloudy: 'weather_icon-16.png',
+		sunny: 'sunny.png',
+		partlySunny: 'mostly-sunny.png',
+		mostlyCloudy: 'mostly-cloudy.png',
+		cloudy: 'cloudy.png',
 		fog: 'weather_icon-39.png',
-		showers: 'weather_icon-19.png',
-		sunnyShowers: 'weather_icon-20.png',
-		rain: 'weather_icon-36.png',
-		tStorm: 'weather_icon-28.png',
-		flurry: 'weather_icon-25.png',
-		sunnyFlurry: 'weather_icon-26.png',
-		snow: 'weather_icon-31.png',
-		sleet: 'weather_icon-22.png',
-		windy: 'weather_icon-57.png',
-		hot: 'weather_icon-65.png',
-		cold: 'weather_icon-62.png'
+		showers: 'shower.png',
+		sunnyShowers: 'sunny-shower.png',
+		rain: 'rain.png',
+		tStorm: 'tstorm.png',
+		flurry: 'snow.png',
+		sunnyFlurry: 'snow.png',
+		snow: 'snow.png',
+		sleet: 'snow.png',
+		rainSnow: 'rain-snow.png',
+		windy: 'windy.png',
+		hot: 'hot.png',
+		cold: 'cold.png'
 	}
 };
 
@@ -337,7 +339,7 @@ function showNav(elem) {
 
 	elem.animate({
 		left: sidebarW + 'px'
-	}, 200);
+	}, 200).focus();
 }
 
 function hideNav(elem) {
@@ -770,37 +772,39 @@ function getWeatherIcon(iconNum) {
 
 	if (num === 1 || num === 2) {
 		path += weatherConfig.icons.sunny;
-	} else if (num >= 3 || num <= 5) {
+	} else if (num >= 3 && num <= 4) {
 		path += weatherConfig.icons.partlySunny;
-	} else if (num >= 6 || num <= 8) {
+	} else if (num >= 5 && num <= 6) {
+		path += weatherConfig.icons.mostlyCloudy;
+	} else if (num >= 6 && num <= 8) {
 		path += weatherConfig.icons.cloudy;
 	} else if (num === 11) {
 		path += weatherConfig.icons.fog;
-	} else if (num >= 12 || num <= 13) {
+	} else if (num >= 12 && num <= 13 || num === 39 || num === 40) {
 		path += weatherConfig.icons.showers;
 	} else if (num === 14) {
 		path += weatherConfig.icons.sunnyShowers;
-	} else if (num >= 15 || num <= 17) {
+	} else if (num >= 15 && num <= 17) {
 		path += weatherConfig.icons.tStorm;
 	} else if (num === 18) {
 		path += weatherConfig.icons.rain;
-	} else if (num >= 19 || num <= 20) {
+	} else if (num >= 19 && num <= 20) {
 		path += weatherConfig.icons.flurry;
 	} else if (num === 21) {
 		path += weatherConfig.icons.sunnyFlurry;
-	} else if (num >= 22 || num <= 23) {
+	} else if (num >= 22 && num <= 23) {
 		path += weatherConfig.icons.snow;
-	} else if (num >= 24 || num <= 26) {
+	} else if (num >= 24 && num <= 26) {
 		path += weatherConfig.icons.sleet;
 	} else if (num === 29) {
-		// rain and snow
+		path += weatherConfig.icons.rainSnow;
 	} else if (num === 30) {
 		path += weatherConfig.icons.hot;
 	} else if (num === 31) {
 		path += weatherConfig.icons.cold;
-	} else if (num === 31) {
+	} else if (num === 32) {
 		path += weatherConfig.icons.windy;
-	}
+	} // after 32 is night weather so we'll skip those
 
 	return path;
 }
@@ -905,6 +909,8 @@ function doLogout(e) {
 }
 
 $(function () {
+	var _this2 = this;
+
 	getWeather();
 	setLoaderHeight();
 	setLayout();
@@ -921,7 +927,21 @@ $(function () {
 	$('#user-profile li').on('click', toggleUserActions);
 	$('#login-google').on('click', loginGoogle);
 	$('#login-facebook').on('click', loginFB);
-	$('.sidebar .narrow-navs li').on('click', sidebarNavigate);
+	$('#sidebar-save').on('click', function (e) {
+		e.preventDefault();
+
+		$(_this2).addClass('active');
+		UserHistories.save();
+	});
+	$('.sidebar .narrow-navs li').on('click', function (e) {
+		return e.preventDefault();
+	});
+	$('.sidebar .narrow-navs li').on('mousedown', sidebarNavigate);
+	$('.nav').on('blur', function () {
+		$('.sidebar .narrow-navs li.active').removeClass('active');
+		$(this).addClass('active');
+		hideNav($(this));
+	});
 
 	$('.input.thumb').each(function () {
 		//let $tools = createToolPopup();

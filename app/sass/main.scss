@@ -154,10 +154,43 @@ html, body{
 		}
 	}
 
+	#sidebar-save{
+		position: absolute;
+		bottom: 20px + $userPhoto + 4px;
+		width: $userPhoto + 4px;
+		height: $userPhoto + 4px;
+		border-radius: 100%;
+		text-align: center;
+		box-shadow: $dropshadow;
+		left: 50%;
+		transform: translateX(-50%);
+
+		&.active a{
+			border-color: $yellow;
+			color: $yellow;;
+		}
+
+		a{
+			color: inherit;
+			display: block;
+			line-height: $userPhoto + 2px;
+			font-size: $font26;
+			border-radius: 100%;
+			text-align: center;
+			border: 2px solid rgba(#fff, 0.8);
+			color: rgba(#fff, 0.8);
+			transition: 0.3s all;
+
+			&:hover{
+				border-color: $yellow;
+			}
+		}
+	}
+
 	#user-avartar{
 		position: absolute;
 		bottom: 10px;
-		background-color: #fff;
+		background-color: rgba(#fff, 0.8);
 		box-shadow: $dropshadow;
 		left: 50%;
 		transform: translateX(-50%);
@@ -261,6 +294,7 @@ html, body{
 	height: 100%;
 	z-index: 3;
 	box-shadow: $dropshadow;
+	outline: 0;
 	left: -999px;
 
 	li{
