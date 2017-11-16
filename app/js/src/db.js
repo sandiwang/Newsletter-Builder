@@ -144,9 +144,9 @@ function getUserHistory(userID) {
 
 	return userRef
 		.once('value')
-		.then((snapshot) => snapshot.val(), 
-					(err) => conosle.log('Error when retrieving data:', err))
-		.then((data) => displayHistories(data));
+		.then((snapshot) => snapshot.val())
+		.then((data) => displayHistories(data))
+		.catch((err) => console.log('Error when retrieving data:', err));
 }
 
 function updateImgSrc(url) {

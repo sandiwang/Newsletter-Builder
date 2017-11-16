@@ -145,10 +145,10 @@ function getUserHistory(userID) {
 
 	return userRef.once('value').then(function (snapshot) {
 		return snapshot.val();
-	}, function (err) {
-		return conosle.log('Error when retrieving data:', err);
 	}).then(function (data) {
 		return displayHistories(data);
+	}).catch(function (err) {
+		return console.log('Error when retrieving data:', err);
 	});
 }
 

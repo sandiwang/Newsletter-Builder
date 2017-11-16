@@ -24,21 +24,23 @@ var weatherConfig = {
 		newyork: 349727
 	},
 	icons: {
-		sunny: 'weather_icon-01.png',
-		partlySunny: 'weather_icon-17.png',
-		cloudy: 'weather_icon-16.png',
+		sunny: 'sunny.png',
+		partlySunny: 'mostly-sunny.png',
+		mostlyCloudy: 'mostly-cloudy.png',
+		cloudy: 'cloudy.png',
 		fog: 'weather_icon-39.png',
-		showers: 'weather_icon-19.png',
-		sunnyShowers: 'weather_icon-20.png',
-		rain: 'weather_icon-36.png',
-		tStorm: 'weather_icon-28.png',
-		flurry: 'weather_icon-25.png',
-		sunnyFlurry: 'weather_icon-26.png',
-		snow: 'weather_icon-31.png',
-		sleet: 'weather_icon-22.png',
-		windy: 'weather_icon-57.png',
-		hot: 'weather_icon-65.png',
-		cold: 'weather_icon-62.png'
+		showers: 'shower.png',
+		sunnyShowers: 'sunny-shower.png',
+		rain: 'rain.png',
+		tStorm: 'tstorm.png',
+		flurry: 'snow.png',
+		sunnyFlurry: 'snow.png',
+		snow: 'snow.png',
+		sleet: 'snow.png',
+		rainSnow: 'rain-snow.png',
+		windy: 'windy.png',
+		hot: 'hot.png',
+		cold: 'cold.png'
 	}
 };
 
@@ -52,6 +54,7 @@ var SaveBtn = function SaveBtn(context) {
 			updateContent();
 			TextEditor.hidePopup();
 			$('.input.active').removeClass('active');
+			doAutosave();
 		}
 	});
 
@@ -126,14 +129,14 @@ var TextEditor = {
 
 var UserHistories = {
 	get: function get() {
-		var userId = Cookies.getJSON().name.userID;
+		var userId = getCurrentUserID();
 		$('#user-histories').modal('show');
 
 		return getUserHistory(userId);
 	},
 	save: function save() {
-		var id = Cookies.getJSON().name.userID,
-		    username = Cookies.getJSON().name.username,
+		var id = getCurrentUserID(),
+		    username = getCurrentUsername(),
 		    contents = $('.canvas.active').html(),
 		    template = $('.templates li.active').attr('data-template');
 		//console.log(`${id}: ${contents}`);
@@ -153,7 +156,7 @@ var UserHistories = {
 		$('#user-histories .current-user').find('span').html(username);
 
 		var _loop = function _loop(list) {
-			var d = moment(list).format('MMMM DD, YYYY - dddd');
+			var d = list === 'autosave' ? 'Autosave' : moment(list).format('MMMM DD, YYYY - dddd');
 			var $date = $('<div>', { class: 'date' }).append('<span>' + d + '</span>').append('<ul></ul>');
 
 			var _loop2 = function _loop2(key) {
@@ -223,7 +226,7 @@ var UserHistories = {
 			overlay.classList.add('slideout');
 			setTimeout(function () {
 				return overlay.style.display = 'none';
-			}, 300);
+			}, 250);
 		}
 	},
 	removeHistoryCard: function removeHistoryCard(dataID) {
@@ -291,7 +294,7 @@ function checkInputValue() {
 }
 
 function getCurrentUsername() {
-	return Cookies.getJSON().name.username;
+	return firebase.auth().currentUser.displayName;
 }
 
 function getContentMaxHeight() {
@@ -314,7 +317,7 @@ function sidebarNavigate(e) {
 
 	var target = $(this).attr('data-target'),
 	    current = $('.sidebar .narrow-navs li.active').attr('data-target'),
-	    $targetNav = $('.sidebar .nav.' + target);
+	    $targetNav = $('.nav.' + target);
 
 	if (current === undefined) {
 		$(this).addClass('active');
@@ -336,7 +339,7 @@ function showNav(elem) {
 
 	elem.animate({
 		left: sidebarW + 'px'
-	}, 200);
+	}, 200).focus();
 }
 
 function hideNav(elem) {
@@ -345,6 +348,75 @@ function hideNav(elem) {
 	elem.animate({
 		left: '-999px'
 	}, 150);
+}
+
+function initFileDrop(elem) {
+	elem.fileDrop({
+		onFileRead: function onFileRead(files) {
+			var base64data = $.removeUriScheme(files[0].data);
+
+			$('.thumb.active').find('img').attr('src', files[0].data);
+			$('.thumb.active').find('img').attr('img-data', files[0].data);
+
+			var uploadingImg = uploadImg(base64data);
+			uploadingImg.then(function (result) {
+				if (result) {
+					doAutosave();
+				}
+			});
+
+			$('.upload-img-reminder').css('left', '-100%');
+		},
+		overClass: 'img-dragging',
+		removeDataUriScheme: true
+	});
+}
+
+function doAutosave() {
+	var userID = getCurrentUserID(),
+	    username = getCurrentUsername(),
+	    contents = $('.canvas.active').html(),
+	    template = $('.templates li.active').attr('data-template'),
+	    autoSave = 1,
+	    currAutosaveNum = getCurrAutosaveNum(userID);
+
+	return currAutosaveNum.then(function (num) {
+		if (num >= 1) {
+			deleteOldestRecord(userID, 'autosave');
+		}
+		return saveContent(userID, username, template, contents, autoSave);
+	}).catch(function (err) {
+		return console.log('Error: cannot get number of autosave records: ' + err);
+	});
+}
+
+function getInitial(name) {
+	var words = name.split(' ');
+	return words[1][0] + words[0][0];
+}
+
+function buildUserProfile(user) {
+	var $avartar = $('#user-avartar'),
+	    $userPhoto = $avartar.find('img'),
+	    $profileModal = $('#user-profile-modal'),
+	    name = user.displayName,
+	    email = user.email,
+	    photo = user.photoURL,
+	    provider = user.providerData[0].providerId;
+
+	$profileModal.find('.modal-title').html(name);
+	$profileModal.find('.logout span').html(name);
+	$profileModal.find('.user-email').html(email);
+	$profileModal.find('.user-provider').html(provider);
+
+	if (!photo) {
+		$userPhoto.hide();
+		$avartar.html(getInitial(name));
+		return;
+	}
+
+	$profileModal.find('.user-photo img').attr('src', photo);
+	$userPhoto.attr('src', photo).show();
 }
 
 function updateContent() {
@@ -494,7 +566,8 @@ function buildCardOverlay() {
 }
 
 function saveContentSuccess() {
-	var $loader = $('.loading-overlay');
+	var $loader = $('.loading-overlay'),
+	    userID = getCurrentUserID();
 
 	$loader.find('.loading').hide();
 	$loader.find('.message.success').show();
@@ -547,19 +620,7 @@ function updateTableCanvas(template, contents) {
 	$canvas.find('.input.thumb').hover(showImgToolOptions, hideImgToolOptions);
 	$canvas.find('.input.thumb').on('click', toggleImgUploadUI);
 	$canvas.find('.input.thumb').each(function () {
-		$(this).fileDrop({
-			onFileRead: function onFileRead(files) {
-				var base64data = $.removeUriScheme(files[0].data);
-
-				$('.thumb.active').find('img').attr('src', files[0].data);
-				$('.thumb.active').find('img').attr('img-data', files[0].data);
-
-				uploadImg(base64data);
-				$('.upload-img-reminder').css('left', '-100%');
-			},
-			overClass: 'img-dragging',
-			removeDataUriScheme: true
-		});
+		initFileDrop($(this));
 	});
 
 	$canvas.find('.input:not(.thumb)').on('click', toggleEditing);
@@ -583,20 +644,30 @@ function clearModalHistories() {
 
 function buildWeatherForecast(data) {
 	var $weatherContainer = $('.canvas .weather'),
-	    $day = $weatherContainer.find('.day-of-week'),
-	    $dailyweather = $weatherContainer.find('.daily-weather'),
-	    $high = $weatherContainer.find('.daily-temperature-high'),
-	    $low = $weatherContainer.find('.daily-temperature-low'),
 	    count = 0;
 
-	for (var daily in data) {
-		if (jQuery.isEmptyObject(data[daily])) continue;
+	var _loop3 = function _loop3(daily) {
+		if (jQuery.isEmptyObject(data[daily])) return 'continue';
 
-		$day.eq(count).html(data[daily].day);
-		$dailyweather.eq(count).attr('src', data[daily].dayWeather);
-		$high.eq(count).html(data[daily].temperature.highest);
-		$low.eq(count).html(data[daily].temperature.lowest);
+		$weatherContainer.each(function () {
+			var $day = $(this).find('.day-of-week'),
+			    $dailyweather = $(this).find('.daily-weather'),
+			    $high = $(this).find('.daily-temperature-high'),
+			    $low = $(this).find('.daily-temperature-low');
+
+			$day.eq(count).html(data[daily].day);
+			$dailyweather.eq(count).attr('src', data[daily].dayWeather);
+			$high.eq(count).html(data[daily].temperature.highest);
+			$low.eq(count).html(data[daily].temperature.lowest);
+		});
+
 		count++;
+	};
+
+	for (var daily in data) {
+		var _ret3 = _loop3(daily);
+
+		if (_ret3 === 'continue') continue;
 	}
 }
 
@@ -618,15 +689,8 @@ function getWeather() {
 }
 
 function filterForecastData(data) {
-	var filteredData = {
-		mon: {},
-		tue: {},
-		wed: {},
-		thr: {},
-		fri: {},
-		sat: {},
-		sun: {}
-	};
+	// assume data comes in in order
+	var filteredData = {};
 
 	var _iteratorNormalCompletion = true;
 	var _didIteratorError = false;
@@ -638,6 +702,7 @@ function filterForecastData(data) {
 
 			//console.log(daily);
 			var day = convertDateToDay(daily.Date).toLowerCase();
+			filteredData[day] = {};
 
 			filteredData[day].date = daily.Date;
 			filteredData[day].day = convertDateToDay(daily.Date);
@@ -707,37 +772,39 @@ function getWeatherIcon(iconNum) {
 
 	if (num === 1 || num === 2) {
 		path += weatherConfig.icons.sunny;
-	} else if (num >= 3 || num <= 5) {
+	} else if (num >= 3 && num <= 4) {
 		path += weatherConfig.icons.partlySunny;
-	} else if (num >= 6 || num <= 8) {
+	} else if (num >= 5 && num <= 6) {
+		path += weatherConfig.icons.mostlyCloudy;
+	} else if (num >= 6 && num <= 8) {
 		path += weatherConfig.icons.cloudy;
 	} else if (num === 11) {
 		path += weatherConfig.icons.fog;
-	} else if (num >= 12 || num <= 13) {
+	} else if (num >= 12 && num <= 13 || num === 39 || num === 40) {
 		path += weatherConfig.icons.showers;
 	} else if (num === 14) {
 		path += weatherConfig.icons.sunnyShowers;
-	} else if (num >= 15 || num <= 17) {
+	} else if (num >= 15 && num <= 17) {
 		path += weatherConfig.icons.tStorm;
 	} else if (num === 18) {
 		path += weatherConfig.icons.rain;
-	} else if (num >= 19 || num <= 20) {
+	} else if (num >= 19 && num <= 20) {
 		path += weatherConfig.icons.flurry;
 	} else if (num === 21) {
 		path += weatherConfig.icons.sunnyFlurry;
-	} else if (num >= 22 || num <= 23) {
+	} else if (num >= 22 && num <= 23) {
 		path += weatherConfig.icons.snow;
-	} else if (num >= 24 || num <= 26) {
+	} else if (num >= 24 && num <= 26) {
 		path += weatherConfig.icons.sleet;
 	} else if (num === 29) {
-		// rain and snow
+		path += weatherConfig.icons.rainSnow;
 	} else if (num === 30) {
 		path += weatherConfig.icons.hot;
 	} else if (num === 31) {
 		path += weatherConfig.icons.cold;
-	} else if (num === 31) {
+	} else if (num === 32) {
 		path += weatherConfig.icons.windy;
-	}
+	} // after 32 is night weather so we'll skip those
 
 	return path;
 }
@@ -745,6 +812,72 @@ function getWeatherIcon(iconNum) {
 function toggleSelectDropdown() {
 	var $wrapper = $(this).parent();
 	$wrapper.toggleClass('active');
+}
+
+function toggleUserProfile(e) {
+	var $profile = $('#user-profile'),
+	    $avartar = $('#user-avartar');
+
+	if (e) e.preventDefault();
+
+	if (!$profile.hasClass('active')) {
+		$profile.focus();
+		showUserProfile();
+	} else {
+		closeUserProfile();
+	}
+}
+
+function closeUserProfile() {
+	var $profile = $('#user-profile'),
+	    $avartar = $('#user-avartar');
+
+	$profile.removeClass('active').find('li.active').removeClass('active');
+	$avartar.removeClass('active');
+	$('#user-profile').css({
+		left: '-999px'
+	});
+}
+
+function showUserProfile() {
+	var $profile = $('#user-profile'),
+	    $avartar = $('#user-avartar'),
+	    sideBarW = $('.sidebar').outerWidth();
+
+	$profile.addClass('active').focus();
+	$avartar.addClass('active');
+
+	$('#user-profile').css({
+		left: sideBarW + 'px'
+	});
+}
+
+function toggleUserActions() {
+	var action = $(this).attr('action');
+
+	if ($(this).hasClass('active')) {
+		$(this).removeClass('active');
+	} else {
+		$('#user-profile li.active').removeClass('active');
+		$(this).addClass('active');
+	}
+
+	switch (action) {
+		case 'logout':
+			doLogout();
+			break;
+		case 'profile':
+			showUserProfileModal();
+			break;
+		default:
+			console.log('Error: action is not in the list');
+	}
+}
+
+function showUserProfileModal() {
+	var $modal = $('#user-profile-modal');
+
+	$modal.modal('show');
 }
 
 function selectImgLinkType() {
@@ -755,42 +888,6 @@ function selectImgLinkType() {
 	$input.val($(this).html());
 	$('input[name="img-url"]').attr('link-type', type);
 	$wrapper.removeClass('active');
-}
-
-function submitUsername() {
-	var $input = $(this).parents('.login-wrapper').find('input'),
-	    name = $input.val().trim();
-
-	if (name === '') {
-		console.log('username cannot be empty');
-		return;
-	}
-
-	if (existingUsername(name)) {
-		console.log('username already existed');
-		$('.login-wrapper .message.failed').html('Username already existed!').css('display', 'inline-block');
-	} else {
-		var userId = Date.now();
-		setCookie(userId, name);
-		createUser(userId, name);
-	}
-}
-
-function existingUsername(name) {
-	var nameStr = name.replace(/\s+/g, ''),
-	    existing = void 0;
-
-	return existing = Cookies.get()[nameStr] ? 1 : 0;
-}
-
-function setCookie(userId, name) {
-	//let nameStr = name.replace(/\s+/g, '');
-
-	Cookies.set('name', {
-		username: name,
-		userID: userId,
-		expires: 30
-	});
 }
 
 function loginSuccess() {
@@ -806,27 +903,15 @@ function loginSuccess() {
 }
 
 function doLogout(e) {
-	e.preventDefault();
-	Cookies.remove('name');
+	if (e) e.preventDefault();
+	logout();
 	location.reload();
 }
 
-function hasVisited() {
-	return $.isEmptyObject(Cookies.get()) ? 0 : 1;
-}
-
-function checkVisted() {
-	var visited = hasVisited();
-	if (visited) {
-		$('.login-wrapper').hide();
-	} else {
-		$('.login-wrapper').show();
-	}
-	$('.main').css('opacity', 1);
-}
-
 $(function () {
-	// getWeather();
+	var _this2 = this;
+
+	getWeather();
 	setLoaderHeight();
 	setLayout();
 
@@ -837,27 +922,31 @@ $(function () {
  	console.lot(err);
  });
  */
+	$('#user-avartar').on('mousedown', toggleUserProfile);
+	$('#user-profile').on('blur', closeUserProfile);
+	$('#user-profile li').on('click', toggleUserActions);
+	$('#login-google').on('click', loginGoogle);
+	$('#login-facebook').on('click', loginFB);
+	$('#sidebar-save').on('click', function (e) {
+		e.preventDefault();
 
-	$('#submit-username').on('click', submitUsername);
-	$('.sidebar .narrow-navs li').on('click', sidebarNavigate);
+		$(_this2).addClass('active');
+		UserHistories.save();
+	});
+	$('.sidebar .narrow-navs li').on('click', function (e) {
+		return e.preventDefault();
+	});
+	$('.sidebar .narrow-navs li').on('mousedown', sidebarNavigate);
+	$('.nav').on('blur', function () {
+		$('.sidebar .narrow-navs li.active').removeClass('active');
+		$(this).addClass('active');
+		hideNav($(this));
+	});
 
 	$('.input.thumb').each(function () {
 		//let $tools = createToolPopup();
 		//$(this).append($tools);
-
-		$(this).fileDrop({
-			onFileRead: function onFileRead(files) {
-				var base64data = $.removeUriScheme(files[0].data);
-
-				$('.thumb.active').find('img').attr('src', files[0].data);
-				$('.thumb.active').find('img').attr('img-data', files[0].data);
-
-				uploadImg(base64data);
-				$('.upload-img-reminder').css('left', '-100%');
-			},
-			overClass: 'img-dragging',
-			removeDataUriScheme: true
-		});
+		initFileDrop($(this));
 	});
 
 	$('.single-input input').on('keyup', checkInputValue);
@@ -886,14 +975,10 @@ $(function () {
 	$('#user-histories .history-preview .closePreview').on('click', closeHistoryPreview);
 	$('#user-histories .history-preview .select-history').on('click', UserHistories.select);
 
-	$('#logout').on('click', doLogout);
+	$('#logout, .logout').on('click', doLogout);
 
 	$(window).on('resize', function () {
 		setLoaderHeight();
 		setLayout();
 	});
-});
-
-$(window).on('load', function () {
-	checkVisted();
 });

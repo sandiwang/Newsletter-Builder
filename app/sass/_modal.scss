@@ -1,6 +1,7 @@
 $historiesHeight: 750px;
 
 $closeSize: 20px;
+$userAvartar: 100px;
 
 @mixin verticalCenter {
 	top: 50%;
@@ -271,7 +272,7 @@ $closeSize: 20px;
 
 		.delete-card{
 			position: absolute;
-			padding: 0 3px;
+			padding: 0 5px;
 			top: 2px;
 			right: 5px;
 
@@ -320,11 +321,9 @@ $closeSize: 20px;
 
 		.cancel{
 			color: $darkpurple;
-			background-color: rgba($lightgrey, 0.9);
-
-			&:hover{
-				background-color: $lightgrey;
-			}
+			background-color: transparent;
+			box-shadow: none;
+			border: 1px solid $darkpurple;
 		}
 
 		.message.success{
@@ -426,8 +425,8 @@ $closeSize: 20px;
 
 		img{
 			display: inline-block;
-			//margin: 0 0 10px;
-			max-width: 100%;
+			width: $userAvartar;
+			height: $userAvartar;
 			border-radius: 100%;
 		}
 	}

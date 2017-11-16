@@ -63,7 +63,8 @@
   letter-spacing: 0.5px; }
 
 .modal-content {
-  border-radius: 0; }
+  border-radius: 0;
+  box-shadow: 0 4px 5px 0 rgba(0, 0, 0, 0.14), 0 1px 10px 0 rgba(0, 0, 0, 0.12), 0 2px 4px -1px rgba(0, 0, 0, 0.3); }
 
 .modal-footer {
   border-top: 0; }
@@ -189,7 +190,7 @@
       text-decoration: none; }
   #user-histories .card .delete-card {
     position: absolute;
-    padding: 0 3px;
+    padding: 0 5px;
     top: 2px;
     right: 5px; }
     #user-histories .card .delete-card i {
@@ -228,9 +229,9 @@
     animation-duration: 0.5s; }
   #user-histories .card-overlay .cancel {
     color: #252839;
-    background-color: rgba(201, 201, 202, 0.9); }
-    #user-histories .card-overlay .cancel:hover {
-      background-color: #c9c9ca; }
+    background-color: transparent;
+    box-shadow: none;
+    border: 1px solid #252839; }
   #user-histories .card-overlay .message.success {
     display: none;
     position: absolute;
@@ -282,6 +283,63 @@
     font-size: 1.143rem;
     text-transform: uppercase;
     letter-spacing: 1px; }
+
+#user-profile-modal {
+  font-size: 0; }
+  #user-profile-modal .modal-body {
+    padding: 30px 15px; }
+  #user-profile-modal .user-infos {
+    font-size: 1rem;
+    display: inline-block;
+    vertical-align: top;
+    padding: 30px 20px;
+    list-style: none;
+    margin-bottom: 0;
+    position: relative; }
+  #user-profile-modal .user-infos.main {
+    width: 40%;
+    text-align: center;
+    border-right: 1px solid #c9c9ca; }
+    #user-profile-modal .user-infos.main > div > div {
+      display: inline-block;
+      padding: 5px;
+      border-radius: 100%;
+      border: 1px solid #c9c9ca;
+      margin-bottom: 10px; }
+    #user-profile-modal .user-infos.main img {
+      display: inline-block;
+      max-width: 100%;
+      border-radius: 100%; }
+  #user-profile-modal .user-infos.detail {
+    width: 60%; }
+  #user-profile-modal .modal-title {
+    margin: 10px 0 20px;
+    font-size: 1.571rem; }
+  #user-profile-modal li {
+    padding: 5px 0; }
+  #user-profile-modal li > div {
+    display: inline-block;
+    font-size: 1.143rem;
+    letter-spacing: 1px; }
+  #user-profile-modal .label {
+    color: inherit;
+    padding: 0;
+    margin-right: 10px;
+    font-weight: 400;
+    border-radius: 0; }
+  #user-profile-modal .logout {
+    font-size: 0.8571rem;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    line-height: 1rem; }
+    #user-profile-modal .logout a {
+      color: rgba(131, 131, 134, 0.8);
+      transition: 0.3s all; }
+      #user-profile-modal .logout a:hover {
+        color: #0091ea;
+        text-decoration: none; }
 
 @keyframes slidein {
   from {
@@ -394,13 +452,14 @@
   z-index: 99999;
   font-size: 1rem; }
   .login-wrapper > div {
-    width: 60%;
+    width: 500px;
     margin: auto;
     box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
     position: relative;
     top: 50%;
     padding: 40px 5%;
     background: #fff;
+    text-align: center;
     top: 50%;
     transform: translateY(-50%);
     -webkit-transform: translateY(-50%);
@@ -446,6 +505,15 @@
       transform: translateY(-50%);
       -webkit-transform: translateY(-50%);
       -ms-transform: translateY(-50%); }
+  .login-wrapper .text-divider {
+    width: 240px;
+    margin: 15px auto; }
+
+#login-google, #login-facebook {
+  cursor: pointer;
+  margin: 10px 0; }
+  #login-google img, #login-facebook img {
+    width: 240px; }
 
 #submit-username {
   margin-top: 20px;
@@ -491,6 +559,33 @@ html, body {
   .primary-btn.danger:hover, .primary-btn.danger:focus, .primary-btn.danger:active {
     box-shadow: 0 4px 5px 0 rgba(0, 0, 0, 0.14), 0 1px 10px 0 rgba(0, 0, 0, 0.12), 0 2px 4px -1px rgba(0, 0, 0, 0.3); }
 
+.text-divider {
+  position: relative;
+  height: 18px;
+  margin: 10px 0; }
+  .text-divider:after {
+    content: '';
+    height: 2px;
+    background-color: #c9c9ca;
+    width: 100%;
+    display: block;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    -webkit-transform: translateY(-50%);
+    -ms-transform: translateY(-50%); }
+  .text-divider span {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    -webkit-transform: translateY(-50%);
+    -ms-transform: translateY(-50%);
+    background-color: #fff;
+    padding: 5px 10px;
+    z-index: 9;
+    left: 50%;
+    transform: translateX(-50%) translateY(-50%); }
+
 #app, .main, .sidebar {
   position: relative;
   height: 100%;
@@ -509,11 +604,61 @@ html, body {
   display: inline-block;
   vertical-align: top;
   font-size: 1rem;
-  background-color: #252839; }
+  background-color: #252839;
+  z-index: 5; }
   .sidebar.active {
     width: 400px; }
   .sidebar .nav.active {
     display: block; }
+  .sidebar #sidebar-save {
+    position: absolute;
+    bottom: 64px;
+    width: 44px;
+    height: 44px;
+    border-radius: 100%;
+    text-align: center;
+    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
+    left: 50%;
+    transform: translateX(-50%); }
+    .sidebar #sidebar-save.active a {
+      border-color: #f2b632;
+      color: #f2b632; }
+    .sidebar #sidebar-save a {
+      color: inherit;
+      display: block;
+      line-height: 42px;
+      font-size: 1.857rem;
+      border-radius: 100%;
+      text-align: center;
+      border: 2px solid rgba(255, 255, 255, 0.8);
+      color: rgba(255, 255, 255, 0.8);
+      transition: 0.3s all; }
+      .sidebar #sidebar-save a:hover {
+        border-color: #f2b632; }
+  .sidebar #user-avartar {
+    position: absolute;
+    bottom: 10px;
+    background-color: rgba(255, 255, 255, 0.8);
+    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
+    left: 50%;
+    transform: translateX(-50%);
+    border-radius: 100%;
+    padding: 2px;
+    width: 44px;
+    height: 44px;
+    line-height: 44px;
+    text-align: center;
+    letter-spacing: 1px;
+    color: #252839;
+    font-size: 1.143rem;
+    cursor: pointer; }
+    .sidebar #user-avartar.active {
+      background-color: #f2b632; }
+    .sidebar #user-avartar img {
+      display: block;
+      width: 40px;
+      height: 40px;
+      border-radius: 100%; }
 
 .narrow-navs {
   list-style: none;
@@ -528,10 +673,39 @@ html, body {
     .narrow-navs li.active {
       background-color: #f2b632; }
   .narrow-navs a {
-    color: #fff;
+    color: rgba(255, 255, 255, 0.8);
     transition: 0.3s all;
     padding: 20px;
     display: block; }
+
+#user-profile {
+  font-size: 1rem;
+  position: absolute;
+  bottom: 0;
+  z-index: 4;
+  margin-left: -999px;
+  border-radius: 4px;
+  outline: 0;
+  background-color: #fff;
+  box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
+  transition: 0.3s all; }
+  #user-profile.active {
+    margin-left: 0px;
+    opacity: 1; }
+  #user-profile ul {
+    padding-left: 0;
+    list-style: none;
+    margin-bottom: 0; }
+  #user-profile li {
+    letter-spacing: 1px;
+    padding: 10px 30px;
+    cursor: pointer;
+    transition: 0.3s all; }
+    #user-profile li:hover {
+      color: #f2b632; }
+    #user-profile li.active {
+      background-color: #f2b632;
+      color: #fff; }
 
 .nav {
   position: absolute;
@@ -540,8 +714,9 @@ html, body {
   width: 300px;
   top: 0;
   height: 100%;
-  z-index: 10;
+  z-index: 3;
   box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2);
+  outline: 0;
   left: -999px; }
   .nav li {
     display: inline-block;
@@ -739,7 +914,8 @@ html, body {
   width: 100%;
   height: 100%;
   background-color: rgba(131, 131, 134, 0.8);
-  display: none; }
+  display: none;
+  z-index: 99; }
   .loading-overlay .loading, .loading-overlay .message.success {
     position: relative;
     margin: 0;

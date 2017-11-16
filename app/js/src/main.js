@@ -162,9 +162,10 @@ let UserHistories = {
 
 		$('#user-histories .current-user').find('span').html(username);
 
-		for(let list in datas) { 
+		for(const list in datas) { 
 			let d = list === 'autosave' ? 'Autosave' : moment(list).format('MMMM DD, YYYY - dddd');
-			let $date = $('<div>', {class: 'date'}).append(`<span>${d}</span>`).append('<ul></ul>');
+			let $date = $('<div>', {class: 'date'}).append(`<span>${d}</span>`).append('<ul></ul>'),
+			    $ul = $('<ul>');
 
 			for(let key in datas[list]) {
 				// console.log(datas[list][key]);
@@ -186,7 +187,9 @@ let UserHistories = {
 				$card.find('a').append($delete).append($textTemplate).append($textTime);
 				$li.append($card);
 
-				$date.append($li);
+				$li.prependTo($ul);
+				$date.append($ul);
+
 				$li.on('click', (e) => {
 					e.preventDefault();
 					UserHistories.showPreview(d, timeFormatted, template, contents);
@@ -209,7 +212,9 @@ let UserHistories = {
 					return deleteUserHistory(userID, dataID, list);
 				});
 			}
-			$histories.append($date);
+
+			$date.append($ul);
+			$date.prependTo($histories);
 		}
 
 		$('#user-histories .loading').hide();
@@ -223,7 +228,7 @@ let UserHistories = {
 			overlay.style.display = 'block';
 		} else if(toggle === 'hide') {
 			overlay.classList.add('slideout');
-			setTimeout(() => overlay.style.display = 'none', 300);
+			setTimeout(() => overlay.style.display = 'none', 250);
 		}	
 	},
 	removeHistoryCard: (dataID) => {
@@ -615,6 +620,9 @@ function updateTableCanvas(template, contents) {
 			$templateMenuItem = $(`.nav.templates li[data-template=${template}]`);
 
 	$canvas.empty().append(contents);
+
+	getWeather();
+	
 	$canvas.find('.input.thumb').hover(showImgToolOptions, hideImgToolOptions);
 	$canvas.find('.input.thumb').on('click', toggleImgUploadUI);
 	$canvas.find('.input.thumb').each(function(){
@@ -881,7 +889,7 @@ function doLogout(e) {
 
 
 $(function(){
-	getWeather();
+	// getWeather();
 	setLoaderHeight();
 	setLayout();
 

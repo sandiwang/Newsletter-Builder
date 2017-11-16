@@ -157,7 +157,8 @@ var UserHistories = {
 
 		var _loop = function _loop(list) {
 			var d = list === 'autosave' ? 'Autosave' : moment(list).format('MMMM DD, YYYY - dddd');
-			var $date = $('<div>', { class: 'date' }).append('<span>' + d + '</span>').append('<ul></ul>');
+			var $date = $('<div>', { class: 'date' }).append('<span>' + d + '</span>').append('<ul></ul>'),
+			    $ul = $('<ul>');
 
 			var _loop2 = function _loop2(key) {
 				// console.log(datas[list][key]);
@@ -179,7 +180,9 @@ var UserHistories = {
 				$card.find('a').append($delete).append($textTemplate).append($textTime);
 				$li.append($card);
 
-				$date.append($li);
+				$li.prependTo($ul);
+				$date.append($ul);
+
 				$li.on('click', function (e) {
 					e.preventDefault();
 					UserHistories.showPreview(d, timeFormatted, template, contents);
@@ -206,7 +209,9 @@ var UserHistories = {
 			for (var key in datas[list]) {
 				_loop2(key);
 			}
-			$histories.append($date);
+
+			$date.append($ul);
+			$date.prependTo($histories);
 		};
 
 		for (var list in datas) {
@@ -226,7 +231,7 @@ var UserHistories = {
 			overlay.classList.add('slideout');
 			setTimeout(function () {
 				return overlay.style.display = 'none';
-			}, 300);
+			}, 250);
 		}
 	},
 	removeHistoryCard: function removeHistoryCard(dataID) {
@@ -617,6 +622,9 @@ function updateTableCanvas(template, contents) {
 	    $templateMenuItem = $('.nav.templates li[data-template=' + template + ']');
 
 	$canvas.empty().append(contents);
+
+	getWeather();
+
 	$canvas.find('.input.thumb').hover(showImgToolOptions, hideImgToolOptions);
 	$canvas.find('.input.thumb').on('click', toggleImgUploadUI);
 	$canvas.find('.input.thumb').each(function () {
@@ -911,7 +919,7 @@ function doLogout(e) {
 $(function () {
 	var _this2 = this;
 
-	getWeather();
+	// getWeather();
 	setLoaderHeight();
 	setLayout();
 
