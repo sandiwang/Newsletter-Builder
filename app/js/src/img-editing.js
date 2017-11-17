@@ -3,7 +3,8 @@ const icons = {
 	linking: 'ion-ios-infinite-outline',
 	cropping: 'ion-ios-crop',
 	close: 'ion-ios-close-outline',
-	cropRound: 'ion-ios-ionic-outline'
+	cropRound: 'ion-ios-ionic-outline',
+	delete: 'ion-ios-trash-outline'
 }
 
 let imgCroppedData = {
@@ -14,9 +15,10 @@ let imgCroppedData = {
 function createToolPopup() {
 	let $popup = $('<ul>', {class: 'tool-popup'}),
 			$linking = $('<li>').append(`<a class="linking" title="Hyperlink"><i class="${icons.linking}"></i></a>`),
-			$cropping = $('<li>').append(`<a class="cropping" title="Crop Image"><i class="${icons.cropping}"></i></a>`);
+			$cropping = $('<li>').append(`<a class="cropping" title="Crop Image"><i class="${icons.cropping}"></i></a>`),
+			$delete = $('<li>').append(`<a class="delete" title="Delete"><i class="${icons.delete}"></i></a>`);
 
-	return $popup.append($linking).append($cropping);
+	return $popup.append($linking).append($cropping).append($delete);
 }
 
 function createCropBtns(){
@@ -149,7 +151,7 @@ function cropImg(e){
 	$img.cropper('destroy');
 }
 
-function getRoundedCanvas(data){
+function getRoundedCanvas(data) {
 	const canvas = document.createElement('canvas');
 	const width = data.width;
   const height = data.height;
@@ -168,7 +170,7 @@ function getRoundedCanvas(data){
   return canvas;
 }
 
-function cancelCropping(e){
+function cancelCropping(e) {
 	e.preventDefault();
 	e.stopPropagation();
 
@@ -176,6 +178,10 @@ function cancelCropping(e){
 
 	$img.cropper('destroy');
 	$img.parent().removeClass('img-cropping').find('.crop-btns').remove();
+}
+
+function deleteCurrentImg() {
+
 }
 
 function doImageTask(e) {
@@ -191,6 +197,8 @@ function doImageTask(e) {
 		case 'cropping':
 			showImgCropping();
 			break;
+		case 'delete':
+			deleteCurrentImg();
 		default:
 			console.log(`Not in the tool lists: ${task}`);
 	}

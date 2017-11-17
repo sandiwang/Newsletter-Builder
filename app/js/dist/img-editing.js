@@ -5,7 +5,8 @@ var icons = {
 	linking: 'ion-ios-infinite-outline',
 	cropping: 'ion-ios-crop',
 	close: 'ion-ios-close-outline',
-	cropRound: 'ion-ios-ionic-outline'
+	cropRound: 'ion-ios-ionic-outline',
+	delete: 'ion-ios-trash-outline'
 };
 
 var imgCroppedData = {
@@ -16,9 +17,10 @@ var imgCroppedData = {
 function createToolPopup() {
 	var $popup = $('<ul>', { class: 'tool-popup' }),
 	    $linking = $('<li>').append('<a class="linking" title="Hyperlink"><i class="' + icons.linking + '"></i></a>'),
-	    $cropping = $('<li>').append('<a class="cropping" title="Crop Image"><i class="' + icons.cropping + '"></i></a>');
+	    $cropping = $('<li>').append('<a class="cropping" title="Crop Image"><i class="' + icons.cropping + '"></i></a>'),
+	    $delete = $('<li>').append('<a class="delete" title="Delete"><i class="' + icons.delete + '"></i></a>');
 
-	return $popup.append($linking).append($cropping);
+	return $popup.append($linking).append($cropping).append($delete);
 }
 
 function createCropBtns() {
@@ -181,6 +183,8 @@ function cancelCropping(e) {
 	$img.parent().removeClass('img-cropping').find('.crop-btns').remove();
 }
 
+function deleteCurrentImg() {}
+
 function doImageTask(e) {
 	e.preventDefault();
 	e.stopPropagation();
@@ -194,6 +198,8 @@ function doImageTask(e) {
 		case 'cropping':
 			showImgCropping();
 			break;
+		case 'delete':
+			deleteCurrentImg();
 		default:
 			console.log('Not in the tool lists: ' + task);
 	}
