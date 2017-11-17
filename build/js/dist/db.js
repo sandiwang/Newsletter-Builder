@@ -31,19 +31,32 @@ firebase.auth().onAuthStateChanged(function (user) {
 		var displayName = user.displayName,
 		    id = user.uid,
 		    email = user.email,
-		    photoURL = user.photoURL;
-		console.log(user);
+		    photoURL = user.photoURL,
+		    existingSetting = getUserAutosaveSetting(id);
+		// console.log(user);
+
+		existingSetting.then(function (result) {
+			createUser(id, displayName, result);
+			$('#switch_autosave').prop('checked', result);
+		});
+
+		buildUserProfile(user);
 
 		$('.login-wrapper').hide();
 		$('.main').css('opacity', 1);
-
-		buildUserProfile(user);
-		createUser(id, displayName);
 	} else {
 		$('.login-wrapper').show();
 		console.log('logged out');
 	}
 });
+
+function getUserAutosaveSetting(userID) {
+	return db.ref("Users/" + userID).once('value').then(function (data) {
+		if (data) return data.val()['autosave'];else return 1;
+	}).catch(function (err) {
+		return console.log("Couldn't fetch user data: " + err);
+	});
+}
 
 function loginGoogle() {
 	firebase.auth().signInWithRedirect(google).then(function (result) {
@@ -81,10 +94,11 @@ function getCurrentUserID() {
 	return firebase.auth().currentUser.uid;
 }
 
-function createUser(userId, username) {
+function createUser(userId, username, autosave) {
 	return db.ref("Users/" + userId).update({
 		id: userId,
-		username: username
+		username: username,
+		autosave: autosave
 	}).then(function () {
 		console.log('successfully create user at database');
 		loginSuccess();
@@ -141,12 +155,12 @@ function getCurrAutosaveNum(userID) {
 
 function getUserHistory(userID) {
 	// list comes back in a ascending order: old to new
-	var userRef = db.ref("/Users/" + userID + "/histories").orderByKey();
+	var userRef = db.ref("/Users/" + userID).orderByKey();
 
 	return userRef.once('value').then(function (snapshot) {
 		return snapshot.val();
 	}).then(function (data) {
-		return displayHistories(data);
+		if (data['autosave']) displayHistories(data['histories']);else displayHistories(data['histories'], 'disable');
 	}).catch(function (err) {
 		return console.log('Error when retrieving data:', err);
 	});
@@ -237,5 +251,20 @@ function uploadImg(data) {
 		return true;
 	}).catch(function (err) {
 		console.log("Error when uploading iamge: " + err);
+	});
+}
+
+function setAutosave(userID, autosave) {
+	if (!userID) return;
+
+	var checked = autosave ? 1 : 0;
+
+	return db.ref("Users/" + userID).update({
+		autosave: checked
+	}).then(function () {
+		console.log('successfully changed the setting of autosave');
+		loginSuccess();
+	}, function (err) {
+		console.log("Error when changing autosave setting: " + err);
 	});
 }
