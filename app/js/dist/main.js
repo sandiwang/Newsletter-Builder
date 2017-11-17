@@ -146,7 +146,7 @@ var UserHistories = {
 
 		return saveContent(id, username, template, contents);
 	},
-	display: function display(datas) {
+	display: function display(datas, disableAutosave) {
 		var $histories = $('#user-histories .histories-lists'),
 		    username = getCurrentUsername();
 
@@ -156,8 +156,9 @@ var UserHistories = {
 		$('#user-histories .current-user').find('span').html(username);
 
 		var _loop = function _loop(list) {
+			if (disableAutosave && list === 'autosave') return 'continue';
 			var d = list === 'autosave' ? 'Autosave' : moment(list).format('MMMM DD, YYYY - dddd');
-			var $date = $('<div>', { class: 'date' }).append('<span>' + d + '</span>').append('<ul></ul>'),
+			var $date = $('<div>', { class: 'date' }).append('<span>' + d + '</span>'),
 			    $ul = $('<ul>');
 
 			var _loop2 = function _loop2(key) {
@@ -215,7 +216,9 @@ var UserHistories = {
 		};
 
 		for (var list in datas) {
-			_loop(list);
+			var _ret = _loop(list);
+
+			if (_ret === 'continue') continue;
 		}
 
 		$('#user-histories .loading').hide();
@@ -233,26 +236,6 @@ var UserHistories = {
 				return overlay.style.display = 'none';
 			}, 250);
 		}
-	},
-	removeHistoryCard: function removeHistoryCard(dataID) {
-		var $card = $('#user-histories .histories-lists .card[data-id=' + dataID + ']'),
-		    $buttons = $card.find('.buttons'),
-		    buttonsH = $buttons.outerHeight(),
-		    buttonsW = $buttons.outerWidth(),
-		    $message = $card.find('.message.success');
-
-		$message.css({
-			height: buttonsH,
-			'line-height': buttonsH + 'px',
-			width: buttonsW
-		});
-
-		$buttons.fadeOut(150);
-		$message.delay(100).fadeIn(300);
-
-		setTimeout(function () {
-			$card.parent('li').remove();
-		}, 1000);
 	},
 	showPreview: function showPreview(date, time, template, contents) {
 		var $preview = $('#user-histories .history-preview'),
@@ -584,8 +567,8 @@ function saveContentSuccess() {
 	}, 1000);
 }
 
-function displayHistories(datas) {
-	return UserHistories.display(datas);
+function displayHistories(datas, disableAutosave) {
+	if (disableAutosave) return UserHistories.display(datas, disableAutosave);else return UserHistories.display(datas);
 }
 
 function removeHistoryCard(dataID) {
@@ -605,6 +588,9 @@ function removeHistoryCard(dataID) {
 	$message.delay(100).fadeIn(300);
 
 	setTimeout(function () {
+		if ($card.parents('ul').find('li').length === 1) {
+			$card.parents('.date').remove();
+		}
 		$card.parent('li').remove();
 	}, 1000);
 }
@@ -910,6 +896,14 @@ function loginSuccess() {
 	}, 1300);
 }
 
+function toggleAutosave() {
+	var autosave = $(this).prop('checked'),
+	    userID = getCurrentUserID();
+	return setAutosave(userID, autosave).then(function () {
+		return console.log('after setting');
+	});
+}
+
 function doLogout(e) {
 	if (e) e.preventDefault();
 	logout();
@@ -982,6 +976,8 @@ $(function () {
 
 	$('#user-histories .history-preview .closePreview').on('click', closeHistoryPreview);
 	$('#user-histories .history-preview .select-history').on('click', UserHistories.select);
+
+	$('#switch_autosave').on('change', toggleAutosave);
 
 	$('#logout, .logout').on('click', doLogout);
 

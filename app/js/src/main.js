@@ -153,7 +153,7 @@ let UserHistories = {
 
 		return saveContent(id, username, template, contents);
 	},
-	display: (datas) => {
+	display: (datas, disableAutosave) => {
 		let $histories = $('#user-histories .histories-lists'),
 				username = getCurrentUsername();
 
@@ -161,10 +161,10 @@ let UserHistories = {
 		clearModalHistories();
 
 		$('#user-histories .current-user').find('span').html(username);
-
 		for(const list in datas) { 
+			if(disableAutosave && list === 'autosave') continue;
 			let d = list === 'autosave' ? 'Autosave' : moment(list).format('MMMM DD, YYYY - dddd');
-			let $date = $('<div>', {class: 'date'}).append(`<span>${d}</span>`).append('<ul></ul>'),
+			let $date = $('<div>', {class: 'date'}).append(`<span>${d}</span>`),
 			    $ul = $('<ul>');
 
 			for(let key in datas[list]) {
@@ -230,26 +230,6 @@ let UserHistories = {
 			overlay.classList.add('slideout');
 			setTimeout(() => overlay.style.display = 'none', 250);
 		}	
-	},
-	removeHistoryCard: (dataID) => {
-		let $card = $(`#user-histories .histories-lists .card[data-id=${dataID}]`),
-				$buttons = $card.find('.buttons'),
-				buttonsH = $buttons.outerHeight(),
-				buttonsW = $buttons.outerWidth(),
-				$message = $card.find('.message.success');
-
-		$message.css({
-			height: buttonsH,
-			'line-height': buttonsH + 'px',
-			width: buttonsW
-		});
-
-		$buttons.fadeOut(150);
-		$message.delay(100).fadeIn(300);
-
-		setTimeout(() => {
-			$card.parent('li').remove();
-		}, 1000);
 	},
 	showPreview: (date, time, template, contents) => {
 		let $preview = $('#user-histories .history-preview'),
@@ -585,8 +565,9 @@ function saveContentSuccess() {
 	}, 1000);
 }
 
-function displayHistories(datas) {
-	return UserHistories.display(datas);
+function displayHistories(datas, disableAutosave) {
+	if(disableAutosave) return UserHistories.display(datas, disableAutosave);
+	else return UserHistories.display(datas);
 }
 
 function removeHistoryCard(dataID) {
@@ -606,6 +587,9 @@ function removeHistoryCard(dataID) {
 	$message.delay(100).fadeIn(300);
 
 	setTimeout(() => {
+		if($card.parents('ul').find('li').length === 1) {
+			$card.parents('.date').remove();
+		}
 		$card.parent('li').remove();
 	}, 1000);
 }
@@ -881,6 +865,12 @@ function loginSuccess() {
 	}, 1300);
 }
 
+function toggleAutosave() {
+	let autosave = $(this).prop('checked'),
+			userID = getCurrentUserID();
+	return setAutosave(userID, autosave).then(() => console.log('after setting'));
+}
+
 function doLogout(e) {
 	if(e) e.preventDefault();
 	logout();
@@ -948,6 +938,8 @@ $(function(){
 
 	$('#user-histories .history-preview .closePreview').on('click', closeHistoryPreview);
 	$('#user-histories .history-preview .select-history').on('click', UserHistories.select);
+
+	$('#switch_autosave').on('change', toggleAutosave);
 
 	$('#logout, .logout').on('click', doLogout);
 	

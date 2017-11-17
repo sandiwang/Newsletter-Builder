@@ -308,7 +308,8 @@
       margin-bottom: 10px; }
     #user-profile-modal .user-infos.main img {
       display: inline-block;
-      max-width: 100%;
+      width: 100px;
+      height: 100px;
       border-radius: 100%; }
   #user-profile-modal .user-infos.detail {
     width: 60%; }
@@ -440,6 +441,48 @@
     cursor: pointer; }
     .single-select li:hover {
       background-color: rgba(201, 201, 202, 0.4); }
+
+.flat-switch_toggle {
+  position: relative;
+  vertical-align: middle; }
+  .flat-switch_toggle input {
+    position: absolute;
+    margin-left: -9999px;
+    visibility: hidden; }
+  .flat-switch_toggle input + label {
+    display: inline-block;
+    position: relative;
+    cursor: pointer;
+    outline: none;
+    user-select: none;
+    vertical-align: middle;
+    padding: 2px;
+    width: 30px;
+    height: 15px;
+    background-color: #c9c9ca;
+    border-radius: 15px; }
+    .flat-switch_toggle input + label:before, .flat-switch_toggle input + label:after {
+      display: block;
+      position: absolute;
+      top: 1px;
+      left: 1px;
+      bottom: 1px;
+      content: ''; }
+    .flat-switch_toggle input + label:before {
+      right: 1px;
+      background-color: #b5b5b7;
+      border-radius: 15px;
+      transition: background 0.4s; }
+    .flat-switch_toggle input + label:after {
+      width: 13px;
+      background-color: #fff;
+      border-radius: 100%;
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.3);
+      transition: margin 0.4s; }
+  .flat-switch_toggle input:checked + label:before {
+    background-color: #4caf50; }
+  .flat-switch_toggle input:checked + label:after {
+    margin-left: 19px; }
 
 .login-wrapper {
   display: none;
