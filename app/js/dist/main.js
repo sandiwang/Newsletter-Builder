@@ -368,6 +368,13 @@ function doAutosave() {
 	    autoSave = 1,
 	    currAutosaveNum = getCurrAutosaveNum(userID);
 
+	setTimeout(function () {
+		$('.autosave-sign').fadeIn(300);
+	}, 500);
+	setTimeout(function () {
+		$('.autosave-sign').fadeOut(300);
+	}, 2000);
+
 	return currAutosaveNum.then(function (num) {
 		if (num >= 1) {
 			deleteOldestRecord(userID, 'autosave');

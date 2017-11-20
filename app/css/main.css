@@ -876,6 +876,34 @@ html, body {
   .input.crop-rounded .cropper-view-box, .input.crop-rounded .cropper-face {
     border-radius: 50%; }
 
+.input.thumb .delete-img-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(242, 182, 50, 0.9);
+  text-align: center;
+  cursor: default; }
+  .input.thumb .delete-img-overlay > div {
+    top: 50%;
+    transform: translateY(-50%);
+    -webkit-transform: translateY(-50%);
+    -ms-transform: translateY(-50%);
+    position: relative; }
+  .input.thumb .delete-img-overlay span {
+    display: inline-block;
+    margin: 5px auto;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    transition: 0.3s all; }
+  .input.thumb .delete-img-overlay .delete {
+    background-color: #fff;
+    border-radius: 2rem;
+    padding: 7px 25px; }
+    .input.thumb .delete-img-overlay .delete:hover {
+      box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 1px 5px 0 rgba(0, 0, 0, 0.12), 0 3px 1px -2px rgba(0, 0, 0, 0.2); }
+
 .tool-popup, .crop-btns {
   position: absolute;
   top: 2px;
@@ -917,6 +945,18 @@ html, body {
   z-index: 99; }
   .upload-img-reminder span {
     font-size: 1.286rem; }
+
+.autosave-sign {
+  display: none;
+  position: fixed;
+  top: 5px;
+  left: 5px;
+  padding: 7px 10px;
+  font-size: 0.8571rem;
+  background-color: #fff;
+  border-radius: 4px;
+  letter-spacing: 1px;
+  z-index: 11; }
 
 .note-editor.panel {
   position: fixed;

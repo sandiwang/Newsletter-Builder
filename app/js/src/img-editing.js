@@ -4,7 +4,8 @@ const icons = {
 	cropping: 'ion-ios-crop',
 	close: 'ion-ios-close-outline',
 	cropRound: 'ion-ios-ionic-outline',
-	delete: 'ion-ios-trash-outline'
+	delete: 'ion-ios-trash-outline',
+	upload: 'ion-ios-cloud-upload-outline'
 }
 
 let imgCroppedData = {
@@ -16,9 +17,10 @@ function createToolPopup() {
 	let $popup = $('<ul>', {class: 'tool-popup'}),
 			$linking = $('<li>').append(`<a class="linking" title="Hyperlink"><i class="${icons.linking}"></i></a>`),
 			$cropping = $('<li>').append(`<a class="cropping" title="Crop Image"><i class="${icons.cropping}"></i></a>`),
-			$delete = $('<li>').append(`<a class="delete" title="Delete"><i class="${icons.delete}"></i></a>`);
+			$delete = $('<li>').append(`<a class="delete" title="Delete"><i class="${icons.delete}"></i></a>`),
+			$upload = $('<li>').append(`<a class="upload" title="Upload Image"><i class="${icons.upload}"></i></a>`);;
 
-	return $popup.append($linking).append($cropping).append($delete);
+	return $popup.append($upload).append($linking).append($cropping).append($delete);
 }
 
 function createCropBtns(){
@@ -29,6 +31,28 @@ function createCropBtns(){
 			
 
 	return $btns.append($cancelBtn).append($cropRoundedBtn).append($cropBtn);
+}
+
+function selectImgFromFiles() {
+	let $img = $('.input.thumb.hovering').find('img'),
+			$input = $img.siblings('input[type=file]');
+
+	$img.attr('img-data', '');
+	$input.on('click', (e) => e.stopPropagation());
+	$input.on('change', confirmSelectedImgFromFiles);
+	$input.click();
+}
+
+function confirmSelectedImgFromFiles(e) {
+	let file = e.target.files[0],
+			fileType = file.type,
+			userID = getCurrentUserID();
+
+	// if it's not image, return
+	if(fileType.indexOf('image') === -1) return;
+
+	$(this).parents('.thumb').addClass('uploadingFromFiles');
+	uploadImgFromFiles(userID, file).then((result) => console.log(`upload: ${result}`));
 }
 
 function populateCurrentLink(elem) {
@@ -71,7 +95,7 @@ function toggleRoundedCropBox(e) {
 function showImgCropping() {
 	
 	let $img = $('.input.thumb.hovering').find('img'),
-			imgData = $img.attr('img-data') || null;
+			imgData = $img.attr('img-data') || $img.attr('img-url') || null;
 
 	if(imgData) $img.attr('src', imgData);
 
@@ -180,8 +204,47 @@ function cancelCropping(e) {
 	$img.parent().removeClass('img-cropping').find('.crop-btns').remove();
 }
 
-function deleteCurrentImg() {
+function doImgDelete(e) {
+	e.preventDefault();
+	e.stopPropagation();
 
+	let $overlay = $(this).parents('.delete-img-overlay'),
+			$img = $overlay.siblings('img'),
+			placeholder = 'img/upload-img.png';
+
+	$img.attr('src', placeholder).attr('img-data', '').attr('img-url', '');
+	$overlay.remove();
+	doAutosave();
+}
+
+function cancelImgDelete(e) {
+	e.preventDefault();
+	e.stopPropagation();
+
+	let $overlay = $(this).parents('.delete-img-overlay');
+
+	$overlay.remove();
+}
+
+function deleteCurrentImg() {
+	let $img = $('.input.thumb.hovering').find('img'),
+			currImg = $img.attr('src'),
+			placeholder = 'img/upload-img.png',
+			$overlay = $('<div>', {class: 'delete-img-overlay'}),
+			$btns = $('<div>'),
+			$deleteBtn = $('<span>', {class: 'delete'}).html('Delete'),
+			$cancelBtn = $('<span>', {class: 'cancel'}).html('Cancel');
+
+	if(currImg === placeholder) return;
+
+	$btns.append($deleteBtn).append('<br>').append($cancelBtn);
+	$overlay.append($btns);
+	$img.parent().append($overlay);
+
+	$deleteBtn.on('click', doImgDelete);
+	$cancelBtn.on('click', cancelImgDelete);
+
+	// $img.attr('src', placeholder).attr('img-data', '').attr('img-url', '');
 }
 
 function doImageTask(e) {
@@ -191,6 +254,9 @@ function doImageTask(e) {
 	let task = $(this).attr('class');
 	
 	switch (task) {
+		case 'upload':
+			selectImgFromFiles();
+			break;
 		case 'linking':
 			showImgLinkModal();
 			break;
@@ -199,6 +265,7 @@ function doImageTask(e) {
 			break;
 		case 'delete':
 			deleteCurrentImg();
+			break;
 		default:
 			console.log(`Not in the tool lists: ${task}`);
 	}

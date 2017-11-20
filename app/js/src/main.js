@@ -362,6 +362,14 @@ function doAutosave() {
 			template = $('.templates li.active').attr('data-template'),
 			autoSave = 1,
 			currAutosaveNum = getCurrAutosaveNum(userID);
+
+	
+	setTimeout(() => {
+		$('.autosave-sign').fadeIn(300);
+	}, 500);
+	setTimeout(() => {
+		$('.autosave-sign').fadeOut(300);
+	}, 2000)
 	
 	return currAutosaveNum
 		.then((num) => {

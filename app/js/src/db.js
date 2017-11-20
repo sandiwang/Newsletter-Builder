@@ -168,15 +168,19 @@ function getUserHistory(userID) {
 		.catch((err) => console.log('Error when retrieving data:', err));
 }
 
-function updateImgSrc(url) {
+function updateImgAttr(url) {
 	if($('.thumb.img-cropping').length > 0) {
 		$('.thumb.img-cropping').find('img').attr('img-url', url);
 	} else if ($('.thumb.active').length > 0) {
 		$('.thumb.active').find('img').attr('img-url', url);
+	} else if($('.thumb.uploadingFromFiles').length > 0) {
+		console.log($('.thumb.uploadingFromFiles'));
+		$('.thumb.uploadingFromFiles').find('img').attr('src', url).attr('img-url', url);
 	}
 	
 	$('.thumb.img-cropping').removeClass('img-cropping').find('.crop-btns').remove();
-	return $('.thumb.active').removeClass('active');
+	$('.thumb.active').removeClass('active');
+	$('.thumb.uploadingFromFiles').removeClass('uploadingFromFiles');
 }
 
 function deleteUserHistory(userID, dataID, date) {
@@ -242,19 +246,35 @@ function uploadImg(data) {
 	}, (error) => {
 		console.error(error);
 	}, () => {
-		updateImgSrc(imgTask.snapshot.downloadUrl);
+		updateImgAttr(imgTask.snapshot.downloadUrl);
 	});
 	*/
 
 	return imgRef.putString(data, 'base64')
 		.then((snapshot) => {
 			//console.log('upload function:', snapshot.metadata.downloadURLs[0]);
-			updateImgSrc(snapshot.metadata.downloadURLs[0]);
+			updateImgAttr(snapshot.metadata.downloadURLs[0]);
 			return true;
 		})
 		.catch((err) => {
-			console.log(`Error when uploading iamge: ${err}`);
+			console.log(`Error when uploading image: ${err}`);
 		});
+}
+
+function uploadImgFromFiles(userID, file) {
+	let fileName = file.name,
+			imgRef = storageRef.child(`images/${userID}/${fileName}${file.lastModified}`);
+
+	return imgRef.put(file)
+		.then((snapshot) => {
+			console.log(snapshot.metadata.downloadURLs[0]);
+			updateImgAttr(snapshot.metadata.downloadURLs[0]);
+			//updateImgSrc(snapshot.metadata.downloadURLs[0]);
+			return true;
+		})
+		.catch((err) => {
+			console.log(`Error when uploading image from files: ${err}`);
+		})
 }
 
 function setAutosave(userID, autosave) {
