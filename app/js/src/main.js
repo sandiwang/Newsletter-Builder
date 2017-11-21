@@ -7,6 +7,10 @@ let app = new Vue({
 });
 */
 
+
+/***** Summernote API ***************/
+/***** https://summernote.org/ ******/
+
 const textEditor = {
 	height: 300,
 	maxHeight: 220,
@@ -24,12 +28,15 @@ const textEditor = {
 	]
 };
 
+
+/***** AccuWeather API *************************/
+/***** https://developer.accuweather.com/ ******/
+
 const weatherConfig = {
 	key: 'CvzA3RKOLCUuqfAMyao7AFVyqDtrYMW7',
 	url: 'http://dataservice.accuweather.com/forecasts/v1/daily/5day',
-	locationKey: {
-		newyork: 349727
-	},
+	locationKeyUrl: 'http://dataservice.accuweather.com/locations/v1/cities/',
+	locationKey: {},
 	icons: {
 		sunny: 'sunny.png',
 		partlySunny: 'mostly-sunny.png',
@@ -51,40 +58,48 @@ const weatherConfig = {
 	}
 };
 
-let SaveBtn = function (context) {
-  const summernoteui = $.summernote.ui;
 
-  let button = summernoteui.button({
-    contents: 'SAVE',
-    tooltip: 'Save',
-    click: () => {
-    	updateContent();
-    	TextEditor.hidePopup();
-    	$('.input.active').removeClass('active');
-    	doAutosave();
-    }
-  });
+/***** ipinfo.io API ***********/
+/***** https://ipinfo.io/ ******/
 
-  return button.render();
+const geolocationConfig = {
+	key: '0226b2e6a2a271'
 }
 
-let CancelBtn = function (context) {
-	const summernoteui = $.summernote.ui;
-
-	let button = summernoteui.button({
-		contents: 'CANCEL',
-		tooltip: 'Cancel',
-		click: () => {
-			$('.editor-popup').summernote('reset');
-			TextEditor.hidePopup();
-			$('.input.active').removeClass('active');
-		}
-	});
-
-	return button.render();
-}
+let userLocation = {};
 
 let TextEditor = {
+	SaveBtn: (context) => {
+		const summernoteui = $.summernote.ui;
+
+	  let button = summernoteui.button({
+	    contents: 'SAVE',
+	    tooltip: 'Save',
+	    click: () => {
+	    	updateContent();
+	    	TextEditor.hidePopup();
+	    	$('.input.active').removeClass('active');
+	    	doAutosave();
+	    }
+	  });
+
+	  return button.render();
+	},
+	CancelBtn: (context) => {
+		const summernoteui = $.summernote.ui;
+
+		let button = summernoteui.button({
+			contents: 'CANCEL',
+			tooltip: 'Cancel',
+			click: () => {
+				$('.editor-popup').summernote('reset');
+				TextEditor.hidePopup();
+				$('.input.active').removeClass('active');
+			}
+		});
+
+		return button.render();
+	},
 	init: (elem) => {
 		if(elem && elem.html().trim() !== ''){
 			$('.editor-popup').html(elem.html());
@@ -95,8 +110,8 @@ let TextEditor = {
 			maxHeight: textEditor.maxHeight,
 			toolbar: textEditor.toolbar,
 		  buttons: {
-		    save: SaveBtn,
-		    cancel: CancelBtn
+		    save: TextEditor.SaveBtn,
+		    cancel: TextEditor.CancelBtn
 		  },
 		  onCreateLink: (url) => {
 		  	let email = /^([\w-]+(?:\.[\w-]+)*)@((?:[\w-]+\.)*\w[\w-]{0,66})\.([a-z]{2,6}(?:\.[a-z]{2})?)$/i
@@ -298,8 +313,8 @@ function setLayout() {
 function sidebarNavigate(e) {
 	e.preventDefault();
 
-	let target = $(this).attr('data-target'),
-			current = $('.sidebar .narrow-navs li.active').attr('data-target'),
+	let target = $(this).attr('data-id'),
+			current = $('.sidebar .narrow-navs li.active').attr('data-id'),
 			$targetNav = $(`.nav.${target}`);
 
 	if (current === undefined) {
@@ -309,7 +324,7 @@ function sidebarNavigate(e) {
 		$(this).removeClass('active');
 		hideNav($targetNav);
 	} else {
-		$(`.sidebar .narrow-navs li[data-target=${current}]`).removeClass('active');
+		$(`.sidebar .narrow-navs li[data-id=${current}]`).removeClass('active');
 		$(this).addClass('active');
 
 		hideNav($(`.sidebar .nav.${current}`));
@@ -504,6 +519,26 @@ function changeTemplate() {
 	}
 }
 
+function resetTemplate() {
+	let $canvas = $('.canvas.active'),
+			templateID = $canvas.attr('template'),
+			templateContent = getTemplate(templateID);
+
+	return templateContent.then((data) => {
+		$canvas.html(data.content);
+		getWeather();
+	
+		$canvas.find('.input.thumb').hover(showImgToolOptions, hideImgToolOptions);
+		$canvas.find('.input.thumb').on('click', toggleImgUploadUI);
+		$canvas.find('.input.thumb').each(function(){
+			initFileDrop($(this));
+		});
+
+		$canvas.find('.input:not(.thumb)').on('click', toggleEditing);
+		$canvas.find('.input a').on('click', (e) => e.stopPropagation());
+	});
+}
+
 function formatLineHeight(contents) {
 	let texts = contents.querySelectorAll('.input div');
 
@@ -664,7 +699,7 @@ function buildWeatherForecast(data) {
 }
 
 function getWeather() {
-	let url = `${weatherConfig.url}/${weatherConfig.locationKey.newyork}?apikey=${weatherConfig.key}`;
+	let url = `${weatherConfig.url}/${userLocation.key}?apikey=${weatherConfig.key}`;
 
 	return $.ajax({
 						type: 'GET',
@@ -885,9 +920,45 @@ function doLogout(e) {
 	location.reload();
 }
 
+function getLocationKey() {
+	return getLocation()
+		.then((data) => {
+			return $.ajax({
+							type: 'GET',
+							url: `${weatherConfig.locationKeyUrl}/${data.country}/search?apikey=${weatherConfig.key}&q=${escape(data.city)}`,
+							contentType: 'jsonp',
+							dataType: 'jsonp'
+						})
+						.then((result) => result[0].Key)
+						.fail((err) => console.log(`Error when getting location key from AccuWeather API:`, err));
+		})
+		.catch((err) => console.log(`Error when getting location key:`, err));
+}
+
+function getLocation() {
+	return $.getJSON(`http://ipinfo.io/?token=${geolocationConfig.key}`, (data) => {
+		let userID = getCurrentUserID();
+
+		userLocation['city'] = data.city;
+		userLocation['countryCode'] = data.country;
+		updateUserLocation(userID, data);
+
+		return data;
+		}, (err) => {
+		console.log(`Error when getting user geolocation data: ${err}`);
+	})
+}
+
+function setUserLocationKey() {
+	return getLocationKey().then((result) => {
+		userLocation['key'] = result;
+		// getWeather();
+	});
+}
+
 
 $(function(){
-	// getWeather();
+	setUserLocationKey();
 	setLoaderHeight();
 	setLayout();
 
@@ -898,6 +969,7 @@ $(function(){
 		console.lot(err);
 	});
 	*/
+
 	$('#user-avartar').on('mousedown', toggleUserProfile);
 	$('#user-profile').on('blur', closeUserProfile);
 	$('#user-profile li').on('click', toggleUserActions);
@@ -911,11 +983,14 @@ $(function(){
 	});
 	$('.sidebar .narrow-navs li').on('click', (e) => e.preventDefault() );
 	$('.sidebar .narrow-navs li').on('mousedown', sidebarNavigate);
-	$('.nav').on('blur', function() {
-		$(`.sidebar .narrow-navs li.active`).removeClass('active');
-		$(this).addClass('active');
+	$('.nav').on('blur', function(e) {
+		let target = $(this).attr('data-id');
+
+		$(`.sidebar .narrow-navs li[data-id=${target}]`).removeClass('active');
+		$(this).removeClass('active');
 		hideNav($(this));
 	})
+	$('.nav.home a').on('click', (e) => e.preventDefault());
 
 	$('.input.thumb').each(function(){
 		//let $tools = createToolPopup();
@@ -925,9 +1000,13 @@ $(function(){
 
 	$('.single-input input').on('keyup', checkInputValue);
 
-	$('#export').on('click', exportNewsletter);
-	$('#save').on('click', UserHistories.save);
-	$('#getHistories').on('click', UserHistories.get);
+	$('#export, #home-export').on('click', exportNewsletter);
+	$('#save, #home-save').on('click', UserHistories.save);
+	$('#getHistories, #home-getHistories').on('click', UserHistories.get);
+	$('#home-reset').on('click', () => {
+		$('.nav.home').blur();
+		resetTemplate();
+	});
 
 	$('.input:not(.thumb)').on('click', toggleEditing);
 	$('.input a').on('click', (e) => e.stopPropagation());
@@ -937,6 +1016,11 @@ $(function(){
 
 	$('.templates li').on('click', changeTemplate);
 
+	$('input[name="img-url"]').on('keyup', (e) => {
+		if(e.which === 13) {
+			setImgLink();
+		}
+	});
 	$('#select-link-type > input').on('click', toggleSelectDropdown);
 	$('#select-link-type ul li').on('click', selectImgLinkType);
 	$('#setImgLink').on('click', setImgLink);

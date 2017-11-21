@@ -47,12 +47,19 @@
 		<div class="main">
 			<div class="sidebar">
 				<ul class="narrow-navs">
-					<li data-target="templates"><a href="" title="Templates"><i class="ion-ios-folder-outline"></i></a></li>
+					<li data-id="home"><a href="" title="Home"><i class="ion-ios-home-outline"></i></a></li>
+					<li data-id="templates"><a href="" title="Templates"><i class="ion-ios-folder-outline"></i></a></li>
 				</ul>
-				<div id="sidebar-save"><a href="" title="Save"><i class="ion-document-text"></i></a></div>
+				<div id="sidebar-save"><a href="" title="Save"><i class="ion-ios-cloud-upload-outline"></i></a></div>
 				<div id="user-avartar"><img src=""></div>
 			</div>
-			<ul class="nav templates" tabindex="-1">
+			<div class="nav home" data-id="home" tabindex="-1">
+				<div id="home-save"><a href="" title="Save the current working progress"><i class="ion-ios-cloud-upload-outline"></i> Save</a></div>
+				<div id="home-getHistories"><a href="" title="Get saved files"><i class="ion-ios-cloud-download-outline"></i> Get Saved</a></div>
+				<div id="home-export"><a href="" title="Export the newsletter"><i class="ion-ios-eye-outline"></i> Export</a></div>
+				<div id="home-reset"><a href="" title="Reset the current newsletter to the default template"><i class="ion-ios-refresh-outline"></i> Reset</a></div>
+			</div>
+			<ul class="nav templates" data-id="templates" tabindex="-1">
 				<li class="active" data-template="1">
 					<div class="template-name">Template 1</div>
 					<div class="template-thumb">
@@ -183,7 +190,7 @@
 								<table width="560" cellpadding="0" cellspacing="0" border="0">
 									<tr>
 										<td width="20" style="border-left: 1px solid #000;">&nbsp;</td>
-										<td width="170" valign="top" height="170" class="input thumb">
+										<td width="170" valign="top" height="170" class="input thumb" data-id="5">
 											<input type="file" class="upload-img-file" style="display: none;">
 											<img src="img/upload-img.png" width="170">
 										</td>
@@ -223,7 +230,7 @@
 												</tr>
 											</table>
 										</td>
-										<td width="170" valign="top" height="170" class="input thumb">
+										<td width="170" valign="top" height="170" class="input thumb" data-id="6">
 											<input type="file" class="upload-img-file" style="display: none;">
 											<img src="img/upload-img.png" width="170">
 										</td>
@@ -237,7 +244,7 @@
 								<table width="560" cellpadding="0" cellspacing="0" border="0">
 									<tr>
 										<td width="20" style="border-left: 1px solid #000;">&nbsp;</td>
-										<td width="170" valign="top" height="170" class="input thumb">
+										<td width="170" valign="top" height="170" class="input thumb" data-id="7">
 											<input type="file" class="upload-img-file" style="display: none;">
 											<img src="img/upload-img.png" width="170">
 										</td>
@@ -277,7 +284,7 @@
 												</tr>
 											</table>
 										</td>
-										<td width="170" valign="top" height="170" class="input thumb">
+										<td width="170" valign="top" height="170" class="input thumb" data-id="8">
 											<input type="file" class="upload-img-file" style="display: none;">
 											<img src="img/upload-img.png" width="170">
 										</td>
@@ -304,7 +311,7 @@
 							<td colspan="2" height="30" style="background-color: #000;">&nbsp;</td>
 						</tr>
 						<tr>
-							<td width="300" height="300" align="center" valign="middle" class="input thumb">
+							<td width="300" height="300" align="center" valign="middle" class="input thumb" data-id="9">
 								<input type="file" class="upload-img-file" style="display: none;">
 								<img src="img/upload-img.png" width="300">
 							</td>
@@ -324,13 +331,13 @@
 								<div style="width: 260px; height: 10px; background-color: #fff;">&nbsp;</div>
 								<div class="input desc" style="font-family: 'KievitOT Light', Verdana, Geneva, sans-serif; padding-top: 5px;"><div style="line-height: 20px;">Contents here...</div></div>
 							</td>
-							<td width="300" height="300" align="center" valign="middle" class="input thumb">
+							<td width="300" height="300" align="center" valign="middle" class="input thumb" data-id="10">
 								<input type="file" class="upload-img-file" style="display: none;">
 								<img src="img/upload-img.png">
 							</td>
 						</tr>
 						<tr>
-							<td width="300" height="300" align="center" valign="middle" class="input thumb">
+							<td width="300" height="300" align="center" valign="middle" class="input thumb" data-id="11">
 								<img src="img/upload-img.png">
 							</td>
 							<td width="300" valign="middle" style="padding: 0 20px;">
@@ -349,7 +356,7 @@
 								<div style="width: 260px; height: 10px; background-color: #fff;">&nbsp;</div>
 								<div class="input desc" style="font-family: 'KievitOT Light', Verdana, Geneva, sans-serif; padding-top: 5px;"><div style="line-height: 20px;">Contents here...</div></div>
 							</td>
-							<td width="300" height="300" align="center" valign="middle" class="input thumb">
+							<td width="300" height="300" align="center" valign="middle" class="input thumb" data-id="12">
 								<input type="file" class="upload-img-file" style="display: none;">
 								<img src="img/upload-img.png" width="300">
 							</td>
@@ -670,8 +677,16 @@
 		      	<div class="logout"><a href="" title="Log out">Not <span></span>?<br>Log out here</a></div>
 		      </div>
 		      <ul class="user-infos detail">
-		      	<li><div class="label">Email:</div><div class="user-email"></div></li>
-		      	<li><div class="label">Sign in from:</div><div class="user-provider"></div></li>
+		      	<li>
+		      		<div class="label">Email:</div>
+		      		<div class="user-email"></div></li>
+		      	<li>
+		      		<div class="label">Sign in from:</div>
+		      		<div class="user-provider"></div></li>
+		      	<li>
+		      		<div class="label">Location:</div>
+		      		<div class="user-location"></div>
+		      	</li>
 		      	<li>
 		      		<div class="label">Show Autosave:</div>
 		      		<div class="flat-switch_toggle">

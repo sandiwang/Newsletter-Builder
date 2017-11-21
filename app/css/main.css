@@ -673,11 +673,11 @@ html, body {
       font-size: 1.857rem;
       border-radius: 100%;
       text-align: center;
-      border: 2px solid rgba(255, 255, 255, 0.8);
+      border: 1px solid rgba(255, 255, 255, 0.8);
       color: rgba(255, 255, 255, 0.8);
       transition: 0.3s all; }
       .sidebar #sidebar-save a:hover {
-        border-color: #f2b632; }
+        color: #f2b632; }
   .sidebar #user-avartar {
     position: absolute;
     bottom: 10px;
@@ -718,7 +718,7 @@ html, body {
   .narrow-navs a {
     color: rgba(255, 255, 255, 0.8);
     transition: 0.3s all;
-    padding: 20px;
+    padding: 15px 20px;
     display: block; }
 
 #user-profile {
@@ -773,6 +773,29 @@ html, body {
       border-color: #f2b632; }
     .nav li.active .template-name {
       color: #f2b632; }
+
+.nav.home {
+  width: auto; }
+  .nav.home a {
+    color: inherit;
+    display: block;
+    padding: 15px 30px 15px 15px; }
+    .nav.home a:hover {
+      text-decoration: none; }
+  .nav.home > div {
+    font-size: 1.143rem;
+    cursor: pointer;
+    letter-spacing: 0.5px;
+    text-transform: uppercase; }
+    .nav.home > div:hover {
+      background-color: rgba(201, 201, 202, 0.5); }
+    .nav.home > div i {
+      width: 25px;
+      text-align: center;
+      font-size: 1.571rem;
+      display: inline-block;
+      margin-right: 5px;
+      vertical-align: middle; }
 
 .template-name {
   letter-spacing: 1px;
@@ -875,6 +898,9 @@ html, body {
       color: #fff; }
   .input.crop-rounded .cropper-view-box, .input.crop-rounded .cropper-face {
     border-radius: 50%; }
+
+.input.thumb a {
+  display: block; }
 
 .input.thumb .delete-img-overlay {
   position: absolute;

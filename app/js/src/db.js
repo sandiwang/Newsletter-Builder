@@ -30,13 +30,18 @@ firebase.auth().onAuthStateChanged((user) => {
     		id = user.uid,
         email = user.email,
         photoURL = user.photoURL,
-        existingSetting = getUserAutosaveSetting(id);
+        existingSetting = getUserAutosaveSetting(id),
+        currentLocation = getUserLocation(id);
    // console.log(user);
 
     existingSetting.then((result) => {
 			createUser(id, displayName, result);
 			$('#switch_autosave').prop('checked', result);
   	});
+
+    currentLocation.then((result) => {
+    	$('#user-profile-modal .user-location').html(result.city);
+    });
 
     buildUserProfile(user);
     
@@ -47,6 +52,25 @@ firebase.auth().onAuthStateChanged((user) => {
     console.log('logged out');
   }
 });
+
+function uploadTemplate(templateID, template) {
+	let data = {
+		templateID,
+		content: template
+	};
+
+	return db.ref(`Template/${templateID}`)
+		.update(data)
+		.then(() => console.log(`successfully upload template ${templateID}`))
+		.catch((err) => console.log(`Error when uploading template ${templateID}`, err));
+}
+
+function getTemplate(templateID) {
+	return db.ref(`Template/${templateID}`)
+		.once('value')
+		.then((snapshot) => snapshot.val())
+		.catch((err) => console.log(`Error when getting template ${templateID}`, err));
+}
 
 function getUserAutosaveSetting(userID) {
 	return db.ref(`Users/${userID}`)
@@ -94,9 +118,9 @@ function getCurrentUserID() {
 	return firebase.auth().currentUser.uid;
 }
 
-function createUser(userId, username, autosave) {
-	return db.ref(`Users/${userId}`).update({
-		id: userId,
+function createUser(userID, username, autosave) {
+	return db.ref(`Users/${userID}`).update({
+		id: userID,
 		username,
 		autosave
 	}).then(() => {
@@ -107,7 +131,26 @@ function createUser(userId, username, autosave) {
 	});
 }
 
-function saveContent(userId, username, template, contents, autoSave) {
+function updateUserLocation(userID, location) {
+	let date = moment().format('YYYYMMDDHHmmss');
+
+	return db.ref(`UserLocation/${userID}`).update({
+		id: userID,
+		city: location.city,
+		country: location.country,
+		updateDate: date
+	}).then(() => console.log('successfully update user location'),
+					(err) => console.log(`Error when updating user location: ${err}`));
+}
+
+function getUserLocation(userID) {
+	return db.ref(`UserLocation/${userID}`)
+		.once('value')
+		.then((data) => data.val())
+		.catch((err) => console.log(`Error when getting user loation from database: ${err}`));
+}
+
+function saveContent(userID, username, template, contents, autoSave) {
 	let today = moment(),
 			todayStr = today.format('YYYYMMDD'),
 			now = today.format('HHmmss'),
@@ -116,7 +159,7 @@ function saveContent(userId, username, template, contents, autoSave) {
 	// let newPostKey = db.ref().child('updates').push().key;
 
 	let data = {
-		id: userId,
+		id: userID,
 		username,
 		uploadDate: todayStr,
 		uploadTime: now,
@@ -127,11 +170,11 @@ function saveContent(userId, username, template, contents, autoSave) {
 
 	// updates[`/Updates/${timestamp}`] = data;
 	if(autoSave) {
-		updates[`/Users/${userId}/histories/autosave/${todayStr}${now}`] = data;
+		updates[`/Users/${userID}/histories/autosave/${todayStr}${now}`] = data;
 	} else {
 		// when user manually saves, we can delete all the autosave data
-		deleteAutosave(userId);
-		updates[`/Users/${userId}/histories/${todayStr}/${timestamp}`] = data;
+		deleteAutosave(userID);
+		updates[`/Users/${userID}/histories/${todayStr}/${timestamp}`] = data;
 	}
 
 	return db.ref().update(updates).then(() => {
