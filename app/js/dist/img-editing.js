@@ -49,12 +49,13 @@ function selectImgFromFiles() {
 function confirmSelectedImgFromFiles(e) {
 	var file = e.target.files[0],
 	    fileType = file.type,
-	    userID = getCurrentUserID();
+	    userID = getCurrentUserID(),
+	    $progressbar = $('<div>', { class: 'progress-bar-wrapper' }).append('<div class="progress-bar"><div></div></div>');
 
 	// if it's not image, return
 	if (fileType.indexOf('image') === -1) return;
 
-	$(this).parents('.thumb').addClass('uploadingFromFiles');
+	$(this).parents('.thumb').addClass('uploadingFromFiles').append($progressbar);
 	uploadImgFromFiles(userID, file).then(function (result) {
 		return console.log('upload: ' + result);
 	});

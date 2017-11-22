@@ -1,5 +1,7 @@
 $loginW: 500px;
 
+$fb: #3b5998;
+
 @mixin verticalCenter {
 	top: 50%;
 	transform        : translateY(-50%);
@@ -92,11 +94,31 @@ $loginW: 500px;
 
 #login-google, #login-facebook{
 	cursor: pointer;
-	margin: 10px 0;
+	margin: 10px 35px;
+	position: relative;
+	padding: 15px 10px 15px 60px;
+	text-align: left;
+	font-size: $font16;
+	letter-spacing: 1px;
+	border-radius: 4px;
 
 	img{
-		width: 240px;;
+		height: 30px;
+		display: inline-block;
+		position: absolute;
+		left: 10px;
+		top: 50%;
+		transform: translateY(-50%);
 	}
+}
+
+#login-google{
+	box-shadow: $dropshadow-2;
+}
+
+#login-facebook{
+	background-color: $fb;
+	color: #fff;
 }
 
 #submit-username{

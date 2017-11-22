@@ -327,7 +327,10 @@
     padding: 0;
     margin-right: 10px;
     font-weight: 400;
-    border-radius: 0; }
+    border-radius: 0;
+    width: 40%;
+    text-align: left;
+    color: #838386; }
   #user-profile-modal .logout {
     font-size: 0.8571rem;
     position: absolute;
@@ -484,6 +487,32 @@
   .flat-switch_toggle input:checked + label:after {
     margin-left: 19px; }
 
+.progress-bar-wrapper {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  padding: 20px;
+  background-color: rgba(37, 40, 57, 0.9); }
+  .progress-bar-wrapper .progress-bar {
+    height: 10px;
+    width: 100%;
+    border-radius: 2rem;
+    position: relative;
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: rgba(255, 255, 255, 0.5); }
+    .progress-bar-wrapper .progress-bar > div {
+      position: absolute;
+      width: 0;
+      height: 100%;
+      background-color: #fff;
+      border-radius: 2rem;
+      top: 0;
+      left: 0;
+      z-index: 1; }
+
 .login-wrapper {
   display: none;
   position: fixed;
@@ -554,9 +583,27 @@
 
 #login-google, #login-facebook {
   cursor: pointer;
-  margin: 10px 0; }
+  margin: 10px 35px;
+  position: relative;
+  padding: 15px 10px 15px 60px;
+  text-align: left;
+  font-size: 1.143rem;
+  letter-spacing: 1px;
+  border-radius: 4px; }
   #login-google img, #login-facebook img {
-    width: 240px; }
+    height: 30px;
+    display: inline-block;
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%); }
+
+#login-google {
+  box-shadow: 0 4px 5px 0 rgba(0, 0, 0, 0.14), 0 1px 10px 0 rgba(0, 0, 0, 0.12), 0 2px 4px -1px rgba(0, 0, 0, 0.3); }
+
+#login-facebook {
+  background-color: #3b5998;
+  color: #fff; }
 
 #submit-username {
   margin-top: 20px;

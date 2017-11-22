@@ -217,12 +217,12 @@ function updateImgAttr(url) {
 	} else if ($('.thumb.active').length > 0) {
 		$('.thumb.active').find('img').attr('img-url', url);
 	} else if($('.thumb.uploadingFromFiles').length > 0) {
-		console.log($('.thumb.uploadingFromFiles'));
 		$('.thumb.uploadingFromFiles').find('img').attr('src', url).attr('img-url', url);
 	}
 	
 	$('.thumb.img-cropping').removeClass('img-cropping').find('.crop-btns').remove();
 	$('.thumb.active').removeClass('active');
+	$('.thumb.uploadingFromFiles .progress-bar-wrapper').remove();
 	$('.thumb.uploadingFromFiles').removeClass('uploadingFromFiles');
 }
 
@@ -265,35 +265,17 @@ function deleteOldestRecord(userID, type) {
 
 function uploadImg(data) {
 	let imgName = moment().unix(),
-			userID = getCurrentUserID();
-	let imgRef = storageRef.child(`images/${userID}/${imgName}`);
+			userID = getCurrentUserID(),
+			imgRef = storageRef.child(`images/${userID}/${imgName}`),
+			imgTask = imgRef.putString(data, 'base64');
 	
-	/***** TODO: add progress bar *****/
-	/*
-	let imgTask = imgRef.putString(data, 'base64');
-
 	imgTask.on(firebase.storage.TaskEvent.STATE_CHANGED, (snapshot) => {
-		const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-  	console.log(`Upload is ${progress}% done`);
-
-  	switch (snapshot.state) {
-	    case firebase.storage.TaskState.SUCCESS: // or 'success'
-	      console.log('Upload is complete');
-	      break;
-	    case firebase.storage.TaskState.RUNNING: // or 'running'
-	      console.log('Upload is running');
-	      break;
-	    default:
-	      console.log(snapshot.state);
-	  }
+		uploadProgress(snapshot);
 	}, (error) => {
 		console.error(error);
-	}, () => {
-		updateImgAttr(imgTask.snapshot.downloadUrl);
 	});
-	*/
 
-	return imgRef.putString(data, 'base64')
+	return imgTask
 		.then((snapshot) => {
 			//console.log('upload function:', snapshot.metadata.downloadURLs[0]);
 			updateImgAttr(snapshot.metadata.downloadURLs[0]);
@@ -304,15 +286,42 @@ function uploadImg(data) {
 		});
 }
 
+function uploadProgress(snapshot) {
+	const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100,
+				$imgContainer = $('.input.thumb.uploadingFromFiles').length > 0 ? $('.input.thumb.uploadingFromFiles') : $('.input.thumb.active'),
+				$progressBar = $imgContainer.find('.progress-bar div');
+
+	$progressBar.css('width', `${progress}%`);
+	console.log(`Upload is ${progress}% done`);
+
+	/*
+	switch (snapshot.state) {
+    case firebase.storage.TaskState.SUCCESS: // or 'success'
+      console.log('Upload is complete');
+      break;
+    case firebase.storage.TaskState.RUNNING: // or 'running'
+      console.log('Upload is running');
+      break;
+    default:
+      console.log(snapshot.state);
+  }
+  */
+}
+
 function uploadImgFromFiles(userID, file) {
 	let fileName = file.name,
-			imgRef = storageRef.child(`images/${userID}/${fileName}${file.lastModified}`);
+			imgRef = storageRef.child(`images/${userID}/${fileName}${file.lastModified}`),
+			imgTask = imgRef.put(file);
 
-	return imgRef.put(file)
+	imgTask.on(firebase.storage.TaskEvent.STATE_CHANGED, (snapshot) => {
+		uploadProgress(snapshot);
+	}, (error) => {
+		console.error(error);
+	});
+
+	return imgTask
 		.then((snapshot) => {
-			console.log(snapshot.metadata.downloadURLs[0]);
 			updateImgAttr(snapshot.metadata.downloadURLs[0]);
-			//updateImgSrc(snapshot.metadata.downloadURLs[0]);
 			return true;
 		})
 		.catch((err) => {
