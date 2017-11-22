@@ -36,7 +36,7 @@ function createCropBtns() {
 
 function selectImgFromFiles() {
 	var $img = $('.input.thumb.hovering').find('img'),
-	    $input = $img.siblings('input[type=file]');
+	    $input = $img.parents('.input.thumb').find('input[type=file]');
 
 	$img.attr('img-data', '');
 	$input.on('click', function (e) {
@@ -117,8 +117,6 @@ function showImgCropping() {
 		},
 		crop: function crop(e) {
 			// Output the result data for cropping image.
-			// console.log(e.x);
-			// console.log(e.y);
 			imgCroppedData.dataURL = $img.cropper('getCroppedCanvas').toDataURL();
 			imgCroppedData.data = $img.cropper('getCroppedCanvas');
 		}
@@ -127,11 +125,12 @@ function showImgCropping() {
 	$img.on('ready', function () {
 		$img.cropper("setCropBoxData", { width: "135", height: "135" });
 
-		$img.parent().addClass('img-cropping');
+		$img.parents('.input.thumb').addClass('img-cropping');
 		$('.cropper-container').on('click', function (e) {
-			return e.stopPropagation();
+			e.stopPropagation();
+			e.preventDefault();
 		});
-		showCropBtns($img.parent());
+		showCropBtns($img.parents('.input.thumb'));
 	});
 }
 
@@ -216,7 +215,7 @@ function doImgDelete(e) {
 	e.stopPropagation();
 
 	var $overlay = $(this).parents('.delete-img-overlay'),
-	    $img = $overlay.siblings('img'),
+	    $img = $overlay.parents('.input.thumb').find('img'),
 	    placeholder = 'img/upload-img.png';
 
 	$img.attr('src', placeholder).attr('img-data', '').attr('img-url', '');
@@ -279,7 +278,7 @@ function doImageTask(e) {
 }
 
 function setImgLink() {
-	var $modal = $(this).parents('.modal'),
+	var $modal = $('#img-linking-modal'),
 	    $input = $modal.find('input[name="img-url"]'),
 	    type = $input.attr('link-type'),
 	    target = $modal.attr('target-img'),

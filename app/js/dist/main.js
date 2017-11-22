@@ -281,6 +281,54 @@ var UserHistories = {
 	linkColor: '#0091ea'
 };
 
+var lockCanvas = {
+	lockBtn: '#home-lock',
+	lockedIcon: 'ion-ios-unlocked-outline',
+	unlockedIcon: 'ion-ios-locked-outline',
+	lockSign: '.template-lock-sign',
+	isLocked: function isLocked(elem) {
+		var $canvas = elem || $('.canvas.active');
+		return $canvas.hasClass('locked');
+	},
+	updateLockBtn: function updateLockBtn(locked) {
+		var $btn = $('#home-lock a'),
+		    isLocked = '<i class="' + lockCanvas.lockedIcon + '"></i> Unlock',
+		    notLocked = '<i class="' + lockCanvas.unlockedIcon + '"></i> Lock',
+		    $lockedSign = $(lockCanvas.lockSign + '.locked'),
+		    $unlockedSign = $(lockCanvas.lockSign + '.unlocked');
+
+		if (locked) {
+			$btn.html(isLocked);
+			$unlockedSign.hide();
+			$lockedSign.show();
+		} else {
+			$btn.html(notLocked);
+			$lockedSign.hide();
+		}
+	},
+	toggleCanvasLock: function toggleCanvasLock(e) {
+		e.preventDefault();
+
+		var $canvas = $('.canvas.active'),
+		    $lockedSign = $(lockCanvas.lockSign + '.locked'),
+		    $unlockedSign = $(lockCanvas.lockSign + '.unlocked');
+
+		if ($(lockCanvas.lockBtn).hasClass('locked')) {
+			$lockedSign.hide();
+			$unlockedSign.show().delay(1000).fadeOut(150);
+		}
+
+		$canvas.toggleClass('locked');
+		$(lockCanvas.lockBtn).toggleClass('locked');
+
+		if ($canvas.hasClass('locked')) {
+			lockCanvas.updateLockBtn(1);
+		} else {
+			lockCanvas.updateLockBtn(0);
+		}
+	}
+};
+
 function isEmpty(elm) {
 	return elm.val().trim() === '' ? 1 : 0;
 }
@@ -505,7 +553,10 @@ function toggleImgUploadUI() {
 
 function changeTemplate() {
 	// if user clicks on current template, nothing happens
-	var template = $(this).attr('data-template');
+	var template = $(this).attr('data-template'),
+	    locked = lockCanvas.isLocked($('.canvas.tab[template=' + template + ']'));
+
+	lockCanvas.updateLockBtn(locked);
 
 	if ($('.templates li.active').length > 0 && !$(this).hasClass('active')) {
 		$('.templates li.active').removeClass('active');
@@ -1031,20 +1082,27 @@ $(function () {
 	});
 
 	$('.input.thumb').each(function () {
-		//let $tools = createToolPopup();
-		//$(this).append($tools);
 		initFileDrop($(this));
 	});
 
 	$('.single-input input').on('keyup', checkInputValue);
 
-	$('#export, #home-export').on('click', exportNewsletter);
-	$('#save, #home-save').on('click', UserHistories.save);
-	$('#getHistories, #home-getHistories').on('click', UserHistories.get);
-	$('#home-reset').on('click', function () {
-		$('.nav.home').blur();
-		resetTemplate();
+	$('#export, #home-export').on('mousedown', exportNewsletter);
+	$('#save, #home-save').on('mousedown', function (e) {
+		e.preventDefault();
+		UserHistories.save();
 	});
+	$('#getHistories, #home-getHistories').on('mousedown', function (e) {
+		e.preventDefault();
+		UserHistories.get();
+	});
+	$('#home-reset').on('mousedown', function (e) {
+		e.preventDefault();
+
+		resetTemplate();
+		$('.nav.home').blur();
+	});
+	$('#home-lock').on('mousedown', lockCanvas.toggleCanvasLock);
 
 	$('.input:not(.thumb)').on('click', toggleEditing);
 	$('.input a').on('click', function (e) {

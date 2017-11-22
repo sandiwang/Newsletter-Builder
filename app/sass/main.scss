@@ -389,6 +389,10 @@ html, body{
 	margin: 20px auto;
 	box-shadow: $dropshadow;
 	text-align: left;
+
+	&.locked{
+		pointer-events: none;
+	}
 }
 
 .button{
@@ -597,6 +601,25 @@ html, body{
 	border-radius: 4px;
 	letter-spacing: 1px;
 	z-index: 11;
+}
+
+.template-lock-sign{
+	display: none;
+	position: fixed;
+	top: 10px;
+	right: 30px;
+	margin-left: 5px;
+	font-size: $font30;
+	transition: 0.15s all;
+
+	a{
+		color: $darkpurple;
+		display: block;
+		background-color: $yellow;
+		border-radius: 100%;
+		padding: 0 12px;
+		box-shadow: $dropshadow;
+	}
 }
 
 .note-editor.panel{
