@@ -274,6 +274,7 @@ function doImageTask(e) {
 }
 
 function setImgLink() {
+	alert('hi');
 	let $modal = $('#img-linking-modal'),
 			$input = $modal.find('input[name="img-url"]'),
 			type = $input.attr('link-type'),
