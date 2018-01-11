@@ -1,4 +1,63 @@
-@import url("https://www.fontify.me/wf/62bff158c0b7d8c9ca2a87f599f46dae");
+@font-face {
+  font-family: "Kievit";
+  font-style: normal;
+  font-weight: 400;
+  src: url("../font/KievitWeb.eot?") format("eot"), url("../font/KievitWeb.woff") format("woff"); }
+
+@font-face {
+  font-family: "Kievit";
+  font-style: italic;
+  font-weight: 400;
+  src: url("../font/KievitWeb-Ita.eot?") format("eot"), url("../font/KievitWeb-Ita.woff") format("woff"); }
+
+@font-face {
+  font-family: "Kievit";
+  font-style: normal;
+  font-weight: 700;
+  src: url("../font/KievitWeb-Bold.eot?") format("eot"), url("../font/KievitWeb-Bold.woff") format("woff"); }
+
+@font-face {
+  font-family: "Kievit";
+  font-style: italic;
+  font-weight: 700;
+  src: url("../font/KievitWeb-BoldIta.eot?") format("eot"), url("../font/KievitWeb-BoldIta.woff") format("woff"); }
+
+@font-face {
+  font-family: "Kievit";
+  font-style: normal;
+  font-weight: 100;
+  src: url("../font/KievitWeb-Light.eot?") format("eot"), url("../font/KievitWeb-Light.woff") format("woff"); }
+
+@font-face {
+  font-family: "Kievit";
+  font-style: italic;
+  font-weight: 100;
+  src: url("../font/KievitWeb-LightIta.eot?") format("eot"), url("../font/KievitWeb-LightIta.woff") format("woff"); }
+
+@font-face {
+  font-family: "Kievit";
+  font-style: normal;
+  font-weight: 500;
+  src: url("../font/KievitWeb-Medi.eot?") format("eot"), url("../font/KievitWeb-Medi.woff") format("woff"); }
+
+@font-face {
+  font-family: "Kievit";
+  font-style: italic;
+  font-weight: 500;
+  src: url("../font/KievitWeb-MediIta.eot?") format("eot"), url("../font/KievitWeb-MediIta.woff") format("woff"); }
+
+@font-face {
+  font-family: "Kievit";
+  font-style: normal;
+  font-weight: 200;
+  src: url("../font/KievitWeb-Thin.eot?") format("eot"), url("../font/KievitWeb-Thin.woff") format("woff"); }
+
+@font-face {
+  font-family: "Kievit";
+  font-style: italic;
+  font-weight: 200;
+  src: url("../font/KievitWeb-ThinIta.eot?") format("eot"), url("../font/KievitWeb-ThinIta.woff") format("woff"); }
+
 @media (min-width: 1280px) {
   .modal.wide .modal-dialog {
     width: 80%; } }
@@ -629,7 +688,7 @@
 html, body {
   height: 100%;
   width: 100%;
-  font-family: font86106;
+  font-family: "Kievit";
   font-size: 14px;
   background-color: #c9c9ca; }
 
