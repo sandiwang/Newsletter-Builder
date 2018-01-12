@@ -68,7 +68,7 @@ const geolocationConfig = {
 
 let userLocation = {};
 
-let TextEditor = {
+const TextEditor = {
 	SaveBtn: (context) => {
 		const summernoteui = $.summernote.ui;
 
@@ -149,7 +149,7 @@ let TextEditor = {
 	}
 }
 
-let UserHistories = {
+const UserHistories = {
 	get: () => {
 		let userId = getCurrentUserID();
 		$('#user-histories').modal('show');
@@ -445,6 +445,8 @@ function doAutosave() {
 }
 
 function getInitial(name) {
+	if(!name) return;
+	
 	let words = name.split(' ');
 	return words[1][0] + words[0][0];
 }
@@ -1007,9 +1009,28 @@ function setUserLocationKey() {
 	});
 }
 
+function capitalizeStr(str) {
+	return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+const Validate = {
+	email (email) {
+		return (email !== '') && (email.includes('@'))
+	},
+	password (psd, psdConfirm) {
+		return psd === psdConfirm;
+	},
+	signUp (email, psd) {
+		return true;
+	}
+}
+
 
 $(function(){
-	setUserLocationKey();
+	if(isAuthenticated()){
+		setUserLocationKey();
+	}
+	
 	setLoaderHeight();
 	setLayout();
 
@@ -1020,6 +1041,51 @@ $(function(){
 		console.lot(err);
 	});
 	*/
+
+	$('#signup-email-link').on('click', () => {
+  	$('.login-methods').hide();
+  	$('.signup-wrapper').show();
+  });
+
+  $('#signin-methods-link').on('click', () => {
+  	$('.signup-wrapper').hide();
+  	$('.login-methods').show();
+  })
+
+  $('.signup-form').on('submit', (e) => {
+  	e.preventDefault();
+
+  	let fname = $('#signup-firstname').val(),
+				lname = $('#signup-lastname').val(),
+				email = $('#signup-email').val(),
+				psd = $('#signup-password').val(),
+				psdConfirm = $('#signup-password-confirm').val(),
+				isPsdValid = Validate.password(psd, psdConfirm),
+				isValid = isPsdValid ? Validate.signUp(email, psd) : false;
+  	
+  	//console.log(isPsdValid);
+  	//console.log(isValid);
+
+  	if(isValid) {
+  		fname = capitalizeStr(fname);
+  		lname = capitalizeStr(lname);
+  		signUpWithEmail(email, psd, fname, lname);
+  	}
+  });
+
+  $('#login-email').on('submit', (e) => {
+  	e.preventDefault();
+
+  	let email = $('#signin-email').val(),
+  			psd = $('#signin-password').val(),
+ 				isValid = Validate.email(email) && psd !== '';
+
+ 		if(isValid) {
+ 			signInWithEmail(email, psd);
+ 		} else {
+ 			console.log('login values not valid');
+ 		}
+  })
 
 	$('#user-avartar').on('mousedown', toggleUserProfile);
 	$('#user-profile').on('blur', closeUserProfile);

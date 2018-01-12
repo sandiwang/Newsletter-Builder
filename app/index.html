@@ -22,26 +22,67 @@
 		<div class="login-wrapper">
 			<div>
 				<div class="login-heading">Newsletter Builder</div>
-				<div class="login-sub-heading">Please Sign In.</div>
-				<div id="login-google">
-					<img src="img/google-logo.png"> Sign in with Google
+				<div class="login-methods">	
+					<div class="login-sub-heading">Please Sign In.</div>
+					<form id="login-email">
+						<label class="single-input">
+		        	<input type="text" id="signin-email" name="signin-email">
+		        	<div class="label-text">Email</div>
+		      	</label>
+		      	<label class="single-input">
+		        	<input type="password" id="signin-password" name="signin-password">
+		        	<div class="label-text">Password</div>
+		      	</label>
+		      	<button type="submit" class="primary-btn">Sign In</button>
+					</form>
+					<div id="login-google">
+						<img src="img/google-logo.png"> Sign in with Google
+					</div>
+					<div class="text-divider"><span>or</span></div>
+					<div id="login-facebook">
+						<img src="img/fb-logo.png"> Sign in with Facebook
+					</div>
+					<div id="signup-email-link">
+						or <span>sign up with email</span>
+					</div>
 				</div>
-				<div class="text-divider"><span>or</span>
-				</div>
-				<div id="login-facebook">
-					<img src="img/fb-logo.png"> Sign in with Facebook
+				<div class="signup-wrapper">
+					<div class="login-sub-heading">Sign Up</div>
+					<form class="signup-form">
+						<div class="form-two-column">
+							<label class="single-input">
+			        	<input type="text" id="signup-firstname" name="firstname">
+			        	<div class="label-text">First Name*</div>
+			      	</label>
+			      	<label class="single-input">
+			        	<input type="text" id="signup-lastname" name="lastname">
+			        	<div class="label-text">Last Name*</div>
+			      	</label>
+						</div>
+						<label class="single-input">
+		        	<input type="text" id="signup-email" name="email">
+		        	<div class="label-text">Email*</div>
+		      	</label>
+		      	<label class="single-input">
+		        	<input type="password" id="signup-password" name="password">
+		        	<div class="label-text">Password*</div>
+		      	</label>
+		      	<label class="single-input">
+		        	<input type="password" id="signup-password-confirm" name="password-confirm">
+		        	<div class="label-text">Confirm Password*</div>
+		      	</label>
+		      	<button type="submit" class="primary-btn">Submit</button>
+					</form>
+					<div id="signin-methods-link">
+						or <span>back to sign in</span>
+					</div>
 				</div>
 				<div id="copyright">
 					<img src="img/gensler.jpg">
-					<p>© 2017 Gensler, All Rights Reserved</p>
+					<p>© 2018 Gensler, All Rights Reserved</p>
 				</div>
 				<!--
-				<label class="single-input">
-        	<input type="text" name="username">
-        	<div class="label-text">Username</div>
-      	</label>
       	<div class="message failed">Username already existed!</div>
-      	
       	<br>
       	<div id="submit-username" class="button">Submit</div>
       	-->

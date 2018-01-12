@@ -446,6 +446,8 @@ function doAutosave() {
 }
 
 function getInitial(name) {
+	if (!name) return;
+
 	var words = name.split(' ');
 	return words[1][0] + words[0][0];
 }
@@ -1040,10 +1042,29 @@ function setUserLocationKey() {
 	});
 }
 
+function capitalizeStr(str) {
+	return str.charAt(0).toUpperCase() + str.slice(1);
+}
+
+var Validate = {
+	email: function email(_email) {
+		return _email !== '' && _email.includes('@');
+	},
+	password: function password(psd, psdConfirm) {
+		return psd === psdConfirm;
+	},
+	signUp: function signUp(email, psd) {
+		return true;
+	}
+};
+
 $(function () {
 	var _this2 = this;
 
-	setUserLocationKey();
+	if (isAuthenticated()) {
+		setUserLocationKey();
+	}
+
 	setLoaderHeight();
 	setLayout();
 
@@ -1054,6 +1075,51 @@ $(function () {
  	console.lot(err);
  });
  */
+
+	$('#signup-email-link').on('click', function () {
+		$('.login-methods').hide();
+		$('.signup-wrapper').show();
+	});
+
+	$('#signin-methods-link').on('click', function () {
+		$('.signup-wrapper').hide();
+		$('.login-methods').show();
+	});
+
+	$('.signup-form').on('submit', function (e) {
+		e.preventDefault();
+
+		var fname = $('#signup-firstname').val(),
+		    lname = $('#signup-lastname').val(),
+		    email = $('#signup-email').val(),
+		    psd = $('#signup-password').val(),
+		    psdConfirm = $('#signup-password-confirm').val(),
+		    isPsdValid = Validate.password(psd, psdConfirm),
+		    isValid = isPsdValid ? Validate.signUp(email, psd) : false;
+
+		//console.log(isPsdValid);
+		//console.log(isValid);
+
+		if (isValid) {
+			fname = capitalizeStr(fname);
+			lname = capitalizeStr(lname);
+			signUpWithEmail(email, psd, fname, lname);
+		}
+	});
+
+	$('#login-email').on('submit', function (e) {
+		e.preventDefault();
+
+		var email = $('#signin-email').val(),
+		    psd = $('#signin-password').val(),
+		    isValid = Validate.email(email) && psd !== '';
+
+		if (isValid) {
+			signInWithEmail(email, psd);
+		} else {
+			console.log('login values not valid');
+		}
+	});
 
 	$('#user-avartar').on('mousedown', toggleUserProfile);
 	$('#user-profile').on('blur', closeUserProfile);

@@ -25,6 +25,7 @@ $arrowSize: 6px;
 		outline: 0;
 		border: 0;
 		border-bottom: 1px solid $lightgrey;
+		font-weight: 500;
 	}
 
 	&.has-value .label-text, input:focus + .label-text{
@@ -158,6 +159,16 @@ $arrowSize: 6px;
 		&:after{
 			margin-left: 19px;
 		}
+	}
+}
+
+.form-two-column{
+	font-size: 0;
+
+	.single-input{
+		width: 50%;
+		display: inline-block;
+		font-size: 1rem;
 	}
 }
 

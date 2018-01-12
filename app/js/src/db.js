@@ -26,6 +26,12 @@ let facebook = new firebase.auth.FacebookAuthProvider();
 
 firebase.auth().onAuthStateChanged((user) => {
   if (user) {
+
+  	if(user.displayName === '' && user.providerId === 'firebase') {
+  		console.log(user);
+  		return;
+  	}
+
     let displayName = user.displayName,
     		id = user.uid,
         email = user.email,
@@ -106,6 +112,42 @@ function loginFB() {
 	});
 }
 
+function signUpWithEmail(email, psd, fname, lname) {
+	firebase.auth().createUserWithEmailAndPassword(email, psd)
+	.then((newUser) => newUser.updateProfile({
+		displayName: `${fname} ${lname}`,
+		autosave: 1
+	}))
+	.then(() => {
+		let newUser = firebase.auth().currentUser;
+		console.log(newUser.displayName);
+		createUser(newUser.uid, newUser.displayName, 1);
+		getLocation();
+		buildUserProfile(newUser);
+
+		$('.login-wrapper').hide();
+  	$('.main').css('opacity', 1);
+	})
+	.catch((error) => {
+		let errorCode = error.code;
+	  let errorMessage = error.message;
+
+	  console.log(`Cannot sign up: ${errorCode}: ${errorMessage}`);
+	});
+}
+
+function signInWithEmail(email, psd) {
+	firebase.auth().signInWithEmailAndPassword(email, psd)
+		.then((user) => console.log('sign in with email - user:', user))
+		.catch((error) => {
+			let errorCode = error.code;
+		  let errorMessage = error.message;
+		  let email = error.email;
+
+		  console.log(`Cannot Login with email: ${email} - ${errorCode}: ${errorMessage}`);
+		})
+}
+
 function logout() {
 	firebase.auth().signOut().then(() => {
 	  console.log('log out successful');
@@ -118,11 +160,20 @@ function getCurrentUserID() {
 	return firebase.auth().currentUser.uid;
 }
 
+function isAuthenticated() {
+	return firebase.auth().currentUser !== null
+}
+
 function createUser(userID, username, autosave) {
+	let id = userID,
+			name = username,
+			as = autosave ? autosave : 1;
+
+	if(name) 
 	return db.ref(`Users/${userID}`).update({
-		id: userID,
-		username,
-		autosave
+		id,
+		'username': name,
+		autosave: as
 	}).then(() => {
 		console.log('successfully create user at database');
 		loginSuccess();

@@ -447,7 +447,8 @@
     padding: 3px 5px;
     outline: 0;
     border: 0;
-    border-bottom: 1px solid #c9c9ca; }
+    border-bottom: 1px solid #c9c9ca;
+    font-weight: 500; }
   .single-input.has-value .label-text, .single-input input:focus + .label-text {
     top: -20px;
     font-size: 0.8571rem; }
@@ -546,6 +547,13 @@
   .flat-switch_toggle input:checked + label:after {
     margin-left: 19px; }
 
+.form-two-column {
+  font-size: 0; }
+  .form-two-column .single-input {
+    width: 50%;
+    display: inline-block;
+    font-size: 1rem; }
+
 .progress-bar-wrapper {
   position: absolute;
   width: 100%;
@@ -602,12 +610,18 @@
   .login-wrapper .login-sub-heading {
     margin-bottom: 20px;
     font-size: 1.143rem; }
+  .login-wrapper .form-two-column .single-input {
+    width: 50%; }
   .login-wrapper .single-input {
     width: 300px; }
     .login-wrapper .single-input .label-text {
       color: #b5b5b7; }
     .login-wrapper .single-input input {
-      width: 100%; }
+      width: 100%;
+      letter-spacing: 0.3px; }
+  .login-wrapper .primary-btn[type="submit"] {
+    margin: 30px auto 20px;
+    display: block; }
   .login-wrapper .message.failed {
     display: none;
     margin: 10px 20px;
@@ -639,6 +653,12 @@
   .login-wrapper .text-divider {
     width: 240px;
     margin: 15px auto; }
+
+#login-email {
+  text-align: left;
+  margin: 30px 35px 50px; }
+  #login-email .primary-btn[type="submit"] {
+    margin-top: 20px; }
 
 #login-google, #login-facebook {
   cursor: pointer;
@@ -681,6 +701,24 @@
     display: inline-block; }
   #copyright p {
     font-size: 0.8571rem; }
+
+#signup-email-link, #signin-methods-link {
+  padding: 10px 40px; }
+  #signup-email-link > span, #signin-methods-link > span {
+    text-decoration: underline;
+    cursor: pointer; }
+    #signup-email-link > span:hover, #signin-methods-link > span:hover {
+      color: #252839; }
+
+.signup-wrapper {
+  display: none; }
+
+.signup-form {
+  text-align: left; }
+  .signup-form .form-two-column .single-input:first-child {
+    padding-right: 5px; }
+  .signup-form .form-two-column .single-input:last-child {
+    padding-left: 5px; }
 
 * {
   box-sizing: border-box; }

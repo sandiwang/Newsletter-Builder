@@ -28,6 +28,12 @@ var facebook = new firebase.auth.FacebookAuthProvider();
 
 firebase.auth().onAuthStateChanged(function (user) {
 	if (user) {
+
+		if (user.displayName === '' && user.providerId === 'firebase') {
+			console.log(user);
+			return;
+		}
+
 		var displayName = user.displayName,
 		    id = user.uid,
 		    email = user.email,
@@ -108,6 +114,41 @@ function loginFB() {
 	});
 }
 
+function signUpWithEmail(email, psd, fname, lname) {
+	firebase.auth().createUserWithEmailAndPassword(email, psd).then(function (newUser) {
+		return newUser.updateProfile({
+			displayName: fname + " " + lname,
+			autosave: 1
+		});
+	}).then(function () {
+		var newUser = firebase.auth().currentUser;
+		console.log(newUser.displayName);
+		createUser(newUser.uid, newUser.displayName, 1);
+		getLocation();
+		buildUserProfile(newUser);
+
+		$('.login-wrapper').hide();
+		$('.main').css('opacity', 1);
+	}).catch(function (error) {
+		var errorCode = error.code;
+		var errorMessage = error.message;
+
+		console.log("Cannot sign up: " + errorCode + ": " + errorMessage);
+	});
+}
+
+function signInWithEmail(email, psd) {
+	firebase.auth().signInWithEmailAndPassword(email, psd).then(function (user) {
+		return console.log('sign in with email - user:', user);
+	}).catch(function (error) {
+		var errorCode = error.code;
+		var errorMessage = error.message;
+		var email = error.email;
+
+		console.log("Cannot Login with email: " + email + " - " + errorCode + ": " + errorMessage);
+	});
+}
+
 function logout() {
 	firebase.auth().signOut().then(function () {
 		console.log('log out successful');
@@ -120,11 +161,19 @@ function getCurrentUserID() {
 	return firebase.auth().currentUser.uid;
 }
 
+function isAuthenticated() {
+	return firebase.auth().currentUser !== null;
+}
+
 function createUser(userID, username, autosave) {
-	return db.ref("Users/" + userID).update({
-		id: userID,
-		username: username,
-		autosave: autosave
+	var id = userID,
+	    name = username,
+	    as = autosave ? autosave : 1;
+
+	if (name) return db.ref("Users/" + userID).update({
+		id: id,
+		'username': name,
+		autosave: as
 	}).then(function () {
 		console.log('successfully create user at database');
 		loginSuccess();

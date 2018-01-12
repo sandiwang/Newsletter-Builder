@@ -43,6 +43,10 @@ $fb: #3b5998;
 		font-size: $font16;
 	}
 
+	.form-two-column .single-input{
+		width: 50%;
+	}
+
 	.single-input{
 		width: 300px;
 
@@ -52,7 +56,13 @@ $fb: #3b5998;
 
 		input{
 			width: 100%;
+			letter-spacing: 0.3px;
 		}
+	}
+
+	.primary-btn[type="submit"]{
+		margin: 30px auto 20px;
+		display: block;
 	}
 
 	.message.failed{
@@ -89,6 +99,15 @@ $fb: #3b5998;
 	.text-divider{
 		width: 240px;
 		margin: 15px auto;
+	}
+}
+
+#login-email{
+	text-align: left;
+	margin: 30px 35px 50px;
+
+	.primary-btn[type="submit"]{
+		margin-top: 20px;
 	}
 }
 
@@ -144,5 +163,34 @@ $fb: #3b5998;
 
 	p{
 		font-size: $font12;
+	}
+}
+
+#signup-email-link, #signin-methods-link{
+	padding: 10px 40px;
+	
+	> span{
+		text-decoration: underline;
+		cursor: pointer;
+
+		&:hover{
+			color: $darkpurple;
+		}
+	}
+}
+
+.signup-wrapper{
+	display: none;
+}
+
+.signup-form{
+	text-align: left;
+
+	.form-two-column .single-input:first-child{
+		padding-right: 5px;
+	}
+
+	.form-two-column .single-input:last-child{
+		padding-left: 5px;
 	}
 }

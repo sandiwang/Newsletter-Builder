@@ -19,7 +19,8 @@ const config = {
 	jsWatchPath : 'app/js/src/*.js',
 	jsVendors : 'bower_components/**/*.min.js',
 	img : 'app/img/*.*',
-	html : 'app/*.html'
+	html : 'app/*.html',
+	fonts : 'app/font/*.*'
 }
 
 gulp.task('browserSync', function(){
@@ -101,6 +102,11 @@ gulp.task('images', function() {
 		.pipe(gulp.dest(config.bowserDir + '/img'));
 });
 
+gulp.task('fonts', function() {
+	return gulp.src(config.fonts)
+		.pipe(gulp.dest('build/font'));
+});
+
 gulp.task('default', function(callback) {
 	runSequence(['sass', 'babel', 'vendorsJS', 'vendorsCSS', 'browserSync'], 'watch',
 		callback
@@ -108,7 +114,7 @@ gulp.task('default', function(callback) {
 });
 
 gulp.task('build', function(callback) {
-	runSequence('html', 'css', 'js', 'images', 
+	runSequence('html', 'css', 'js', 'images', 'fonts', 
 		callback
 		)
 });
