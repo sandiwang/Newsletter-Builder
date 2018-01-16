@@ -1085,9 +1085,10 @@ function getLocation() {
 }
 
 function setUserLocationKey() {
+	console.log('locationKey');
 	return getLocationKey().then(function (result) {
 		userLocation['key'] = result;
-		// getWeather();
+		getWeather();
 	});
 }
 
@@ -1111,7 +1112,7 @@ $(function () {
 	var _this2 = this;
 
 	if (isAuthenticated()) {
-		// setUserLocationKey();
+		//setUserLocationKey();
 	}
 
 	setLoaderHeight();

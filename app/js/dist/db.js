@@ -34,6 +34,8 @@ firebase.auth().onAuthStateChanged(function (user) {
 			return;
 		}
 
+		setUserLocationKey();
+
 		var displayName = user.displayName,
 		    id = user.uid,
 		    email = user.email,
