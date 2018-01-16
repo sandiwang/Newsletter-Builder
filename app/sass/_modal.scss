@@ -109,7 +109,7 @@ $userAvartar: 100px;
 	border-top: 0;
 }
 
-#img-linking-modal{
+#img-linking-modal, #save-confirm-modal{
 	.modal-title{
 		text-align: center;
 	}
@@ -165,6 +165,17 @@ $userAvartar: 100px;
 
 	i{
 		font-size: $font24;
+	}
+}
+
+#save-confirm-modal{
+	p{
+		text-align: center;
+		padding: 0 20px;
+	}
+
+	.single-input{
+		width: 70%;
 	}
 }
 
@@ -421,6 +432,8 @@ $userAvartar: 100px;
 			border-radius: 100%;
 			border: 1px solid $lightgrey;
 			margin-bottom: 10px;
+			width: $userAvartar + 12px;
+			height: $userAvartar + 12px;
 		}
 
 		img{
@@ -428,6 +441,13 @@ $userAvartar: 100px;
 			width: $userAvartar;
 			height: $userAvartar;
 			border-radius: 100%;
+		}
+
+		i{
+			display: none;
+			color: rgba($lightgrey, 0.8);
+			font-size: $font50;
+			line-height: $userAvartar;
 		}
 	}
 

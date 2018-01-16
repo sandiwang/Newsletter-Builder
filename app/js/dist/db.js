@@ -150,7 +150,7 @@ function signInWithEmail(email, psd) {
 }
 
 function logout() {
-	firebase.auth().signOut().then(function () {
+	return firebase.auth().signOut().then(function () {
 		console.log('log out successful');
 	}).catch(function (error) {
 		console.log("Error when logging out: " + error);
@@ -205,13 +205,20 @@ function getUserLocation(userID) {
 	});
 }
 
-function saveContent(userID, username, template, contents, autoSave) {
+function saveContent(saveContentObj) {
 	var today = moment(),
 	    todayStr = today.format('YYYYMMDD'),
 	    now = today.format('HHmmss'),
 	    timestamp = today.unix(),
 	    updates = {};
 	// let newPostKey = db.ref().child('updates').push().key;
+
+	var userID = saveContentObj.id,
+	    username = saveContentObj.username,
+	    template = saveContentObj.template,
+	    contents = saveContentObj.contents,
+	    autoSave = saveContentObj.autoSave || 0;
+	//name = saveContentObj.saveName || `${todayStr}${now}`;
 
 	var data = {
 		id: userID,
@@ -220,10 +227,15 @@ function saveContent(userID, username, template, contents, autoSave) {
 		uploadTime: now,
 		template: template,
 		contents: contents,
-		autoSave: autoSave || 0
+		autoSave: autoSave
+	};
 
-		// updates[`/Updates/${timestamp}`] = data;
-	};if (autoSave) {
+	if (saveContentObj.saveName) {
+		data['saveName'] = saveContentObj.saveName;
+	}
+
+	// updates[`/Updates/${timestamp}`] = data;
+	if (autoSave) {
 		updates["/Users/" + userID + "/histories/autosave/" + todayStr + now] = data;
 	} else {
 		// when user manually saves, we can delete all the autosave data

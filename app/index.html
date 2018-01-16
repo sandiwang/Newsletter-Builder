@@ -95,7 +95,9 @@
 					<li data-id="home"><a href="" title="Home"><i class="ion-ios-home-outline"></i></a></li>
 					<li data-id="templates"><a href="" title="Templates"><i class="ion-ios-folder-outline"></i></a></li>
 				</ul>
+				<!--
 				<div id="sidebar-save"><a href="" title="Save"><i class="ion-ios-cloud-upload-outline"></i></a></div>
+				-->
 				<div id="user-avartar"><img src=""></div>
 			</div>
 			<div class="nav home" data-id="home" tabindex="-1">
@@ -669,12 +671,32 @@
 	  </div>
 	</div>
 
+	<div class="modal fade" id="save-confirm-modal" tabindex="-1" role="dialog">
+	  <div class="modal-dialog" role="document">
+	    <div class="modal-content">
+	      <div class="modal-body">
+	      	<div class="closeModal" data-dismiss="modal" aria-label="Close"><div></div></div>
+		      <h4 class="modal-title">Name for the saved file</h4>
+	      	<label class="single-input">
+	        	<input type="text" name="save-name">
+	        	<div class="label-text">Name</div>
+	      	</label>
+	      	<p>Leave it blank to set file name to current time</p>
+	      </div>
+	      <div class="modal-footer">
+	      	<button id="save-cancel" type="button" class="primary-btn cancel" data-dismiss="modal">Cancel</button>
+	        <button id="confirm-save" type="button" class="primary-btn">Save</button>
+	      </div>
+	    </div>
+	  </div>
+	</div>
+
 	<div class="modal fade wide" id="user-histories" tabindex="-1" role="dialog">
 		<div class="modal-dialog" role="document">
 			<div class="modal-content">
 				<div class="modal-body">
 					<div class="closeModal" data-dismiss="modal" aria-label="Close"><div></div></div>
-					<h4 class="modal-title">Histories <div class="current-user"><span></span> <a id="logout" href="" title="Log Out">(Not <span></span>? Log out here.)</a></div></h4>
+					<h4 class="modal-title">Saved <div class="current-user"><span></span> <a id="logout" href="" title="Log Out">(Not <span></span>? Log out here.)</a></div></h4>
 					<div class="histories-lists">
 						<div class="date">
 							<span>2017117</span>
@@ -703,7 +725,7 @@
 			</div>
 			<div class="history-preview">
 				<div class="closePreview"><div></div></div>
-				<div class="title">History Preview - <span></span></div>
+				<div class="title"><span></span></div>
 				<div class="preview"></div>
 				<div class="actions">
 					<div class="button outlined closePreview">Cancel</div>
@@ -720,7 +742,7 @@
 	      	<div class="closeModal" data-dismiss="modal" aria-label="Close"><div></div></div>
 		      
 		      <div class="user-infos main">  
-						<div class="user-photo"><div><img src=""></div></div>
+						<div class="user-photo"><div><img src=""><i class="ion-person"></i></div></div>
 		      	<h4 class="modal-title">User Name</h4>
 		      	<div class="logout"><a href="" title="Log out">Not <span></span>?<br>Log out here</a></div>
 		      </div>

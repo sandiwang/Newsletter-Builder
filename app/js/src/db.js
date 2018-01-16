@@ -149,7 +149,7 @@ function signInWithEmail(email, psd) {
 }
 
 function logout() {
-	firebase.auth().signOut().then(() => {
+	return firebase.auth().signOut().then(() => {
 	  console.log('log out successful');
 	}).catch(function(error) {
 	  console.log(`Error when logging out: ${error}`);
@@ -201,13 +201,20 @@ function getUserLocation(userID) {
 		.catch((err) => console.log(`Error when getting user loation from database: ${err}`));
 }
 
-function saveContent(userID, username, template, contents, autoSave) {
+function saveContent(saveContentObj) {
 	let today = moment(),
 			todayStr = today.format('YYYYMMDD'),
 			now = today.format('HHmmss'),
 			timestamp = today.unix(),
 			updates = {};
 	// let newPostKey = db.ref().child('updates').push().key;
+
+	let userID = saveContentObj.id,
+			username = saveContentObj.username,
+			template = saveContentObj.template,
+			contents = saveContentObj.contents,
+			autoSave = saveContentObj.autoSave || 0;
+			//name = saveContentObj.saveName || `${todayStr}${now}`;
 
 	let data = {
 		id: userID,
@@ -216,7 +223,11 @@ function saveContent(userID, username, template, contents, autoSave) {
 		uploadTime: now,
 		template,
 		contents,
-		autoSave: autoSave || 0
+		autoSave
+	}
+
+	if(saveContentObj.saveName) {
+		data['saveName'] = saveContentObj.saveName;
 	}
 
 	// updates[`/Updates/${timestamp}`] = data;

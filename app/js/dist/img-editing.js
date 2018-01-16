@@ -57,7 +57,7 @@ function confirmSelectedImgFromFiles(e) {
 
 	$(this).parents('.thumb').addClass('uploadingFromFiles').append($progressbar);
 	uploadImgFromFiles(userID, file).then(function (result) {
-		return console.log('upload: ' + result);
+		return doAutosave();
 	});
 }
 
@@ -279,7 +279,6 @@ function doImageTask(e) {
 }
 
 function setImgLink() {
-	alert('hi');
 	var $modal = $('#img-linking-modal'),
 	    $input = $modal.find('input[name="img-url"]'),
 	    type = $input.attr('link-type'),

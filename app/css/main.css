@@ -128,29 +128,29 @@
 .modal-footer {
   border-top: 0; }
 
-#img-linking-modal .modal-title {
+#img-linking-modal .modal-title, #save-confirm-modal .modal-title {
   text-align: center; }
 
-#img-linking-modal .url-form {
+#img-linking-modal .url-form, #save-confirm-modal .url-form {
   width: 400px;
   margin: auto; }
 
-#img-linking-modal .single-input {
+#img-linking-modal .single-input, #save-confirm-modal .single-input {
   display: block;
   margin: 40px auto 10px;
   text-align: center;
   position: relative; }
-  #img-linking-modal .single-input input {
+  #img-linking-modal .single-input input, #save-confirm-modal .single-input input {
     width: 100%; }
-  #img-linking-modal .single-input .label-text {
+  #img-linking-modal .single-input .label-text, #save-confirm-modal .single-input .label-text {
     letter-spacing: 0.5px;
     text-align: left;
     color: #b5b5b7; }
 
-#img-linking-modal .single-select {
+#img-linking-modal .single-select, #save-confirm-modal .single-select {
   margin-bottom: 10px; }
 
-#img-linking-modal .modal-footer {
+#img-linking-modal .modal-footer, #save-confirm-modal .modal-footer {
   text-align: center; }
 
 #img-linking-modal .single-input.has-value #test-link {
@@ -171,6 +171,13 @@
   transition: 0.3s all; }
   #test-link i {
     font-size: 1.714rem; }
+
+#save-confirm-modal p {
+  text-align: center;
+  padding: 0 20px; }
+
+#save-confirm-modal .single-input {
+  width: 70%; }
 
 #user-histories .modal-content {
   max-height: 750px;
@@ -364,12 +371,19 @@
       padding: 5px;
       border-radius: 100%;
       border: 1px solid #c9c9ca;
-      margin-bottom: 10px; }
+      margin-bottom: 10px;
+      width: 112px;
+      height: 112px; }
     #user-profile-modal .user-infos.main img {
       display: inline-block;
       width: 100px;
       height: 100px;
       border-radius: 100%; }
+    #user-profile-modal .user-infos.main i {
+      display: none;
+      color: rgba(201, 201, 202, 0.8);
+      font-size: 3.571rem;
+      line-height: 100px; }
   #user-profile-modal .user-infos.detail {
     width: 60%; }
   #user-profile-modal .modal-title {
@@ -755,6 +769,15 @@ html, body {
   .primary-btn.danger:hover, .primary-btn.danger:focus, .primary-btn.danger:active {
     box-shadow: 0 4px 5px 0 rgba(0, 0, 0, 0.14), 0 1px 10px 0 rgba(0, 0, 0, 0.12), 0 2px 4px -1px rgba(0, 0, 0, 0.3); }
 
+.primary-btn.cancel {
+  background-color: transparent;
+  border: 1px solid rgba(37, 40, 57, 0.6);
+  color: rgba(37, 40, 57, 0.7);
+  box-shadow: none; }
+  .primary-btn.cancel:hover, .primary-btn.cancel:focus, .primary-btn.cancel:active {
+    border-color: #252839;
+    color: #252839; }
+
 .text-divider {
   position: relative;
   height: 18px;
@@ -806,6 +829,8 @@ html, body {
     width: 400px; }
   .sidebar .nav.active {
     display: block; }
+  .sidebar a:hover {
+    text-decoration: none; }
   .sidebar #sidebar-save {
     position: absolute;
     bottom: 64px;

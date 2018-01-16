@@ -19,6 +19,7 @@ $font26: 1.857rem;
 $font28: 2rem;
 $font30: 2.143rem;
 $font40: 2.857rem;
+$font50: 3.571rem;
 
 $lightgrey: #c9c9ca;
 $grey: #b5b5b7;
@@ -92,6 +93,18 @@ html, body{
 	}
 }
 
+.primary-btn.cancel{
+	background-color: transparent;
+	border: 1px solid rgba($darkpurple, 0.6);
+	color: rgba($darkpurple, 0.7);
+	box-shadow: none;
+
+	&:hover, &:focus, &:active{
+		border-color: $darkpurple;
+		color: $darkpurple;
+	}
+}
+
 .text-divider{
 	position: relative;
 	height: 18px;
@@ -152,6 +165,10 @@ html, body{
 		&.active{
 			display: block;
 		}
+	}
+
+	a:hover{
+		text-decoration: none;
 	}
 
 	#sidebar-save{

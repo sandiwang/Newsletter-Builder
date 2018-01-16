@@ -146,17 +146,24 @@ var UserHistories = {
 
 		return getUserHistory(userId);
 	},
-	save: function save() {
+	save: function save(saveName) {
 		var id = getCurrentUserID(),
 		    username = getCurrentUsername(),
 		    contents = $('.canvas.active').html(),
-		    template = $('.templates li.active').attr('data-template');
+		    template = $('.templates li.active').attr('data-template'),
+		    saveContentObj = {
+			id: id,
+			username: username,
+			template: template,
+			contents: contents,
+			saveName: saveName
+		};
 		//console.log(`${id}: ${contents}`);
 
 		// setLoaderHeight();
 		$('.loading-overlay').show();
 
-		return saveContent(id, username, template, contents);
+		return saveContent(saveContentObj);
 	},
 	display: function display(datas, disableAutosave) {
 		var $histories = $('#user-histories .histories-lists'),
@@ -177,6 +184,7 @@ var UserHistories = {
 				// console.log(datas[list][key]);
 				var template = datas[list][key].template,
 				    contents = datas[list][key].contents || '',
+				    saveName = datas[list][key].saveName || '',
 				    time = datas[list][key].uploadTime || null,
 				    timeFormatted = time ? moment(time, 'HHmmss').format('HH : mm : ss') : '&nbsp;',
 				    dataId = key,
@@ -185,12 +193,20 @@ var UserHistories = {
 				    $overlay = buildCardOverlay(),
 				    $message = $('<div>', { class: 'message success' }).html('Delete Successed'),
 				    $delete = $('<div>', { class: "delete-card" }).append('<i class="ion-ios-trash-outline"></i>'),
-				    $textTemplate = $('<div>', { class: 'template' }).html('Template ' + template),
-				    $textTime = $('<div>', { class: 'time' }).html(timeFormatted);
+				    $textTitle = $('<div>', { class: 'template' }),
+				    $textSubTitle = $('<div>', { class: 'time' });
+
+				if (saveName) {
+					$textTitle.html(saveName);
+					$textSubTitle.html('Template ' + template);
+				} else {
+					$textTitle.html('Template ' + template);
+					$textSubTitle.html(timeFormatted);
+				}
 
 				$overlay.append($message);
 				$card.append($overlay);
-				$card.find('a').append($delete).append($textTemplate).append($textTime);
+				$card.find('a').append($delete).append($textTitle).append($textSubTitle);
 				$li.append($card);
 
 				$li.prependTo($ul);
@@ -198,7 +214,7 @@ var UserHistories = {
 
 				$li.on('click', function (e) {
 					e.preventDefault();
-					UserHistories.showPreview(d, timeFormatted, template, contents);
+					UserHistories.showPreview(d, timeFormatted, template, contents, saveName);
 				});
 				$delete.on('click', function (e) {
 					e.stopPropagation();
@@ -249,11 +265,16 @@ var UserHistories = {
 			}, 250);
 		}
 	},
-	showPreview: function showPreview(date, time, template, contents) {
+	showPreview: function showPreview(date, time, template, contents, saveName) {
 		var $preview = $('#user-histories .history-preview'),
 		    contentsStipped = contents;
 
-		$preview.find('.title span').empty().html(date + ' - ' + time);
+		if (saveName) {
+			$preview.find('.title span').empty().html(saveName);
+		} else {
+			$preview.find('.title span').empty().html(date + ' - ' + time);
+		}
+
 		$preview.find('.preview').empty().append(contents);
 		$preview.attr('template', template).css({
 			display: 'block',
@@ -428,6 +449,14 @@ function doAutosave() {
 	    autoSave = 1,
 	    currAutosaveNum = getCurrAutosaveNum(userID);
 
+	var saveContentObj = {
+		id: userID,
+		username: username,
+		template: template,
+		contents: contents,
+		autoSave: 1
+	};
+
 	setTimeout(function () {
 		$('.autosave-sign').fadeIn(300);
 	}, 500);
@@ -439,7 +468,7 @@ function doAutosave() {
 		if (num >= 1) {
 			deleteOldestRecord(userID, 'autosave');
 		}
-		return saveContent(userID, username, template, contents, autoSave);
+		return saveContent(saveContentObj);
 	}).catch(function (err) {
 		return console.log('Error: cannot get number of autosave records: ' + err);
 	});
@@ -459,7 +488,7 @@ function buildUserProfile(user) {
 	    name = user.displayName,
 	    email = user.email,
 	    photo = user.photoURL,
-	    provider = user.providerData[0].providerId;
+	    provider = user.providerData[0].providerId === 'password' ? 'Email' : user.providerData[0].providerId;
 
 	$profileModal.find('.modal-title').html(name);
 	$profileModal.find('.logout span').html(name);
@@ -467,11 +496,14 @@ function buildUserProfile(user) {
 	$profileModal.find('.user-provider').html(provider);
 
 	if (!photo) {
+		$profileModal.find('.user-photo img').hide();
+		$profileModal.find('.user-photo i').show();
 		$userPhoto.hide();
 		$avartar.html(getInitial(name));
 		return;
 	}
 
+	$profileModal.find('.user-photo i').hide();
 	$profileModal.find('.user-photo img').attr('src', photo);
 	$userPhoto.attr('src', photo).show();
 }
@@ -597,11 +629,23 @@ function resetTemplate() {
 function formatLineHeight(contents) {
 	var texts = contents.querySelectorAll('.input div');
 
-	texts.forEach(function (val, index, obj) {
-		if (val.style.lineHeight !== '') {
-			val.style.lineHeight = val.style.lineHeight + '00%';
+	for (var i = 0; i < texts.length; i++) {
+		if (texts[i].style.lineHeight !== '') {
+			var lineHeight = texts[i].style.lineHeight * 100 + '%';
+			console.log(lineHeight);
+			texts[i].style.lineHeight = lineHeight;
+
+			console.log(texts[i].style.lineHeight);
 		}
-	});
+	}
+
+	/*
+ textsArr.forEach((val, index, obj) => {
+ 	if(val.style.lineHeight !== ''){
+ 		val.style.lineHeight = val.style.lineHeight + '00%' 
+ 	}
+ });
+ */
 }
 
 function exportNewsletter() {
@@ -653,6 +697,9 @@ function saveContentSuccess() {
 
 	$loader.find('.loading').hide();
 	$loader.find('.message.success').show();
+
+	$('input[name="save-name"]').val('');
+	$('#save-confirm-modal').modal('hide');
 
 	setTimeout(function () {
 		$loader.fadeOut(150);
@@ -1000,8 +1047,10 @@ function toggleAutosave() {
 
 function doLogout(e) {
 	if (e) e.preventDefault();
-	logout();
-	location.reload();
+	logout().then(function () {
+		return location.reload();
+	});
+	// location.reload();
 }
 
 function getLocationKey() {
@@ -1048,7 +1097,7 @@ function capitalizeStr(str) {
 
 var Validate = {
 	email: function email(_email) {
-		return _email !== '' && _email.includes('@');
+		return _email !== '' && _email.indexOf('@') !== -1;
 	},
 	password: function password(psd, psdConfirm) {
 		return psd === psdConfirm;
@@ -1062,7 +1111,7 @@ $(function () {
 	var _this2 = this;
 
 	if (isAuthenticated()) {
-		setUserLocationKey();
+		// setUserLocationKey();
 	}
 
 	setLoaderHeight();
@@ -1156,7 +1205,8 @@ $(function () {
 	$('#export, #home-export').on('mousedown', exportNewsletter);
 	$('#save, #home-save').on('mousedown', function (e) {
 		e.preventDefault();
-		UserHistories.save();
+		$('#save-confirm-modal').modal('show');
+		// UserHistories.save();
 	});
 	$('#getHistories, #home-getHistories').on('mousedown', function (e) {
 		e.preventDefault();
@@ -1194,6 +1244,11 @@ $(function () {
 
 	$('#user-histories .history-preview .closePreview').on('click', closeHistoryPreview);
 	$('#user-histories .history-preview .select-history').on('click', UserHistories.select);
+
+	$('#confirm-save').on('click', function () {
+		var saveName = $('input[name="save-name"]').val();
+		UserHistories.save(saveName);
+	});
 
 	$('#switch_autosave').on('change', toggleAutosave);
 
