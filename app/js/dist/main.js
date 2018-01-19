@@ -33,7 +33,7 @@ var weatherConfig = {
 		partlySunny: 'mostly-sunny.png',
 		mostlyCloudy: 'mostly-cloudy.png',
 		cloudy: 'cloudy.png',
-		fog: 'weather_icon-39.png',
+		fog: 'fog.png',
 		showers: 'shower.png',
 		sunnyShowers: 'sunny-shower.png',
 		rain: 'rain.png',
@@ -49,10 +49,36 @@ var weatherConfig = {
 	}
 };
 
-/***** ipinfo.io API ***********/
-/***** https://ipinfo.io/ ******/
+var newWeatherConfig = {
+	key: 'efac2c6e52dd40cca85215659181101',
+	url: 'http://api.apixu.com/v1/forecast.json',
+	icons: {
+		sunny: 'sunny.png',
+		partlySunny: 'mostly-sunny.png',
+		mostlyCloudy: 'mostly-cloudy.png',
+		cloudy: 'cloudy.png',
+		fog: 'fog.png',
+		showers: 'shower.png',
+		sunnyShowers: 'sunny-shower.png',
+		rain: 'rain.png',
+		tStorm: 'tstorm.png',
+		flurry: 'snow.png',
+		sunnyFlurry: 'snow.png',
+		snow: 'snow.png',
+		sleet: 'snow.png',
+		rainSnow: 'rain-snow.png',
+		windy: 'windy.png',
+		hot: 'hot.png',
+		cold: 'cold.png',
+		blizzard: 'blizzard.png',
+		mist: 'mist.png',
+		thunderSnow: 'thunder-snow.png'
+	}
 
-var geolocationConfig = {
+	/***** ipinfo.io API ***********/
+	/***** https://ipinfo.io/ ******/
+
+};var geolocationConfig = {
 	key: '0226b2e6a2a271'
 };
 
@@ -123,6 +149,7 @@ var TextEditor = {
 	destroy: function destroy() {
 		$('.editor-popup').summernote('destroy');
 		$('.editor-popup').html('');
+		$('.tooltip').hide();
 	},
 	showPopup: function showPopup() {
 		$('.note-editor.panel').animate({
@@ -135,6 +162,7 @@ var TextEditor = {
 		}, 150, function () {
 			//destroyTextEditor();
 			TextEditor.destroy();
+			$('.tooltip').hide();
 		});
 	}
 };
@@ -478,7 +506,7 @@ function getInitial(name) {
 	if (!name) return;
 
 	var words = name.split(' ');
-	return words[1][0] + words[0][0];
+	return words[0][0] + words[1][0];
 }
 
 function buildUserProfile(user) {
@@ -611,7 +639,8 @@ function resetTemplate() {
 
 	return templateContent.then(function (data) {
 		$canvas.html(data.content);
-		getWeather();
+		// getWeather();
+		newGetWeather();
 
 		$canvas.find('.input.thumb').hover(showImgToolOptions, hideImgToolOptions);
 		$canvas.find('.input.thumb').on('click', toggleImgUploadUI);
@@ -750,7 +779,8 @@ function updateTableCanvas(template, contents) {
 
 	$canvas.empty().append(contents);
 
-	getWeather();
+	// getWeather();
+	newGetWeather();
 
 	$canvas.find('.input.thumb').hover(showImgToolOptions, hideImgToolOptions);
 	$canvas.find('.input.thumb').on('click', toggleImgUploadUI);
@@ -823,6 +853,20 @@ function getWeather() {
 	});
 }
 
+function newGetWeather() {
+	var url = newWeatherConfig.url + '?key=' + newWeatherConfig.key + '&q=' + userLocation.ip + '&days=5';
+
+	return $.ajax({
+		type: 'GET',
+		url: url
+	}).done(function (data) {
+		var dailyForecastData = newFilterForecastData(data.forecast.forecastday);
+		buildWeatherForecast(dailyForecastData);
+	}).fail(function (err) {
+		console.log(err);
+	});
+}
+
 function filterForecastData(data) {
 	// assume data comes in in order
 	var filteredData = {};
@@ -865,6 +909,83 @@ function filterForecastData(data) {
 	return filteredData;
 }
 
+function newFilterForecastData(data) {
+	var filteredData = {};
+
+	var _iteratorNormalCompletion2 = true;
+	var _didIteratorError2 = false;
+	var _iteratorError2 = undefined;
+
+	try {
+		for (var _iterator2 = data[Symbol.iterator](), _step2; !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = true) {
+			var daily = _step2.value;
+
+
+			var day = newConvertDateToDay(daily.date).toLowerCase();
+			filteredData[day] = {};
+
+			filteredData[day].date = daily.date;
+			filteredData[day].day = newConvertDateToDay(daily.date);
+			filteredData[day].temperature = {
+				lowest: daily.day.mintemp_f,
+				highest: daily.day.maxtemp_f
+			};
+			filteredData[day].dayWeather = newGetWeatherIcon(daily.day.condition.code);
+			console.log(daily.day.condition);
+		}
+	} catch (err) {
+		_didIteratorError2 = true;
+		_iteratorError2 = err;
+	} finally {
+		try {
+			if (!_iteratorNormalCompletion2 && _iterator2.return) {
+				_iterator2.return();
+			}
+		} finally {
+			if (_didIteratorError2) {
+				throw _iteratorError2;
+			}
+		}
+	}
+
+	return filteredData;
+}
+
+function newConvertDateToDay(date) {
+	// convert date string into date object
+	var dateObj = new Date(date).getDay() + 1,
+	    day = void 0;
+
+	switch (dateObj) {
+		case 7:
+			// Sunday
+			day = 'Sun';
+			break;
+		case 1:
+			// Monday
+			day = 'Mon';
+			break;
+		case 2:
+			day = 'Tue';
+			break;
+		case 3:
+			day = 'Wed';
+			break;
+		case 4:
+			day = 'Thr';
+			break;
+		case 5:
+			day = 'Fri';
+			break;
+		case 6:
+			// Saturday
+			day = 'Sat';
+			break;
+	}
+
+	return day;
+}
+
 function convertDateToDay(date) {
 	// convert date string into date object
 	// 0 is Sunday, 1 is Monday
@@ -899,6 +1020,53 @@ function convertDateToDay(date) {
 	}
 
 	return day;
+}
+
+function newGetWeatherIcon(iconNum) {
+	var path = 'img/weather/',
+	    num = Number(iconNum);
+
+	if (num === 1000) {
+		path += newWeatherConfig.icons.sunny;
+	} else if (num === 1003) {
+		path += newWeatherConfig.icons.partlySunny;
+	} else if (num === 1006 || num === 1009) {
+		path += newWeatherConfig.icons.cloudy;
+	} else if (num === 1030) {
+		path += newWeatherConfig.icons.mist;
+	} else if (num === 1063 || num === 1186 || num === 1192 || num === 1180) {
+		path += newWeatherConfig.icons.sunnyShowers;
+	} else if (num === 1066 || num === 1069 || num >= 1204 && num <= 1237 || num === 1261 || num === 1264) {
+		path += newWeatherConfig.icons.snow;
+	} else if (num === 1114 || num === 1117) {
+		path += newWeatherConfig.icons.blizzard;
+	} else if (num === 1072 || num >= 1150 && num <= 1171) {
+		path += newWeatherConfig.icons.showers;
+	} else if (num === 1087) {
+		path += newWeatherConfig.icons.tStorm;
+	} else if (num === 1135 || num === 1147) {
+		path += newWeatherConfig.icons.fog;
+	} else if (num === 1183 || num === 1189 || num === 1195 || num === 1198 || num === 1201 || num >= 1240 && num <= 1258) {
+		path += newWeatherConfig.icons.rain;
+	} else if (num >= 1273 && num <= 1276) {
+		path += newWeatherConfig.icons.tStorm;
+	} else if (num >= 1279 && num <= 1282) {
+		path += newWeatherConfig.icon.thunderSnow;
+	}
+
+	/*
+ } else if (num === 29) {
+ 	path += newWeatherConfig.icons.rainSnow;
+ } else if (num === 30) {
+ 	path += newWeatherConfig.icons.hot;
+ } else if (num === 31) {
+ 	path += newWeatherConfig.icons.cold;
+ } else if (num === 32) {
+ 	path += newWeatherConfig.icons.windy;
+ } 
+ */
+
+	return path;
 }
 
 function getWeatherIcon(iconNum) {
@@ -1085,10 +1253,16 @@ function getLocation() {
 }
 
 function setUserLocationKey() {
-	console.log('locationKey');
 	return getLocationKey().then(function (result) {
 		userLocation['key'] = result;
 		getWeather();
+	});
+}
+
+function newSetUserLocationKey() {
+	return getLocation().then(function (data) {
+		userLocation['ip'] = data.ip;
+		newGetWeather();
 	});
 }
 
