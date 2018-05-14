@@ -1,15 +1,17 @@
-# Newsletter-Builder
+# Newsletter Builder
 
 Gensler's internal weekly newsletter builder.<br><br>
 
 ## Install
 - `npm install`
 - `bower install`
+
+## Usage
 - `gulp`
 
 
 ### Special Requirement for this project:
-- Font should be Kievit, no other font
+- Font should be Kievit. We don't let user choose other font.
 
 <br><br><br>
 
